@@ -1,0 +1,3 @@
+class EndPoint {
+  EndPoint._();
+}
