@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moodie/constants/asset_const.dart';
+import 'package:moodie/constants/routes.dart';
 import 'package:moodie/shared/themes/colors.dart';
 
 class OnBoardingView extends StatelessWidget {
@@ -97,7 +99,9 @@ class OnBoardingView extends StatelessWidget {
                         horizontal: 24.0,
                       ),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed(Routes.login);
+                        },
                         child: const Text('Get Started'),
                         style: ElevatedButton.styleFrom(
                           primary: ThemeColor.primary,
