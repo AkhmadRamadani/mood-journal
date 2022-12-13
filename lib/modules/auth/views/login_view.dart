@@ -10,7 +10,7 @@ class LoginView extends StatelessWidget {
         title: const Text('Login'),
       ),
       body: const Center(
-        child: Text('Login'),
+        child: Text('Login Page'),
       ),
     );
   }
