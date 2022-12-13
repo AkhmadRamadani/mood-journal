@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:moodie/constants/app_const.dart';
 import 'package:moodie/constants/pages.dart';
 import 'package:moodie/constants/routes.dart';
+import 'package:moodie/shared/themes/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: Routes.splash,
       getPages: Pages.getPages(),
       builder: (context, child) {
