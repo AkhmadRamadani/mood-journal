@@ -109,7 +109,9 @@ class LoginView extends StatelessWidget {
                       ),
                       CustomTextButton(
                         title: "Sign in",
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed(Routes.home);
+                        },
                         textColor: Colors.white,
                         backgroundColor: ThemeColor.primary,
                       ),
