@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/auth/views/login_view.dart';

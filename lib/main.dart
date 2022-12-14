@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:moodie/constants/app_const.dart';
 import 'package:moodie/constants/pages.dart';
 import 'package:moodie/constants/routes.dart';
-import 'package:moodie/shared/themes/colors.dart';
 
 void main() {
   runApp(const MyApp());

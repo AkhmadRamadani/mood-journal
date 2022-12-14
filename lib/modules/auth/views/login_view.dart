@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
+import 'package:moodie/shared/widgets/text_field/custom_text_field.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -93,44 +93,16 @@ class LoginView extends StatelessWidget {
                       const SizedBox(
                         height: 24,
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: MediaQuery.of(context).size.width / 7,
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(243, 243, 247, 1),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: const TextField(
-                          keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontFamily: 'HelveticaNeue'),
-                          decoration: InputDecoration.collapsed(
-                            hintText: "Email address",
-                          ),
-                        ),
+                      const CustomTextField(
+                        hintText: "Email",
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(
                         height: 24,
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: MediaQuery.of(context).size.width / 7,
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(243, 243, 247, 1),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: const TextField(
-                          obscureText: true,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontFamily: 'HelveticaNeue'),
-                          decoration: InputDecoration.collapsed(
-                            hintText: "Password",
-                          ),
-                        ),
+                      const CustomTextField(
+                        hintText: "Password",
+                        keyboardType: TextInputType.visiblePassword,
                       ),
                       const SizedBox(
                         height: 24,

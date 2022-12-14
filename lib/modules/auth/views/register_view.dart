@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
+import 'package:moodie/shared/widgets/text_field/custom_text_field.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -92,111 +92,24 @@ class RegisterView extends StatelessWidget {
                       const SizedBox(
                         height: 24,
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: MediaQuery.of(context).size.width / 7,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(243, 243, 247, 1),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 5,
-                              child: TextField(
-                                keyboardType: TextInputType.emailAddress,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontFamily: 'HelveticaNeue'),
-                                decoration: InputDecoration.collapsed(
-                                  hintText: "Username",
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.check,
-                                  size: 22,
-                                  color: Colors.greenAccent,
-                                ))
-                          ],
-                        ),
+                      const CustomTextField(
+                        hintText: "Full Name",
+                        keyboardType: TextInputType.name,
                       ),
                       const SizedBox(
                         height: 24,
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        width: MediaQuery.of(context).size.width - 50,
-                        height: MediaQuery.of(context).size.width / 7,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(243, 243, 247, 1),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 5,
-                              child: TextField(
-                                keyboardType: TextInputType.emailAddress,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontFamily: 'HelveticaNeue'),
-                                decoration: InputDecoration.collapsed(
-                                  hintText: "Email address",
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.check,
-                                  size: 22,
-                                  color: Colors.greenAccent,
-                                ))
-                          ],
-                        ),
+                      const CustomTextField(
+                        hintText: "Email",
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(
                         height: 24,
                       ),
-                      Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: MediaQuery.of(context).size.width - 50,
-                          height: MediaQuery.of(context).size.width / 7,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(243, 243, 247, 1),
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                flex: 5,
-                                child: TextField(
-                                  // obscureText: !show_password,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontFamily: 'HelveticaNeue'),
-                                  decoration: InputDecoration.collapsed(
-                                    hintText: "Password",
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    width: 12,
-                                    height: 12,
-                                    child: SvgPicture.asset(
-                                      AssetConst.meremIc,
-                                      color: Colors.grey,
-                                      width: 12,
-                                    ),
-                                  ))
-                            ],
-                          )),
+                      const CustomTextField(
+                        hintText: "Password",
+                        keyboardType: TextInputType.visiblePassword,
+                      ),
 
                       const SizedBox(
                         height: 24,

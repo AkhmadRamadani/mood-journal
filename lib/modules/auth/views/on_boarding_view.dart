@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/shared/themes/colors.dart';
+import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
 
 class OnBoardingView extends StatelessWidget {
   const OnBoardingView({super.key});
@@ -92,23 +91,15 @@ class OnBoardingView extends StatelessWidget {
                 // const SizedBox(height: 20),
                 Column(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                      ),
-                      child: ElevatedButton(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: CustomTextButton(
+                        title: 'Get Started',
                         onPressed: () {
-                          Get.toNamed(Routes.login);
+                          Get.offNamed(Routes.login);
                         },
-                        child: const Text('Get Started'),
-                        style: ElevatedButton.styleFrom(
-                          primary: ThemeColor.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                        ),
+                        backgroundColor: ThemeColor.primary,
+                        textColor: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 30),
