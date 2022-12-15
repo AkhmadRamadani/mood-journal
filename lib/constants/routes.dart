@@ -8,4 +8,6 @@ class Routes {
   static const String register = '/register';
 
   static const String onBoarding = '/onboarding';
+
+  static const String editProfile = '/edit-profile';
 }
