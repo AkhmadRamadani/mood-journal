@@ -42,7 +42,7 @@ class _NotificationViewState extends State<NotificationView>
                 greet: false,
                 isDark: true,
                 type: 'heading',
-                name: 'Notification'.tr,
+                name: 'Notifications'.tr,
                 image:
                     'https://i.pinimg.com/564x/06/63/f5/0663f52b4e6775adcd134a27853004b3.jpg',
               ),
@@ -67,10 +67,11 @@ class _NotificationViewState extends State<NotificationView>
                     children: [
                       Text(
                         'Today\'s Notification'.tr,
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: ThemeColor.neutral_900,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: ThemeColor.neutral_900,
+                                  fontWeight: FontWeight.w600,
+                                ),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
                       const NotificationCard(
@@ -90,10 +91,11 @@ class _NotificationViewState extends State<NotificationView>
                       const SizedBox(height: Spacing.spacing * 3),
                       Text(
                         'This Week\'s Notification'.tr,
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: ThemeColor.neutral_900,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: ThemeColor.neutral_900,
+                                  fontWeight: FontWeight.w600,
+                                ),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
                       const NotificationCard(
