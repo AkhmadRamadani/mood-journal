@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "427798358799",
+    "project_id": "mood-journal-435b7",
+    "storage_bucket": "mood-journal-435b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427798358799:android:8b860348da441b61a2ec7a",
+        "android_client_info": {
+          "package_name": "com.example.moodie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427798358799-qm7h3cv0mk7ipcbhdbj0t2sblnhqf220.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmjGeJ4ocIc09LNB3IxyEoObWUb_rB8xE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427798358799-qm7h3cv0mk7ipcbhdbj0t2sblnhqf220.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "427798358799-6kcjd4vovvbcc48jfo2fij6htpip234o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moodie"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427798358799:android:639ee8350bef1005a2ec7a",
+        "android_client_info": {
+          "package_name": "com.moodie.journal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427798358799-qm7h3cv0mk7ipcbhdbj0t2sblnhqf220.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmjGeJ4ocIc09LNB3IxyEoObWUb_rB8xE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427798358799-qm7h3cv0mk7ipcbhdbj0t2sblnhqf220.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "427798358799-6kcjd4vovvbcc48jfo2fij6htpip234o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moodie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
