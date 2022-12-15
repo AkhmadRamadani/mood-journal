@@ -10,7 +10,7 @@ class SplashView extends StatelessWidget {
         title: const Text('Splash'),
       ),
       body: const Center(
-        child: Text('Splash'),
+        child: Text('Test Upload Splash'),
       ),
     );
   }
