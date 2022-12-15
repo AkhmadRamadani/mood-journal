@@ -50,6 +50,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "427798358799-8dv4gjqs99ehhe6o354jf6mgq17a40nq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moodie.journal",
+            "certificate_hash": "ceede3c80f2536d3435cb429361f46432285e09d"
+          }
+        },
+        {
           "client_id": "427798358799-qm7h3cv0mk7ipcbhdbj0t2sblnhqf220.apps.googleusercontent.com",
           "client_type": 3
         }
