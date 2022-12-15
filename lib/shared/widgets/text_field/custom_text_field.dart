@@ -11,6 +11,7 @@ class CustomTextField extends StatefulWidget {
     this.isUsingIcon,
     this.icon,
     this.iconColor,
+    this.controller,
   }) : super(key: key);
 
   final String? hintText, labelText;
@@ -19,6 +20,7 @@ class CustomTextField extends StatefulWidget {
   final bool? isUsingIcon;
   final IconData? icon;
   final Color? iconColor;
+  final TextEditingController? controller;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -48,6 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           Expanded(
             flex: 5,
             child: TextField(
+              controller: widget.controller,
               obscureText: widget.keyboardType == TextInputType.visiblePassword
                   ? !showPassword
                   : false,

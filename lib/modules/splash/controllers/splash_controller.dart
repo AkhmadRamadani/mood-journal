@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
 
@@ -12,6 +13,18 @@ class SplashController extends GetxController {
 
   Future<void> goToLogin() async {
     await Future.delayed(const Duration(seconds: 3));
-    Get.offNamed(Routes.onBoarding);
+    if (await checkIsLoggedIn()) {
+      Get.offAllNamed(Routes.home);
+    } else {
+      Get.offAllNamed(Routes.onBoarding);
+    }
+  }
+
+  Future<bool> checkIsLoggedIn() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

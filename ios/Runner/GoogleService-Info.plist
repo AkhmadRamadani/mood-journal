@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>427798358799-6kcjd4vovvbcc48jfo2fij6htpip234o.apps.googleusercontent.com</string>
+	<string>427798358799-li2gcv6hmet7f13t8t1ihicjg10fta14.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.427798358799-6kcjd4vovvbcc48jfo2fij6htpip234o</string>
+	<string>com.googleusercontent.apps.427798358799-li2gcv6hmet7f13t8t1ihicjg10fta14</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>427798358799-8dv4gjqs99ehhe6o354jf6mgq17a40nq.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD03g7diBr_OIyYICnyqoljZEPxseyE12g</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.moodie</string>
+	<string>com.moodie.journal</string>
 	<key>PROJECT_ID</key>
 	<string>mood-journal-435b7</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:427798358799:ios:13dcfafb16567632a2ec7a</string>
+	<string>1:427798358799:ios:af81c591318d135ca2ec7a</string>
 </dict>
 </plist>

@@ -17,4 +17,11 @@ class AssetConst {
   static const String melekIc = 'assets/icons/melek.svg';
   // merem
   static const String meremIc = 'assets/icons/merem.svg';
+
+  static const String animationLoading =
+      'assets/animations/loading_blue_lottie.json';
+  static const String animationCheck = 'assets/animations/check_lottie.json';
+  static const String animationError = 'assets/animations/error_lottie.json';
+  static const String animationWarning =
+      'assets/animations/warning_lottie.json';
 }
