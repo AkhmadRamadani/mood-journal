@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodie/modules/dashboard/views/dashboard_view.dart';
+import 'package:moodie/modules/notification/views/notification_view.dart';
 import 'package:moodie/modules/record/views/record_view.dart';
 
 class HomeController extends GetxController {
@@ -8,7 +9,7 @@ class HomeController extends GetxController {
   final pages = [
     const DashboardView(),
     const RecordView(),
-    Container(color: Colors.green),
+    const NotificationView(),
     Container(color: Colors.blue),
   ];
 
