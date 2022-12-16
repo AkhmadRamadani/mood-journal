@@ -8,6 +8,7 @@ import 'package:moodie/shared/widgets/buttons/profile_button.dart';
 class NotificationCard extends StatelessWidget {
   final int type;
   final String title, desc, time;
+  final Function()? onClick;
 
   const NotificationCard({
     Key? key,
@@ -15,12 +16,13 @@ class NotificationCard extends StatelessWidget {
     required this.title,
     required this.desc,
     required this.time,
+    this.onClick,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onClick ?? () {},
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
