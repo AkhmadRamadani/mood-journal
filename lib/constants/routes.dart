@@ -10,4 +10,5 @@ class Routes {
   static const String onBoarding = '/onboarding';
 
   static const String editProfile = '/edit-profile';
+  static const String addMood = '/add-mood';
 }
