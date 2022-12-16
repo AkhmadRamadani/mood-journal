@@ -47,7 +47,7 @@ class _DashboardViewPage extends State<DashboardView> {
                 const SizedBox(height: Spacing.spacing * 3),
                 Text(
                   'Summary',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: ThemeColor.neutral_900,
                         fontWeight: FontWeight.w600,
                       ),

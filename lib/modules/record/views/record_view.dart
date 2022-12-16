@@ -111,10 +111,11 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                     children: [
                       Text(
                         'Today\'s Record'.tr,
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: ThemeColor.neutral_900,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: ThemeColor.neutral_900,
+                                  fontWeight: FontWeight.w600,
+                                ),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
                       const RecordCard(
