@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
+import 'package:moodie/modules/auth/controllers/login_controller.dart';
+import 'package:moodie/modules/auth/controllers/register_controller.dart';
 import 'package:moodie/modules/auth/views/login_view.dart';
 import 'package:moodie/modules/auth/views/on_boarding_view.dart';
 import 'package:moodie/modules/auth/views/register_view.dart';
@@ -25,6 +27,9 @@ class Pages {
       GetPage(
         name: Routes.login,
         page: () => const LoginView(),
+        binding: BindingsBuilder(() {
+          Get.put(LoginController());
+        }),
       ),
       GetPage(
         name: Routes.onBoarding,
@@ -33,6 +38,9 @@ class Pages {
       GetPage(
         name: Routes.register,
         page: () => const RegisterView(),
+        binding: BindingsBuilder(() {
+          Get.put(RegisterController());
+        }),
       ),
       GetPage(
         name: Routes.home,

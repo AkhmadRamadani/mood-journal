@@ -47,6 +47,7 @@ dependencies:
   firebase_core: ^2.4.0
   firebase_auth: ^4.2.0
   lottie: ^2.1.0
+  google_sign_in: ^5.4.2
 
 
 dev_dependencies:
@@ -77,6 +78,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/lotties/
+    - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
