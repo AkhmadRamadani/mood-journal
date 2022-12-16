@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -74,19 +75,44 @@ class _NotificationViewState extends State<NotificationView>
                                 ),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
-                      const NotificationCard(
-                          type: 0,
-                          title: 'Mood Record Time!',
-                          desc:
-                              'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
-                          time: '07:00 AM'),
-                      const SizedBox(height: Spacing.spacing * 3),
-                      const NotificationCard(
+                      NotificationCard(
                         type: 0,
                         title: 'Mood Record Time!',
                         desc:
                             'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
                         time: '07:00 AM',
+                        onClick: () {
+                          Get.bottomSheet(
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: Get.height / 1.2,
+                              child: const AddMood(),
+                            ),
+                            isScrollControlled: true,
+                            enableDrag: true,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: Spacing.spacing * 3),
+                      NotificationCard(
+                        type: 0,
+                        title: 'Mood Record Time!',
+                        desc:
+                            'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
+                        time: '07:00 AM',
+                        onClick: () {
+                          Get.bottomSheet(
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: Get.height / 1.2,
+                              child: const AddMood(),
+                            ),
+                            isScrollControlled: true,
+                            enableDrag: true,
+                          );
+                        },
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
                       Text(
@@ -98,19 +124,44 @@ class _NotificationViewState extends State<NotificationView>
                                 ),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
-                      const NotificationCard(
-                          type: 0,
-                          title: 'Mood Record Time!',
-                          desc:
-                              'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
-                          time: '07:00 AM'),
-                      const SizedBox(height: Spacing.spacing * 3),
-                      const NotificationCard(
+                      NotificationCard(
                         type: 0,
                         title: 'Mood Record Time!',
                         desc:
                             'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
                         time: '07:00 AM',
+                        onClick: () {
+                          Get.bottomSheet(
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: Get.height / 1.2,
+                              child: const AddMood(),
+                            ),
+                            isScrollControlled: true,
+                            enableDrag: true,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: Spacing.spacing * 3),
+                      NotificationCard(
+                        type: 0,
+                        title: 'Mood Record Time!',
+                        desc:
+                            'Hello! How are you today? hope it all will be good! Keep your mood is on fire!',
+                        time: '07:00 AM',
+                        onClick: () {
+                          Get.bottomSheet(
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: Get.height / 1.2,
+                              child: const AddMood(),
+                            ),
+                            isScrollControlled: true,
+                            enableDrag: true,
+                          );
+                        },
                       ),
                     ],
                   ),
