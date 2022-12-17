@@ -56,28 +56,36 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButton: Align(
-          alignment: Alignment.bottomRight,
-          child: FloatingActionButton(
-            onPressed: () async {
-              await Get.bottomSheet(
-                GetBuilder<RecordController>(
-                    init: RecordController(),
-                    builder: (state) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        height: Get.height / 1.2,
-                        child: const AddMood(),
-                      );
-                    }),
-                isScrollControlled: true,
-                enableDrag: true,
-              );
-              DashboardController.to.refresh();
-            },
-            backgroundColor: ThemeColor.primary,
-            child: const Icon(Icons.add),
+        floatingActionButton: Visibility(
+          visible: controller.currentPageIndex.value == 0 ||
+              controller.currentPageIndex.value == 1,
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Get.bottomSheet(
+                  GetBuilder<RecordController>(
+                      init: RecordController(),
+                      builder: (state) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10)),
+                          height: Get.height / 1.2,
+                          child: const AddMood(),
+                        );
+                      }),
+                  isScrollControlled: true,
+                  enableDrag: true,
+                );
+                if (controller.currentPageIndex.value == 0) {
+                  DashboardController.to.refresh();
+                } else if (controller.currentPageIndex.value == 1) {
+                  RecordController.to.refresh();
+                }
+              },
+              backgroundColor: ThemeColor.primary,
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
       ),

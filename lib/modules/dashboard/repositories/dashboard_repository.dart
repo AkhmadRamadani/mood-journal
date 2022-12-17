@@ -59,9 +59,11 @@ class DashboardRepository {
           moodMap[mood] = 1;
         }
       });
-
+      // print(moodMap);
       // make it to range from 0 to 1
-      moodMap.updateAll((key, value) => value / moodMap.length);
+      moodMap.updateAll((key, value) => value / snapshot.docs.length);
+      // log updated moodMap
+      // print(moodMap);
       final mood = moodMap.entries.reduce((value, element) {
         if (value.value > element.value) {
           return value;

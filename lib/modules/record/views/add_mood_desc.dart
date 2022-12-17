@@ -130,7 +130,7 @@ class AddMoodDesc extends StatelessWidget {
             GetBuilder<RecordController>(
               id: 'addMood',
               builder: (state) {
-                if (state.isLoading.value) {
+                if (state.isLoadingInsert.value) {
                   return Container(
                     color: Colors.black.withOpacity(0.3),
                     child: Center(

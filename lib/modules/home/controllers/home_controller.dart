@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/dashboard/views/dashboard_view.dart';
 import 'package:moodie/modules/notification/views/notification_view.dart';
 import 'package:moodie/modules/profile/views/profile_view.dart';
+import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/modules/record/views/record_view.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
 
@@ -33,6 +35,17 @@ class HomeController extends GetxController {
 
   void setPageIndex(int index) {
     currentPageIndex.value = index;
+
+    if (index == 0) {
+      DashboardController.to.refresh();
+    } else if (index == 1) {
+      RecordController.to.refresh();
+    } else if (index == 2) {
+      // NotificationController.to.refresh();
+    } else if (index == 3) {
+      // ProfileController.to.refresh();
+    }
+
     update();
   }
 
