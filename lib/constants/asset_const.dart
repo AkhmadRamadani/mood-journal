@@ -24,4 +24,11 @@ class AssetConst {
   static const String animationError = 'assets/animations/error_lottie.json';
   static const String animationWarning =
       'assets/animations/warning_lottie.json';
+
+  static const String cryingAnimation = 'assets/lotties/crying-emoji.json';
+
+  static const String winkingAnimation = 'assets/lotties/winking-emoji.json';
+  static const String blushingAnimation = 'assets/lotties/blushing-emoji.json';
+  static const String smileyAnimation = 'assets/lotties/smiley-emoji.json';
+  static const String sadAnimation = 'assets/lotties/sad-emoji.json';
 }

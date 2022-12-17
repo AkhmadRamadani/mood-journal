@@ -14,7 +14,7 @@ class RecordView extends StatefulWidget {
   State<StatefulWidget> createState() => _RecordViewState();
 }
 
-class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
+class _RecordViewState extends State<RecordView> {
   @override
   void dispose() {
     super.dispose();

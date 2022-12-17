@@ -40,35 +40,35 @@ class LoginView extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  top: 24,
-                                ),
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 0.4,
-                                  ),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Center(
-                                  child: IconButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    icon: const Icon(Icons.arrow_back),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(),
-                            ],
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Container(
+                          //       margin: const EdgeInsets.only(
+                          //         top: 24,
+                          //       ),
+                          //       width: 50,
+                          //       height: 50,
+                          //       decoration: BoxDecoration(
+                          //         border: Border.all(
+                          //           color: Colors.black.withOpacity(0.3),
+                          //           width: 0.4,
+                          //         ),
+                          //         borderRadius: BorderRadius.circular(50),
+                          //       ),
+                          //       child: Center(
+                          //         child: IconButton(
+                          //           onPressed: () {
+                          //             Get.back();
+                          //           },
+                          //           icon: const Icon(Icons.arrow_back),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     const SizedBox(),
+                          //   ],
+                          // ),
                           const SizedBox(
-                            height: 24,
+                            height: 74,
                           ),
                           Text(
                             "Welcome Back!",

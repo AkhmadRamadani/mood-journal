@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
+import 'package:moodie/modules/record/controllers/record_controller.dart';
+import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/icons/custom_icon.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -51,6 +53,29 @@ class HomePage extends StatelessWidget {
               ],
               onTabChange: (index) => controller.setPageIndex(index),
             ),
+          ),
+        ),
+        floatingActionButton: Align(
+          alignment: Alignment.bottomRight,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.bottomSheet(
+                GetBuilder<RecordController>(
+                    init: RecordController(),
+                    builder: (state) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10)),
+                        height: Get.height / 1.2,
+                        child: const AddMood(),
+                      );
+                    }),
+                isScrollControlled: true,
+                enableDrag: true,
+              );
+            },
+            backgroundColor: ThemeColor.primary,
+            child: const Icon(Icons.add),
           ),
         ),
       ),

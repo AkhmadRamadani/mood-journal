@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:get/get.dart';
-import 'package:moodie/shared/widgets/cards/emotions_card.dart';
-import 'package:moodie/shared/widgets/cards/select_mood_card.dart';
-import 'package:moodie/shared/widgets/text_field/custom_text_field.dart';
 
 class AddMoodDesc extends StatelessWidget {
   const AddMoodDesc({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    RecordController recordController = Get.find();
     return Container(
+      decoration: const BoxDecoration(
+        color: ThemeColor.background,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(CustomRadius.defaultRadius),
+          topRight: Radius.circular(CustomRadius.defaultRadius),
+        ),
+      ),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,6 +66,7 @@ class AddMoodDesc extends StatelessWidget {
                                 ),
                                 hintText: 'Title',
                               ),
+                              controller: recordController.titleController,
                             ),
                             const SizedBox(height: Spacing.spacing * 3),
                             TextFormField(
@@ -82,9 +89,10 @@ class AddMoodDesc extends StatelessWidget {
                                 ),
                                 hintText: 'How you feel?',
                               ),
+                              controller: recordController.noteController,
                             ),
                             const SizedBox(height: 165),
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               height: 45,
                               child: TextButton(
@@ -95,14 +103,7 @@ class AddMoodDesc extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Get.back();
-                                  Get.bottomSheet(
-                                      Container(
-                                        height: Get.height / 1.2,
-                                        child: AddMoodDesc(),
-                                      ),
-                                      isScrollControlled: true,
-                                      enableDrag: true);
+                                  recordController.addMood();
                                 },
                                 child: const Text(
                                   "Next",

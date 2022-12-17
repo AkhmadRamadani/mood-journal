@@ -91,6 +91,7 @@ class _NotificationViewState extends State<NotificationView>
                             ),
                             isScrollControlled: true,
                             enableDrag: true,
+                            // backgroundColor: Colors.,
                           );
                         },
                       ),
