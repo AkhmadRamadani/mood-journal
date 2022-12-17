@@ -3,20 +3,26 @@ import 'package:moodie/shared/icons/custom_icon.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
+import 'package:moodie/shared/widgets/buttons/profile_button.dart';
 import 'package:moodie/shared/widgets/buttons/rounded_image_button.dart';
+import 'package:moodie/shared/widgets/skeleton/skeleton_widget.dart';
 
 class AbsenceCard extends StatefulWidget {
   final String title, desc, date, type;
   final Function(int) onPressed;
+  final bool isLoading;
+  final String image;
 
-  const AbsenceCard(
-      {Key? key,
-      required this.title,
-      required this.desc,
-      required this.date,
-      required this.type,
-      required this.onPressed})
-      : super(key: key);
+  const AbsenceCard({
+    Key? key,
+    required this.title,
+    required this.desc,
+    required this.date,
+    required this.type,
+    required this.onPressed,
+    required this.isLoading,
+    required this.image,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AbsenceCardState();
@@ -82,35 +88,44 @@ class _AbsenceCardState extends State<AbsenceCard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          RoundedImageButton(
-            onPressed: (val) {},
-            icon: CustomIcons.schedule,
-            bgColor: ThemeColor.primary,
-            color: iconColor,
+          ProfileButton(
+            image: widget.image,
           ),
           const SizedBox(width: Spacing.spacing * 2),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  "It's Holiday",
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: ThemeColor.primary, fontWeight: FontWeight.w500),
+                SkeletonWidget(
+                  isLoading: widget.isLoading,
+                  height: 20,
+                  child: Text(
+                    widget.title,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: ThemeColor.primary, fontWeight: FontWeight.w500),
+                  ),
                 ),
                 const SizedBox(height: Spacing.spacing),
-                Text(
-                  'Enjoy your holiday with your family at home',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                SkeletonWidget(
+                  isLoading: widget.isLoading,
+                  height: 20,
+                  child: Text(
+                    widget.desc,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: ThemeColor.neutral_500,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: Spacing.spacing),
+                SkeletonWidget(
+                  isLoading: widget.isLoading,
+                  height: 20,
+                  child: Text(
+                    widget.date,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: ThemeColor.neutral_500,
-                      ),
-                ),
-                const SizedBox(height: Spacing.spacing),
-                Text(
-                  widget.date,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: ThemeColor.neutral_500,
-                      fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

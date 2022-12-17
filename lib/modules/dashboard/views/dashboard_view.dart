@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:moodie/shared/widgets/cards/absence_card.dart';
@@ -7,16 +8,12 @@ import 'package:get/get.dart';
 import 'package:moodie/shared/widgets/cards/summary_card.dart';
 import 'package:moodie/utils/extensions/date_extension.dart';
 
-class DashboardView extends StatefulWidget {
-  const DashboardView({Key? key}) : super(key: key);
+class DashboardView extends StatelessWidget {
+  const DashboardView({super.key});
 
-  @override
-  State<StatefulWidget> createState() => _DashboardViewPage();
-}
-
-class _DashboardViewPage extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
+    DashboardController controller = Get.put(DashboardController());
     return Scaffold(
       backgroundColor: ThemeColor.background,
       body: SafeArea(
@@ -29,21 +26,27 @@ class _DashboardViewPage extends State<DashboardView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const PageHeader(
+                PageHeader(
                   greet: true,
                   type: 'name',
-                  name: 'Akhmad Ramadani',
-                  image:
-                      'https://i.pinimg.com/564x/06/63/f5/0663f52b4e6775adcd134a27853004b3.jpg',
+                  name: controller.user?.displayName ?? '',
+                  image: controller.user?.photoURL ?? '',
+                  showImage: false,
                 ),
                 const SizedBox(height: Spacing.spacing * 3),
-                AbsenceCard(
-                  title: 'Its Holyday',
-                  desc: 'Enjoy your holiday with your family at home',
-                  date: DateTime.now().toHumanDate(),
-                  type: 'info',
-                  onPressed: (val) {},
-                ),
+                GetBuilder<DashboardController>(
+                    id: 'quote',
+                    builder: (state) {
+                      return AbsenceCard(
+                        title: state.salute(),
+                        desc: state.quoteResponse?.content ?? "How are you?",
+                        date: state.quoteResponse?.author ?? "",
+                        type: 'info',
+                        isLoading: state.isLoading.value,
+                        onPressed: (val) {},
+                        image: state.user?.photoURL ?? '',
+                      );
+                    }),
                 const SizedBox(height: Spacing.spacing * 3),
                 Text(
                   'Summary',

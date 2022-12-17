@@ -48,6 +48,9 @@ dependencies:
   firebase_auth: ^4.2.0
   lottie: ^2.1.0
   google_sign_in: ^5.4.2
+  cloud_firestore: ^4.2.0
+  skeleton_animation: 
+
 
 
 dev_dependencies:

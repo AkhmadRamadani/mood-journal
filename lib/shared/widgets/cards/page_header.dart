@@ -11,18 +11,20 @@ class PageHeader extends StatelessWidget {
   final IconData? icon;
   final Function(int)? onSuffixPressed;
   final IconData? suffixIcon;
+  final bool? showImage;
 
-  const PageHeader(
-      {Key? key,
-      required this.image,
-      required this.name,
-      required this.greet,
-      required this.type,
-      this.isDark,
-      this.icon,
-      this.suffixIcon,
-      this.onSuffixPressed})
-      : super(key: key);
+  const PageHeader({
+    Key? key,
+    required this.image,
+    required this.name,
+    required this.greet,
+    required this.type,
+    this.isDark,
+    this.icon,
+    this.suffixIcon,
+    this.onSuffixPressed,
+    this.showImage = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +91,7 @@ class PageHeader extends StatelessWidget {
               color: isDark == true ? ThemeColor.white : ThemeColor.neutral_900,
             ),
           ),
-        ] else ...[
+        ] else if (showImage ?? true) ...[
           ProfileButton(
             image: image,
           ),

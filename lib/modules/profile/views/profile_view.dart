@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/modules/profile/controllers/profile_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -13,6 +14,7 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProfileController controller = Get.put(ProfileController());
     Widget menuItem(String text) {
       return Container(
         child: Row(
@@ -126,7 +128,9 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(height: Spacing.spacing * 4),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          controller.logout();
+                        },
                         child: Container(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
