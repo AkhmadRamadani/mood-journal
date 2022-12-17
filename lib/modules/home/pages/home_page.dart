@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/modules/record/views/add_mood_view.dart';
@@ -58,8 +59,8 @@ class HomePage extends StatelessWidget {
         floatingActionButton: Align(
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
-            onPressed: () {
-              Get.bottomSheet(
+            onPressed: () async {
+              await Get.bottomSheet(
                 GetBuilder<RecordController>(
                     init: RecordController(),
                     builder: (state) {
@@ -73,6 +74,7 @@ class HomePage extends StatelessWidget {
                 isScrollControlled: true,
                 enableDrag: true,
               );
+              DashboardController.to.refresh();
             },
             backgroundColor: ThemeColor.primary,
             child: const Icon(Icons.add),

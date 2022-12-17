@@ -99,6 +99,9 @@ class SummaryCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
+                const SizedBox(
+                  height: Spacing.spacing - 4,
+                ),
                 Text(
                   contentDesc ?? 'null',
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(

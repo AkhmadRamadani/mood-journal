@@ -63,14 +63,19 @@ class DashboardView extends StatelessWidget {
                     Expanded(
                       child: Column(
                         children: <Widget>[
-                          const SummaryCard(
-                            theme: 'primary',
-                            isChart: true,
-                            chartVal: 0.72,
-                            header: 'Weekly Mood',
-                            contentTitle: '72%',
-                            date: 'Week 1 of January 2022',
-                          ),
+                          GetBuilder<DashboardController>(
+                              id: 'biggestMood',
+                              builder: (state) {
+                                return SummaryCard(
+                                  theme: 'primary',
+                                  isChart: true,
+                                  chartVal:
+                                      state.biggestMood?.values.first ?? 0.0,
+                                  header: 'Weekly Mood',
+                                  contentTitle: state.biggestMoodPercentage(),
+                                  date: state.biggestMoodSubText(),
+                                );
+                              }),
                           const SizedBox(
                             height: Spacing.spacing * 3,
                           ),
@@ -94,14 +99,19 @@ class DashboardView extends StatelessWidget {
                     Expanded(
                       child: Column(
                         children: <Widget>[
-                          SummaryCard(
-                            theme: 'secondary',
-                            isChart: false,
-                            header: 'Mood',
-                            contentTitle: 'You\'re Happy',
-                            contentDesc: 'Keep it up',
-                            date: DateTime.now().toHumanDateShort(),
-                          ),
+                          GetBuilder<DashboardController>(
+                              id: 'latestMood',
+                              builder: (state) {
+                                return SummaryCard(
+                                  theme: 'secondary',
+                                  isChart: false,
+                                  header: 'Mood',
+                                  contentTitle:
+                                      'You\'re ${(state.latestMood?.name ?? "not adding any mood yet")}',
+                                  contentDesc: state.latestMoodSubText(),
+                                  date: DateTime.now().toHumanDateShort(),
+                                );
+                              }),
                           const SizedBox(
                             height: Spacing.spacing * 3,
                           ),
