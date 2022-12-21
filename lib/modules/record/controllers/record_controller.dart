@@ -10,7 +10,7 @@ import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
 
 class RecordController extends GetxController {
-  static RecordController get to => Get.find();
+  static RecordController get to => Get.put(RecordController());
 
   MoodConditions? mood;
   String? note;

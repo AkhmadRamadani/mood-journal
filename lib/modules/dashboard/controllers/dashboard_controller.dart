@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:moodie/models/quore_response.dart';
 import 'package:moodie/modules/dashboard/repositories/dashboard_repository.dart';
+import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 
 class DashboardController extends GetxController {
@@ -16,6 +20,12 @@ class DashboardController extends GetxController {
   MoodConditions? latestMood;
 
   Map<MoodConditions, double>? biggestMood;
+
+  RxInt currentWater = 0.obs;
+  RxInt targetWater = 0.obs;
+  RxDouble waterPercentage = 0.0.obs;
+
+  HydrateRepository hydrateRepository = HydrateRepository();
 
   String salute() {
     final hour = DateTime.now().hour;
@@ -81,6 +91,35 @@ class DashboardController extends GetxController {
     return '';
   }
 
+  Future<void> setWaterPercentage() async {
+    final water = await hydrateRepository.getTarget();
+    targetWater.value = water;
+
+    currentWater.value = await hydrateRepository.getTodayDrink();
+
+    waterPercentage.value = (currentWater.value / targetWater.value * 100);
+    log(waterPercentage.value.toString());
+    update(['water']);
+  }
+
+  String drinkTodaySubText() {
+    String text = '';
+    if (waterPercentage.value > 90) {
+      text = 'You have drank enough water today';
+    } else if (waterPercentage.value > 70) {
+      text = 'You are almost there';
+    } else if (waterPercentage.value > 50) {
+      text = 'You are half way there';
+    } else if (waterPercentage.value > 30) {
+      text = 'You are almost there';
+    } else if (waterPercentage.value > 10) {
+      text = 'You are almost there';
+    } else {
+      text = 'You have drank enough water today';
+    }
+    return text;
+  }
+
   @override
   Future<void> refresh() async {
     setLatestMood();
@@ -92,6 +131,7 @@ class DashboardController extends GetxController {
     setQuote();
     setLatestMood();
     setBiggestMood();
+    setWaterPercentage();
     super.onInit();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -79,8 +80,15 @@ class LoginView extends StatelessWidget {
                           const SizedBox(
                             height: 24,
                           ),
+                          SvgPicture.asset(
+                            AssetConst.sittingManSVG,
+                          ),
 
                           /// Button with icon and text
+                        ],
+                      ),
+                      Column(
+                        children: [
                           CustomTextButton(
                             onPressed: () {
                               controller.loginWithGoogle();
@@ -88,50 +96,75 @@ class LoginView extends StatelessWidget {
                             title: "Sign in with Google",
                             svgLocation: AssetConst.googleIc,
                           ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          Text(
-                            "Or sign in with email",
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          CustomTextField(
-                            controller: controller.emailController,
-                            hintText: "Email",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          CustomTextField(
-                            controller: controller.passwordController,
-                            hintText: "Password",
-                            keyboardType: TextInputType.visiblePassword,
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          CustomTextButton(
-                            title: "Sign in",
-                            onPressed: () {
-                              controller.login();
-                            },
-                            textColor: Colors.white,
-                            backgroundColor: ThemeColor.primary,
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
 
-                          /// Forgot password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          // const SizedBox(
+                          //   height: 24,
+                          // ),
+                          // Text(
+                          //   "Or sign in with email",
+                          //   style: GoogleFonts.poppins(
+                          //     fontSize: 12,
+                          //   ),
+                          // ),
+                          // const SizedBox(
+                          //   height: 24,
+                          // ),
+                          // CustomTextField(
+                          //   controller: controller.emailController,
+                          //   hintText: "Email",
+                          //   keyboardType: TextInputType.emailAddress,
+                          // ),
+                          // const SizedBox(
+                          //   height: 24,
+                          // ),
+                          // CustomTextField(
+                          //   controller: controller.passwordController,
+                          //   hintText: "Password",
+                          //   keyboardType: TextInputType.visiblePassword,
+                          // ),
+                          // const SizedBox(
+                          //   height: 24,
+                          // ),
+                          // CustomTextButton(
+                          //   title: "Sign in",
+                          //   onPressed: () {
+                          //     controller.login();
+                          //   },
+                          //   textColor: Colors.white,
+                          //   backgroundColor: ThemeColor.primary,
+                          // ),
+
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          Column(
                             children: [
+                              InkWell(
+                                onTap: () {
+                                  Get.toNamed(Routes.register);
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Don't have an account?",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      "Sign up",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: ThemeColor.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Text(
                                 "Forgot password?",
                                 style: GoogleFonts.poppins(
@@ -141,39 +174,7 @@ class LoginView extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 24,
-                          ),
                         ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 24.0),
-                        child: InkWell(
-                          onTap: () {
-                            Get.toNamed(Routes.register);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account?",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                "Sign up",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: ThemeColor.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -187,7 +188,10 @@ class LoginView extends StatelessWidget {
                 return Container(
                   color: Colors.black.withOpacity(0.3),
                   child: Center(
-                    child: Lottie.asset(AssetConst.animationLoading, width: 48),
+                    child: Lottie.asset(
+                      AssetConst.animationLoading,
+                      width: 48,
+                    ),
                   ),
                 );
               }

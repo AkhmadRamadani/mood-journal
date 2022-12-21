@@ -31,4 +31,13 @@ class AssetConst {
   static const String blushingAnimation = 'assets/lotties/blushing-emoji.json';
   static const String smileyAnimation = 'assets/lotties/smiley-emoji.json';
   static const String sadAnimation = 'assets/lotties/sad-emoji.json';
+
+  static const String hydrateCup1 = 'assets/icons/hydrate/cup1.svg';
+  static const String hydrateCup2 = 'assets/icons/hydrate/cup2.svg';
+  static const String hydrateCup3 = 'assets/icons/hydrate/cup3.svg';
+  static const String hydrateCup4 = 'assets/icons/hydrate/cup4.svg';
+
+  static const String humidityHydrateSVG = 'assets/icons/hydrate/humidity.svg';
+  static const String menuHydrateSVG = 'assets/icons/hydrate/menu.svg';
+  static const String progressHydrateSVG = 'assets/icons/hydrate/progress.svg';
 }

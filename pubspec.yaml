@@ -50,6 +50,11 @@ dependencies:
   google_sign_in: ^5.4.2
   cloud_firestore: ^4.2.0
   skeleton_animation: 
+  wave: ^0.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  firebase_messaging: ^14.1.4
+  flutter_local_notifications: ^13.0.0
 
 
 
@@ -63,6 +68,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  hive_generator: ^2.0.0
+  build_runner: ^2.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,6 +89,7 @@ flutter:
     - assets/images/
     - assets/lotties/
     - assets/animations/
+    - assets/icons/hydrate/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

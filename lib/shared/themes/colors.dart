@@ -26,4 +26,16 @@ class ThemeColor {
 
   static const Color success_400 = Color.fromRGBO(39, 174, 96, 1);
   static const Color warning_400 = Color.fromRGBO(241, 196, 15, 1);
+
+  static const primaryColor = Color(0xFF37CAEC);
+  static const secodaryColor = Color(0xFF6ed9f1);
+  static const pinkColor = Color(0xFFdbbbec);
+  static const blueAccentColor = Color(0xFF7298D6);
+  static const blueColor = Color(0xFF403FEA);
+  static const blackColor = Color(0xFF092a45);
+  static const redColor = Color(0xFFAD8164);
+
+  static const secondaryColorDark = Colors.white;
+
+  static const Color primaryColorDark = Color.fromRGBO(50, 48, 98, 1);
 }

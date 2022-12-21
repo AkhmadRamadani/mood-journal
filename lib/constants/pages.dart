@@ -7,6 +7,8 @@ import 'package:moodie/modules/auth/views/on_boarding_view.dart';
 import 'package:moodie/modules/auth/views/register_view.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
 import 'package:moodie/modules/home/pages/home_page.dart';
+import 'package:moodie/modules/hydrate/controllers/hydrate_controller.dart';
+import 'package:moodie/modules/hydrate/views/hydrate_view.dart';
 import 'package:moodie/modules/profile/views/edit_profile.dart';
 import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/modules/splash/controllers/splash_controller.dart';
@@ -34,6 +36,9 @@ class Pages {
       GetPage(
         name: Routes.onBoarding,
         page: () => const OnBoardingView(),
+        binding: BindingsBuilder(() {
+          Get.put(LoginController());
+        }),
       ),
       GetPage(
         name: Routes.register,
@@ -57,6 +62,13 @@ class Pages {
         name: Routes.addMood,
         page: () => const AddMood(),
       ),
+      GetPage(
+        name: Routes.hydrate,
+        page: () => HydrateView(),
+        binding: BindingsBuilder(() {
+          Get.put(HydrateController());
+        }),
+      )
     ];
   }
 }

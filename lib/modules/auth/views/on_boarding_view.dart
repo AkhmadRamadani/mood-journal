@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/constants/routes.dart';
+import 'package:moodie/modules/auth/controllers/login_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
 
@@ -13,6 +14,8 @@ class OnBoardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = LoginController.to;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
@@ -88,39 +91,39 @@ class OnBoardingView extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 // const SizedBox(height: 20),
                 Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: CustomTextButton(
-                        title: 'Get Started',
                         onPressed: () {
-                          Get.offNamed(Routes.login);
+                          controller.loginWithGoogle();
                         },
-                        backgroundColor: ThemeColor.primary,
-                        textColor: Colors.white,
+                        title: "Sign in with Google",
+                        svgLocation: AssetConst.googleIc,
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    RichText(
-                      text: TextSpan(
-                        text: 'Already have an account? ',
-                        style: GoogleFonts.roboto(
-                          fontSize: 16,
-                          color: Colors.black.withOpacity(0.4),
-                        ),
-                        children: [
-                          TextSpan(
-                            text: 'Login',
-                            style: GoogleFonts.roboto(
-                              fontSize: 16,
-                              color: ThemeColor.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                    // const SizedBox(height: 30),
+                    // RichText(
+                    //   text: TextSpan(
+                    //     text: 'Don\'t have account yet? ',
+                    //     style: GoogleFonts.roboto(
+                    //       fontSize: 16,
+                    //       color: Colors.black.withOpacity(0.4),
+                    //     ),
+                    //     children: [
+                    //       TextSpan(
+                    //         text: 'Sign Up',
+                    //         style: GoogleFonts.roboto(
+                    //           fontSize: 16,
+                    //           color: ThemeColor.primary,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
               ],

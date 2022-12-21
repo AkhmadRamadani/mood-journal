@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -14,122 +16,145 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DashboardController controller = Get.put(DashboardController());
-    return Scaffold(
-      backgroundColor: ThemeColor.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: Spacing.spacing * 5,
-              horizontal: Spacing.spacing * 3,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                PageHeader(
-                  greet: true,
-                  type: 'name',
-                  name: controller.user?.displayName ?? '',
-                  image: controller.user?.photoURL ?? '',
-                  showImage: false,
-                ),
-                const SizedBox(height: Spacing.spacing * 3),
-                GetBuilder<DashboardController>(
-                    id: 'quote',
-                    builder: (state) {
-                      return AbsenceCard(
-                        title: state.salute(),
-                        desc: state.quoteResponse?.content ?? "How are you?",
-                        date: state.quoteResponse?.author ?? "",
-                        type: 'info',
-                        isLoading: state.isLoading.value,
-                        onPressed: (val) {},
-                        image: state.user?.photoURL ?? '',
-                      );
-                    }),
-                const SizedBox(height: Spacing.spacing * 3),
-                Text(
-                  'Summary',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: ThemeColor.neutral_900,
-                        fontWeight: FontWeight.w600,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: ThemeColor.background,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: Spacing.spacing * 5,
+                horizontal: Spacing.spacing * 3,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  PageHeader(
+                    greet: true,
+                    type: 'name',
+                    name: controller.user?.displayName ?? '',
+                    image: controller.user?.photoURL ?? '',
+                    showImage: false,
+                  ),
+                  const SizedBox(height: Spacing.spacing * 3),
+                  GetBuilder<DashboardController>(
+                      id: 'quote',
+                      builder: (state) {
+                        return AbsenceCard(
+                          title: state.salute(),
+                          desc: state.quoteResponse?.content ?? "How are you?",
+                          date: state.quoteResponse?.author ?? "",
+                          type: 'info',
+                          isLoading: state.isLoading.value,
+                          onPressed: (val) {},
+                          image: state.user?.photoURL ?? '',
+                        );
+                      }),
+                  const SizedBox(height: Spacing.spacing * 3),
+                  Text(
+                    'Summary',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: ThemeColor.neutral_900,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: Spacing.spacing * 3),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: <Widget>[
+                            GetBuilder<DashboardController>(
+                                id: 'biggestMood',
+                                builder: (state) {
+                                  return SummaryCard(
+                                    theme: 'primary',
+                                    isChart: true,
+                                    chartVal:
+                                        state.biggestMood?.values.first ?? 0.0,
+                                    header: 'Weekly Mood',
+                                    contentTitle: state.biggestMoodPercentage(),
+                                    date: state.biggestMoodSubText(),
+                                  );
+                                }),
+                            const SizedBox(
+                              height: Spacing.spacing * 3,
+                            ),
+                            SummaryCard(
+                              theme: 'secondary',
+                              isChart: false,
+                              header: 'Last Mood',
+                              contentTitle: 'Sad',
+                              contentDesc:
+                                  'When you\'re sad, don\'t forget to take a break.',
+                              date: DateTime.now()
+                                  .subtract(const Duration(days: 1))
+                                  .toHumanDateShort(),
+                            ),
+                          ],
+                        ),
                       ),
-                ),
-                const SizedBox(height: Spacing.spacing * 3),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          GetBuilder<DashboardController>(
-                              id: 'biggestMood',
-                              builder: (state) {
-                                return SummaryCard(
-                                  theme: 'primary',
-                                  isChart: true,
-                                  chartVal:
-                                      state.biggestMood?.values.first ?? 0.0,
-                                  header: 'Weekly Mood',
-                                  contentTitle: state.biggestMoodPercentage(),
-                                  date: state.biggestMoodSubText(),
-                                );
-                              }),
-                          const SizedBox(
-                            height: Spacing.spacing * 3,
-                          ),
-                          SummaryCard(
-                            theme: 'secondary',
-                            isChart: false,
-                            header: 'Last Mood',
-                            contentTitle: 'Sad',
-                            contentDesc:
-                                'When you\'re sad, don\'t forget to take a break.',
-                            date: DateTime.now()
-                                .subtract(const Duration(days: 1))
-                                .toHumanDateShort(),
-                          ),
-                        ],
+                      const SizedBox(
+                        width: (Spacing.spacing * 2) + 4,
                       ),
-                    ),
-                    const SizedBox(
-                      width: (Spacing.spacing * 2) + 4,
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          GetBuilder<DashboardController>(
-                              id: 'latestMood',
-                              builder: (state) {
-                                return SummaryCard(
-                                  theme: 'secondary',
-                                  isChart: false,
-                                  header: 'Mood',
-                                  contentTitle:
-                                      'You\'re ${(state.latestMood?.name ?? "not adding any mood yet")}',
-                                  contentDesc: state.latestMoodSubText(),
-                                  date: DateTime.now().toHumanDateShort(),
-                                );
-                              }),
-                          const SizedBox(
-                            height: Spacing.spacing * 3,
-                          ),
-                          SummaryCard(
-                            theme: 'secondary',
-                            isChart: true,
-                            chartVal: 0.2,
-                            header: 'Drink Today',
-                            contentTitle: '20%',
-                            contentDesc: 'You\'re not drinking enough',
-                            date: DateTime.now().toHumanDateShort(),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
+                      Expanded(
+                        child: Column(
+                          children: <Widget>[
+                            GetBuilder<DashboardController>(
+                                id: 'latestMood',
+                                builder: (state) {
+                                  return SummaryCard(
+                                    theme: 'secondary',
+                                    isChart: false,
+                                    header: 'Mood',
+                                    contentTitle:
+                                        'You\'re ${(state.latestMood?.name ?? "not adding any mood yet")}',
+                                    contentDesc: state.latestMoodSubText(),
+                                    date: DateTime.now().toHumanDateShort(),
+                                  );
+                                }),
+                            const SizedBox(
+                              height: Spacing.spacing * 3,
+                            ),
+                            GetBuilder<DashboardController>(
+                                id: 'water',
+                                builder: (state) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      await Get.toNamed(Routes.hydrate);
+                                      state.setWaterPercentage();
+                                    },
+                                    child: SummaryCard(
+                                      theme: 'secondary',
+                                      isChart: true,
+                                      chartVal: (state.waterPercentage.value /
+                                                  100) >
+                                              1
+                                          ? 1
+                                          : (state.waterPercentage.value / 100),
+                                      header: 'Drink Today',
+                                      contentTitle: (state
+                                                      .waterPercentage.value /
+                                                  100) >
+                                              1
+                                          ? '100%'
+                                          : '${(state.waterPercentage.value).toStringAsFixed(0)}%',
+                                      contentDesc:
+                                          'You\'re not drinking enough',
+                                      date: state.drinkTodaySubText(),
+                                    ),
+                                  );
+                                }),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

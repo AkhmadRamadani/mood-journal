@@ -11,4 +11,5 @@ class Routes {
 
   static const String editProfile = '/edit-profile';
   static const String addMood = '/add-mood';
+  static const String hydrate = '/hydrate';
 }

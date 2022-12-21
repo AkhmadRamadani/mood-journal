@@ -3,10 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:moodie/constants/app_const.dart';
 import 'package:moodie/constants/pages.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/firebase_options.dart';
+import 'package:moodie/modules/record/controllers/record_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +16,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Get.lazyPut<RecordController>(() => RecordController());
+  await Hive.initFlutter();
+  Hive.openBox('water');
   runApp(const MyApp());
 }
 
