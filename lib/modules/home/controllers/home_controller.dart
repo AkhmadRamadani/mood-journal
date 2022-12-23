@@ -7,6 +7,7 @@ import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/notification_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/dashboard/views/dashboard_view.dart';
+import 'package:moodie/modules/notification/controllers/notification_controller.dart';
 import 'package:moodie/modules/notification/views/notification_view.dart';
 import 'package:moodie/modules/profile/views/profile_view.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
@@ -99,7 +100,7 @@ class HomeController extends GetxController {
     } else if (index == 1) {
       RecordController.to.refresh();
     } else if (index == 2) {
-      // NotificationController.to.refresh();
+      NotificationController.to.refresh();
     } else if (index == 3) {
       // ProfileController.to.refresh();
     }
@@ -107,7 +108,7 @@ class HomeController extends GetxController {
     update();
   }
 
-  Future<void> _signOut() async {
+  Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
