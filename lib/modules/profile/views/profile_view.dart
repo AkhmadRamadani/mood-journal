@@ -88,18 +88,15 @@ class ProfileView extends StatelessWidget {
                       const SizedBox(height: Spacing.spacing * 3),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/edit-profile');
+                          Navigator.pushNamed(context, '/show-profile');
                         },
-                        child: menuItem('Edit Profile'),
+                        child: menuItem('Show Profile'),
                       ),
                       const SizedBox(height: Spacing.spacing * 2),
                       GestureDetector(
-                        onTap: () {},
-                        child: menuItem('History Of Your Account'),
-                      ),
-                      const SizedBox(height: Spacing.spacing * 2),
-                      GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/help-profile');
+                        },
                         child: menuItem('Help'),
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
@@ -113,18 +110,17 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(height: Spacing.spacing * 3),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/privacy-police');
+                        },
                         child: menuItem('Privacy & Policy'),
                       ),
                       const SizedBox(height: Spacing.spacing * 2),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/term-service');
+                        },
                         child: menuItem('Term of Service'),
-                      ),
-                      const SizedBox(height: Spacing.spacing * 2),
-                      GestureDetector(
-                        onTap: () {},
-                        child: menuItem('Rate App'),
                       ),
                       const SizedBox(height: Spacing.spacing * 4),
                       GestureDetector(

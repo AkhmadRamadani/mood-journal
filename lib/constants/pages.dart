@@ -9,7 +9,10 @@ import 'package:moodie/modules/home/controllers/home_controller.dart';
 import 'package:moodie/modules/home/pages/home_page.dart';
 import 'package:moodie/modules/hydrate/controllers/hydrate_controller.dart';
 import 'package:moodie/modules/hydrate/views/hydrate_view.dart';
-import 'package:moodie/modules/profile/views/edit_profile.dart';
+import 'package:moodie/modules/profile/views/show_profile.dart';
+import 'package:moodie/modules/profile/views/help_profile.dart';
+import 'package:moodie/modules/profile/views/privacy_police.dart';
+import 'package:moodie/modules/profile/views/term_service.dart';
 import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/modules/splash/controllers/splash_controller.dart';
 import 'package:moodie/modules/splash/views/splash_view.dart';
@@ -55,12 +58,24 @@ class Pages {
         }),
       ),
       GetPage(
-        name: Routes.editProfile,
-        page: () => const EditProfile(),
+        name: Routes.showProfile,
+        page: () => const ShowProfile(),
       ),
       GetPage(
         name: Routes.addMood,
         page: () => const AddMood(),
+      ),
+      GetPage(
+        name: Routes.helpProfile,
+        page: () => const HelpProfile(),
+      ),
+      GetPage(
+        name: Routes.privacyPolice,
+        page: () => const PrivacyPolice(),
+      ),
+      GetPage(
+        name: Routes.termService,
+        page: () => const TermService(),
       ),
       GetPage(
         name: Routes.hydrate,

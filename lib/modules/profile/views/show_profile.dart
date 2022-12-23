@@ -9,8 +9,8 @@ import 'package:moodie/shared/widgets/cards/record_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
 
-class EditProfile extends StatelessWidget {
-  const EditProfile({Key? key}) : super(key: key);
+class ShowProfile extends StatelessWidget {
+  const ShowProfile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
