@@ -75,4 +75,10 @@ class NotificationController extends GetxController {
     ]);
     log('NotificationController onInit');
   }
+
+  @override
+  void refresh() async {
+    super.refresh();
+    await getNotifications();
+  }
 }
