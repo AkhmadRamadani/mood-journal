@@ -18,9 +18,7 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NotificationController controller = Get.put(
-      NotificationController(),
-    );
+    final NotificationController controller = Get.find();
     return Scaffold(
       backgroundColor: ThemeColor.primary,
       body: SafeArea(

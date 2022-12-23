@@ -70,15 +70,8 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    Future.wait([
-      getNotifications(),
-    ]);
-    log('NotificationController onInit');
-  }
+    getNotifications();
 
-  @override
-  void refresh() async {
-    super.refresh();
-    await getNotifications();
+    log('NotificationController onInit');
   }
 }

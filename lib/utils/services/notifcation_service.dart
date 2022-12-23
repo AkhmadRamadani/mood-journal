@@ -38,16 +38,6 @@ class NotificationService {
     requestIOSPermissions();
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (details) async {
-        User? user = FirebaseAuth.instance.currentUser;
-        CollectionReference notifications =
-            FirebaseFirestore.instance.collection('notifications');
-        await notifications.doc().set({
-          'user_id': user!.uid,
-          'payload': details.payload,
-          'created_at': DateTime.now(),
-        });
-      },
     );
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -109,17 +99,6 @@ class NotificationService {
         ],
       ),
     );
-
-    User? user = FirebaseAuth.instance.currentUser;
-    CollectionReference notifications =
-        FirebaseFirestore.instance.collection('notifications');
-    await notifications.doc().set({
-      'user_id': user!.uid,
-      'title': title ?? '',
-      'body': body ?? '',
-      'payload': payload,
-      'created_at': DateTime.now(),
-    });
   }
 
   /// Set right date and time for notifications
@@ -219,17 +198,7 @@ class NotificationService {
   cancelAll() async => await flutterLocalNotificationsPlugin.cancelAll();
   cancel(id) async => await flutterLocalNotificationsPlugin.cancel(id);
 
-  onDidReceiveNotificationResponse(NotificationResponse details) {
-    User? user = FirebaseAuth.instance.currentUser;
-    CollectionReference notifications =
-        FirebaseFirestore.instance.collection('notifications');
-    notifications.doc().set({
-      'id': details.id,
-      'title': details.payload,
-      'body': details.payload,
-      'uid': user!.uid,
-    });
-  }
+  onDidReceiveNotificationResponse(NotificationResponse details) {}
 
   /// show notification from firebase
   Future<void> showNotificationFromFirebase(

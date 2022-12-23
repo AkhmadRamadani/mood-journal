@@ -91,6 +91,9 @@ class HomeController extends GetxController {
           ),
         )),
   ];
+  RecordController recordController = Get.put(RecordController());
+  NotificationController notificationController =
+      Get.put(NotificationController());
 
   void setPageIndex(int index) {
     currentPageIndex.value = index;
@@ -98,9 +101,9 @@ class HomeController extends GetxController {
     if (index == 0) {
       DashboardController.to.refresh();
     } else if (index == 1) {
-      RecordController.to.refresh();
+      recordController.getMoodByDate();
     } else if (index == 2) {
-      NotificationController.to.refresh();
+      notificationController.getNotifications();
     } else if (index == 3) {
       // ProfileController.to.refresh();
     }

@@ -87,6 +87,7 @@ class LoginController extends GetxController {
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       if (userCredential.user != null) {
+        Get.offAllNamed(Routes.home);
         await messaging.getToken().then((value) {
           users.doc(userCredential.user!.uid).set({
             'fcmToken': value,
@@ -96,8 +97,6 @@ class LoginController extends GetxController {
         // subscribe to topic
         await messaging.subscribeToTopic('drinkReminder');
         await messaging.subscribeToTopic('fillJournal');
-
-        Get.offAllNamed(Routes.home);
       } else {
         AlertHelper.showMsg(
           title: 'Oops!!!',
