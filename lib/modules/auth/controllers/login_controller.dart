@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,7 +16,8 @@ class LoginController extends GetxController {
   TextEditingController passwordController = TextEditingController();
 
   RxBool isLoading = false.obs;
-
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   // Firebase Auth login user
   Future<void> login() async {
     isLoading.value = true;
@@ -28,6 +31,12 @@ class LoginController extends GetxController {
         );
         if (userCredential.user != null) {
           Get.offAllNamed(Routes.home);
+          messaging.getToken().then((value) {
+            users.doc(userCredential.user!.uid).set({
+              'fcmToken': value,
+              'lastLogin': DateTime.now().toString(),
+            });
+          });
         } else {
           AlertHelper.showMsg(
             title: 'Oops!!!',
@@ -78,6 +87,16 @@ class LoginController extends GetxController {
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       if (userCredential.user != null) {
+        await messaging.getToken().then((value) {
+          users.doc(userCredential.user!.uid).set({
+            'fcmToken': value,
+            'lastLogin': DateTime.now().toString(),
+          });
+        });
+        // subscribe to topic
+        await messaging.subscribeToTopic('drinkReminder');
+        await messaging.subscribeToTopic('fillJournal');
+
         Get.offAllNamed(Routes.home);
       } else {
         AlertHelper.showMsg(

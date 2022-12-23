@@ -4,10 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:moodie/constants/routes.dart';
+import 'package:moodie/models/notification_model.dart';
 import 'package:moodie/models/quore_response.dart';
 import 'package:moodie/modules/dashboard/repositories/dashboard_repository.dart';
 import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
+import 'package:moodie/utils/services/notifcation_service.dart';
 
 class DashboardController extends GetxController {
   static DashboardController get to => Get.find();
@@ -132,6 +135,7 @@ class DashboardController extends GetxController {
     setLatestMood();
     setBiggestMood();
     setWaterPercentage();
+    // setDrinkWaterReminder();
     super.onInit();
   }
 }

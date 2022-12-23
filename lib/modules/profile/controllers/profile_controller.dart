@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
@@ -9,10 +10,16 @@ class ProfileController extends GetxController {
 
   User? user = FirebaseAuth.instance.currentUser;
   GoogleSignInAccount? googleUser;
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
     await Hive.box('water').clear();
-    Get.offAllNamed(Routes.login);
+    // unsubscribe from all notifications
+    await messaging.unsubscribeFromTopic('drinkReminder');
+    await messaging.unsubscribeFromTopic('fillJournal');
+
+    Get.offAllNamed(Routes.onBoarding);
   }
 }

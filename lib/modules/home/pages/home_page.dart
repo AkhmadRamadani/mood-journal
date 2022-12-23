@@ -63,6 +63,7 @@ class HomePage extends StatelessWidget {
             alignment: Alignment.bottomRight,
             child: FloatingActionButton(
               onPressed: () async {
+                // controller.showNotif();
                 await Get.bottomSheet(
                   GetBuilder<RecordController>(
                       init: RecordController(),

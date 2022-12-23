@@ -157,13 +157,17 @@ class HydrateController extends GetxController {
   }
 
   Future<void> addCurrentWater() async {
-    currentWater.value += selectedCup!.ml;
-    // await box.put('current', currentWater.value);
-    await repository.addDrink(currentWater.value, targetWater.value);
-    setRemainingWater();
-    setPercentage();
-    setHeightPercentages();
-    update();
+    if (targetWater.value == 0) {
+      Get.snackbar("Error", "Please add target first");
+    } else {
+      currentWater.value += selectedCup!.ml;
+      // await box.put('current', currentWater.value);
+      await repository.addDrink(currentWater.value, targetWater.value);
+      setRemainingWater();
+      setPercentage();
+      setHeightPercentages();
+      update();
+    }
   }
 
   Future<void> setCurrentWater() async {
