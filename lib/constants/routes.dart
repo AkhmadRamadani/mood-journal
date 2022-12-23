@@ -9,6 +9,9 @@ class Routes {
 
   static const String onBoarding = '/onboarding';
 
-  static const String editProfile = '/edit-profile';
+  static const String showProfile = '/show-profile';
   static const String addMood = '/add-mood';
+  static const String helpProfile = '/help-profile';
+  static const String privacyPolice = '/privacy-police';
+  static const String termService = '/term-service';
 }
