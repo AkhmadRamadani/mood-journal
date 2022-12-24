@@ -34,12 +34,10 @@ class NotificationController extends GetxController {
     var list = await notificationRepository.getListNotifications();
     if (list != null) {
       todaysNotifList = list
-          .where((element) => element.date!
-              .isAfter(DateTime.now().subtract(const Duration(days: 1))))
+          .where((element) => element.date!.day == DateTime.now().day)
           .toList();
       yesterdayNotifList = list
-          .where((element) => element.date!
-              .isBefore(DateTime.now().subtract(const Duration(days: 1))))
+          .where((element) => element.date!.day < DateTime.now().day)
           .toList();
     } else {
       log('NotificationController getNotifications list is null');
