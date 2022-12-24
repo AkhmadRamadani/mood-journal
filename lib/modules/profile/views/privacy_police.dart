@@ -78,7 +78,7 @@ class PrivacyPolice extends StatelessWidget {
                               PrivacyText.date,
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleSmall!
+                                  .titleMedium!
                                   .copyWith(
                                     color: ThemeColor.neutral_900,
                                     fontWeight: FontWeight.w600,

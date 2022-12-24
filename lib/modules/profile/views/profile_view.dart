@@ -55,8 +55,7 @@ class ProfileView extends StatelessWidget {
                 isDark: true,
                 type: 'heading',
                 name: 'Profile'.tr,
-                image:
-                    'https://i.pinimg.com/564x/06/63/f5/0663f52b4e6775adcd134a27853004b3.jpg',
+                image: controller.user?.photoURL ?? '',
               ),
             ),
             const SizedBox(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/modules/profile/controllers/profile_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -14,11 +15,12 @@ class ShowProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProfileController controller = Get.put(ProfileController());
     return Scaffold(
       backgroundColor: ThemeColor.primary,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
@@ -41,32 +43,34 @@ class ShowProfile extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.check,
-                        color: ThemeColor.white,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   child: IconButton(
+                  //     onPressed: () {},
+                  //     icon: const Icon(
+                  //       Icons.check,
+                  //       color: ThemeColor.white,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Image.network(
-                'https://i.pinimg.com/564x/06/63/f5/0663f52b4e6775adcd134a27853004b3.jpg',
-                width: Spacing.spacing * 20,
-                height: Spacing.spacing * 20,
-              ),
+            ProfileButton(
+              image: controller.user?.photoURL ?? '',
+              // isRounded: true,
+              size: 100,
             ),
             const SizedBox(
               height: Spacing.spacing * 3,
             ),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(Spacing.spacing * 3),
+                padding: const EdgeInsets.fromLTRB(
+                  Spacing.spacing * 3,
+                  Spacing.spacing * 3,
+                  Spacing.spacing * 3,
+                  0,
+                ),
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: ThemeColor.background,
@@ -87,28 +91,18 @@ class ShowProfile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nama',
+                              'Account Details',
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium!
+                                  .titleLarge!
                                   .copyWith(
                                     color: ThemeColor.neutral_900,
                                     fontWeight: FontWeight.w600,
                                   ),
-                            ),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'testName',
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeColor.neutral_400,
-                                  ),
-                                ),
-                              ),
                             ),
                             const SizedBox(height: Spacing.spacing * 3),
                             Text(
-                              'Email',
+                              'Your Name :',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
@@ -117,19 +111,20 @@ class ShowProfile extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'testEmail@gmail.com',
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeColor.neutral_400,
+                            const SizedBox(height: Spacing.spacing * 2),
+                            Text(
+                              controller.user?.displayName ?? '',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                    color: ThemeColor.neutral_900,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                ),
-                              ),
                             ),
                             const SizedBox(height: Spacing.spacing * 3),
                             Text(
-                              'No. HP',
+                              'Your Email :',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
@@ -138,15 +133,16 @@ class ShowProfile extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: '082211113333',
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: ThemeColor.neutral_400,
+                            const SizedBox(height: Spacing.spacing * 2),
+                            Text(
+                              controller.user?.email ?? '',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                    color: ThemeColor.neutral_900,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                ),
-                              ),
                             ),
                           ],
                         ),
