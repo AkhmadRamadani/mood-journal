@@ -184,35 +184,57 @@ class AddMood extends StatelessWidget {
                                   );
                                 }),
                             const SizedBox(height: Spacing.spacing * 3),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 45,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor: ThemeColor.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // Get.back();
-                                  Get.bottomSheet(
-                                    SizedBox(
-                                      height: Get.height / 1.2,
-                                      child: const AddMoodDesc(),
+                            GetBuilder<RecordController>(builder: (state) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 45,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: ThemeColor.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                    isScrollControlled: true,
-                                    enableDrag: true,
-                                  );
-                                },
-                                child: const Text(
-                                  "Next",
-                                  style: TextStyle(
-                                    color: ThemeColor.white,
+                                  ),
+                                  onPressed: () {
+                                    // Get.back();
+                                    if (state.mood == null) {
+                                      Get.snackbar(
+                                        'Error',
+                                        'Please select a mood',
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: ThemeColor.redColor,
+                                        colorText: ThemeColor.white,
+                                      );
+                                      return;
+                                    }
+                                    if (state.emotions.isEmpty) {
+                                      Get.snackbar(
+                                        'Error',
+                                        'Please select an emotion',
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: ThemeColor.redColor,
+                                        colorText: ThemeColor.white,
+                                      );
+                                      return;
+                                    }
+                                    Get.bottomSheet(
+                                      SizedBox(
+                                        height: Get.height / 1.2,
+                                        child: const AddMoodDesc(),
+                                      ),
+                                      isScrollControlled: true,
+                                      enableDrag: true,
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Next",
+                                    style: TextStyle(
+                                      color: ThemeColor.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           ],
                         ),
                       ),
