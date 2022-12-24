@@ -27,6 +27,7 @@ class DashboardController extends GetxController {
   RxInt currentWater = 0.obs;
   RxInt targetWater = 0.obs;
   RxDouble waterPercentage = 0.0.obs;
+  RxDouble dailyDrinkMean = 0.0.obs;
 
   HydrateRepository hydrateRepository = HydrateRepository();
 
@@ -107,26 +108,60 @@ class DashboardController extends GetxController {
 
   String drinkTodaySubText() {
     String text = '';
-    if (waterPercentage.value > 90) {
-      text = 'You have drank enough water today';
-    } else if (waterPercentage.value > 70) {
-      text = 'You are almost there';
-    } else if (waterPercentage.value > 50) {
-      text = 'You are half way there';
-    } else if (waterPercentage.value > 30) {
-      text = 'You are almost there';
-    } else if (waterPercentage.value > 10) {
-      text = 'You are almost there';
+    if (waterPercentage.isNaN) {
+      text = "You didn't set your target yet";
     } else {
-      text = 'You have drank enough water today';
+      if (waterPercentage.value > 90) {
+        text = 'You have drank enough water today';
+      } else if (waterPercentage.value > 70) {
+        text = 'You are almost there';
+      } else if (waterPercentage.value > 50) {
+        text = 'You are half way there';
+      } else if (waterPercentage.value > 30) {
+        text = 'You are almost there';
+      } else if (waterPercentage.value > 10) {
+        text = 'You are almost there';
+      } else {
+        text = 'You have drank enough water today';
+      }
     }
     return text;
+  }
+
+  String weeklyWaterSubText() {
+    String text = '';
+    if (dailyDrinkMean.isNaN) {
+      text = "You didn't set your target yet";
+    } else {
+      if (dailyDrinkMean.value > 3.5) {
+        text = 'You have drank enough water this week';
+      } else if (dailyDrinkMean.value > 3) {
+        text = 'You are almost there';
+      } else if (dailyDrinkMean.value > 2.5) {
+        text = 'You are half way there';
+      } else if (dailyDrinkMean.value > 2) {
+        text = 'You are almost there';
+      } else if (dailyDrinkMean.value > 1.5) {
+        text = 'You are almost there';
+      } else {
+        text = 'You have drank enough water this week';
+      }
+    }
+    return text;
+  }
+
+  Future<void> getDailyDrinkMean() async {
+    dailyDrinkMean.value =
+        (await DashboardRepository().getDailyDrinkMean() ?? 0.0) / 1000;
+    update(['water']);
   }
 
   @override
   Future<void> refresh() async {
     setLatestMood();
     setBiggestMood();
+    getDailyDrinkMean();
+    setWaterPercentage();
   }
 
   @override
@@ -135,6 +170,7 @@ class DashboardController extends GetxController {
     setLatestMood();
     setBiggestMood();
     setWaterPercentage();
+    getDailyDrinkMean();
     // setDrinkWaterReminder();
     super.onInit();
   }

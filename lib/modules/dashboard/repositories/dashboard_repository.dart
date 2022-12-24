@@ -8,6 +8,8 @@ import 'package:moodie/shared/enum/mood_enum.dart';
 
 class DashboardRepository {
   CollectionReference moods = FirebaseFirestore.instance.collection('moods');
+  CollectionReference dailyDrink =
+      FirebaseFirestore.instance.collection('daily_drink');
   User? user = FirebaseAuth.instance.currentUser;
   Future<QuoteResponse?> getQuote() async {
     try {
@@ -72,6 +74,25 @@ class DashboardRepository {
         }
       });
       return {mood.key: mood.value.toDouble()};
+    } else {
+      return null;
+    }
+  }
+
+  /// daily drink mean
+  /// get weekly daily drink mean
+  Future<double?> getDailyDrinkMean() async {
+    final snapshot = await dailyDrink
+        .where('user_id', isEqualTo: user!.uid)
+        .where('created_at',
+            isGreaterThan: DateTime.now().subtract(Duration(days: 7)))
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      double total = 0;
+      snapshot.docs.forEach((element) {
+        total += element['drink_amount'];
+      });
+      return total / snapshot.docs.length;
     } else {
       return null;
     }

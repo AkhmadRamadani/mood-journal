@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
+import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:moodie/shared/widgets/cards/absence_card.dart';
 import 'package:moodie/shared/widgets/cards/page_header.dart';
@@ -83,17 +84,20 @@ class DashboardView extends StatelessWidget {
                             const SizedBox(
                               height: Spacing.spacing * 3,
                             ),
-                            SummaryCard(
-                              theme: 'secondary',
-                              isChart: false,
-                              header: 'Last Mood',
-                              contentTitle: 'Sad',
-                              contentDesc:
-                                  'When you\'re sad, don\'t forget to take a break.',
-                              date: DateTime.now()
-                                  .subtract(const Duration(days: 1))
-                                  .toHumanDateShort(),
-                            ),
+                            GetBuilder<DashboardController>(
+                                id: 'water',
+                                builder: (state) {
+                                  return SummaryCard(
+                                    theme: 'secondary',
+                                    isChart: false,
+                                    header: 'Average Daily Drink',
+                                    contentTitle:
+                                        '${state.dailyDrinkMean.value.toStringAsFixed(2)} L',
+                                    contentDesc:
+                                        "This is your average daily drink",
+                                    date: 'In Last 7 Days',
+                                  );
+                                }),
                           ],
                         ),
                       ),
@@ -122,30 +126,26 @@ class DashboardView extends StatelessWidget {
                             GetBuilder<DashboardController>(
                                 id: 'water',
                                 builder: (state) {
-                                  return InkWell(
+                                  return SummaryCard(
                                     onTap: () async {
                                       await Get.toNamed(Routes.hydrate);
-                                      state.setWaterPercentage();
+                                      state.refresh();
                                     },
-                                    child: SummaryCard(
-                                      theme: 'secondary',
-                                      isChart: true,
-                                      chartVal: (state.waterPercentage.value /
-                                                  100) >
-                                              1
-                                          ? 1
-                                          : (state.waterPercentage.value / 100),
-                                      header: 'Drink Today',
-                                      contentTitle: (state
-                                                      .waterPercentage.value /
-                                                  100) >
-                                              1
-                                          ? '100%'
-                                          : '${(state.waterPercentage.value).toStringAsFixed(0)}%',
-                                      contentDesc:
-                                          'You\'re not drinking enough',
-                                      date: state.drinkTodaySubText(),
-                                    ),
+                                    theme: 'secondary',
+                                    isChart: true,
+                                    chartVal:
+                                        (state.waterPercentage.value / 100) > 1
+                                            ? 1
+                                            : (state.waterPercentage.value /
+                                                100),
+                                    header: 'Drink Today',
+                                    contentTitle: (state.waterPercentage.value /
+                                                100) >
+                                            1
+                                        ? '100%'
+                                        : '${(state.waterPercentage.value.isNaN ? 0 : state.waterPercentage.value).toStringAsFixed(0)}%',
+                                    contentDesc: 'You\'re not drinking enough',
+                                    date: state.drinkTodaySubText(),
                                   );
                                 }),
                           ],

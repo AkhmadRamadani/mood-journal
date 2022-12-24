@@ -9,6 +9,7 @@ class SummaryCard extends StatelessWidget {
   final double? chartVal;
   final String? contentDesc;
   final bool isChart;
+  final Function()? onTap;
 
   const SummaryCard({
     Key? key,
@@ -18,115 +19,121 @@ class SummaryCard extends StatelessWidget {
     required this.contentTitle,
     this.contentDesc,
     this.chartVal,
+    this.onTap,
     required this.date,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme == "primary" ? ThemeColor.primary : ThemeColor.white,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(CustomRadius.defaultRadius),
+    return GestureDetector(
+      onTap: onTap ?? () {},
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme == "primary" ? ThemeColor.primary : ThemeColor.white,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(CustomRadius.defaultRadius),
+          ),
         ),
-      ),
-      padding: const EdgeInsets.all(Spacing.spacing * 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                header,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: theme == "primary"
-                          ? ThemeColor.white
-                          : ThemeColor.neutral_900,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: theme == "primary"
-                    ? ThemeColor.white
-                    : ThemeColor.neutral_900,
-              )
-            ],
-          ),
-          const SizedBox(
-            height: Spacing.spacing * 2,
-          ),
-
-          // Chart
-          Visibility(
-            visible: isChart,
-            child: SizedBox(
-              height: Spacing.spacing * 16,
-              child: CircularPercentIndicator(
-                radius: Spacing.spacing * 8,
-                lineWidth: Spacing.spacing,
-                animation: true,
-                percent: chartVal ?? 0.0,
-                center: Text(
-                  contentTitle,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: theme == 'primary'
-                            ? ThemeColor.white
-                            : ThemeColor.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                backgroundColor: ThemeColor.background,
-                backgroundWidth: Spacing.spacing / 2,
-                progressColor:
-                    theme == 'primary' ? ThemeColor.white : ThemeColor.primary,
-              ),
-            ),
-          ),
-          Visibility(
-            visible: !isChart,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        padding: const EdgeInsets.all(Spacing.spacing * 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
                 Text(
-                  contentTitle,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: theme == 'primary'
-                            ? ThemeColor.white
-                            : ThemeColor.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(
-                  height: Spacing.spacing - 4,
-                ),
-                Text(
-                  contentDesc ?? 'null',
+                  header,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: theme == 'primary'
+                        color: theme == "primary"
                             ? ThemeColor.white
                             : ThemeColor.neutral_900,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
+                if (onTap != null)
+                  Icon(
+                    Icons.chevron_right,
+                    color: theme == "primary"
+                        ? ThemeColor.white
+                        : ThemeColor.neutral_900,
+                  )
               ],
             ),
-          ),
-          const SizedBox(
-            height: Spacing.spacing * 2,
-          ),
-          Text(
-            date,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: theme == 'primary'
+            const SizedBox(
+              height: Spacing.spacing * 2,
+            ),
+
+            // Chart
+            Visibility(
+              visible: isChart,
+              child: SizedBox(
+                height: Spacing.spacing * 16,
+                child: CircularPercentIndicator(
+                  radius: Spacing.spacing * 8,
+                  lineWidth: Spacing.spacing,
+                  animation: true,
+                  percent: chartVal ?? 0.0,
+                  center: Text(
+                    contentTitle,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: theme == 'primary'
+                              ? ThemeColor.white
+                              : ThemeColor.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  backgroundColor: ThemeColor.background,
+                  backgroundWidth: Spacing.spacing / 2,
+                  progressColor: theme == 'primary'
                       ? ThemeColor.white
-                      : ThemeColor.neutral_500,
-                  fontWeight: FontWeight.w500,
+                      : ThemeColor.primary,
                 ),
-          ),
-        ],
+              ),
+            ),
+            Visibility(
+              visible: !isChart,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    contentTitle,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: theme == 'primary'
+                              ? ThemeColor.white
+                              : ThemeColor.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(
+                    height: Spacing.spacing - 4,
+                  ),
+                  Text(
+                    contentDesc ?? 'null',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: theme == 'primary'
+                              ? ThemeColor.white
+                              : ThemeColor.neutral_900,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: Spacing.spacing * 2,
+            ),
+            Text(
+              date,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: theme == 'primary'
+                        ? ThemeColor.white
+                        : ThemeColor.neutral_500,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }
