@@ -5,11 +5,11 @@ class ThemeColor {
 
   static const Color background = Color.fromRGBO(245, 246, 251, 1);
 
-  static const Color appBar = Color.fromRGBO(249, 240, 227, 1);
+  static const Color appBar = Color.fromRGBO(249, 248, 244, 1);
 
   static const Color primary = Color.fromRGBO(142, 151, 253, 1);
 
-  // Main Color
+  // Main Color249,248,244
   static const Color purple_400 = Color.fromRGBO(141, 66, 134, 1);
   static const Color purple_200 = Color.fromRGBO(212, 168, 215, 1);
   static const Color secondary_400 = Color.fromRGBO(220, 101, 103, 1);

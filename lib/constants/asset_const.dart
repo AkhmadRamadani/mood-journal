@@ -40,4 +40,6 @@ class AssetConst {
   static const String humidityHydrateSVG = 'assets/icons/hydrate/humidity.svg';
   static const String menuHydrateSVG = 'assets/icons/hydrate/menu.svg';
   static const String progressHydrateSVG = 'assets/icons/hydrate/progress.svg';
+
+  static const String appIcon = 'assets/icons/icon.png';
 }
