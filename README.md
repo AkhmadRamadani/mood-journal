@@ -19,32 +19,32 @@ Selan dari itu, kami juga memiliki tujuan agar dapat membuat sebuah aplikasi yan
 
 | Splash Screen | Dashboard Page | Home Page |
 | ------------------ | --------------------------- | ------------------ |
-| <img src="./image/1.png" height="630" alt="Screenshot"/>  | <img src="./image/2.jpeg" height="630" alt="Screenshot"/> | <img src="./image/3.jpeg" height="630" alt="Screenshot"/> |
+| <img src="./image/1.png" height="550" alt="Screenshot"/>  | <img src="./image/2.jpeg" height="550" alt="Screenshot"/> | <img src="./image/3.jpeg" height="550" alt="Screenshot"/> |
 
 | Record Mood Page | Notification Page | Profile Page |
 | ------------------ | --------------------------- | ------------------ |
-| <img src="./image/4.jpeg" height="630" alt="Screenshot"/>  | <img src="./image/5.jpeg" height="630" alt="Screenshot"/> | <img src="./image/6.jpeg" height="630" alt="Screenshot"/> |
+| <img src="./image/4.jpeg" height="550" alt="Screenshot"/>  | <img src="./image/5.jpeg" height="550" alt="Screenshot"/> | <img src="./image/6.jpeg" height="550" alt="Screenshot"/> |
 
 ### Login Section
 
 | Dashboard Page | Pop Up Select Account | Home Page |
 | ------------------ | --------------------------- | ------------------ |
-| <img src="./image/2.jpeg" height="630" alt="Screenshot"/>  | <img src="./image/22.jpeg" height="630" alt="Screenshot"/> | <img src="./image/3.jpeg" height="630" alt="Screenshot"/> |
+| <img src="./image/2.jpeg" height="550" alt="Screenshot"/>  | <img src="./image/22.jpeg" height="550" alt="Screenshot"/> | <img src="./image/3.jpeg" height="550" alt="Screenshot"/> |
 
 ### Profile Section
 
 | Show User Page | Help Page | Privacy & Police Page | Term of Service Page |
 | ------------------ | --------------------------- |--------------------------- | --------------------------- |
-| <img src="./image/10.jpeg" height="450" alt="Screenshot"/>  | <img src="./image/9.jpeg" height="450" alt="Screenshot"/> | <img src="./image/7.jpeg" height="450" alt="Screenshot"/> | <img src="./image/8.jpeg" height="450" alt="Screenshot"/> |
+| <img src="./image/10.jpeg" height="350" alt="Screenshot"/>  | <img src="./image/9.jpeg" height="350" alt="Screenshot"/> | <img src="./image/7.jpeg" height="350" alt="Screenshot"/> | <img src="./image/8.jpeg" height="350" alt="Screenshot"/> |
 
 ### Add Mood Section
 
 | Add Mood and Emotion | Add Title and Desc | Modal Success | Delete Mood |
 | ------------------ | --------------------------- |--------------------------- | --------------------------- |
-| <img src="./image/13.jpeg" height="450" alt="Screenshot"/>  | <img src="./image/14.jpeg" height="450" alt="Screenshot"/> | <img src="./image/15.png" height="450" alt="Screenshot"/> |  <img src="./image/16.png" height="450" alt="Screenshot"/> |
+| <img src="./image/13.jpeg" height="350" alt="Screenshot"/>  | <img src="./image/14.jpeg" height="350" alt="Screenshot"/> | <img src="./image/15.png" height="350" alt="Screenshot"/> |  <img src="./image/16.png" height="350" alt="Screenshot"/> |
 
 ### Drink Section
 
 | Drink Page | Add Goals |
 | ------------------ | --------------------------- |
-| <img src="./image/11.jpeg" height="630" alt="Screenshot"/>  | <img src="./image/12.jpeg" height="630" alt="Screenshot"/> |
+| <img src="./image/11.jpeg" height="550" alt="Screenshot"/>  | <img src="./image/12.jpeg" height="550" alt="Screenshot"/> |
