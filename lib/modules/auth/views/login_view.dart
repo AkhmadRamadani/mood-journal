@@ -32,150 +32,131 @@ class LoginView extends StatelessWidget {
                 ),
               ),
               child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                  ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Column(
+                      const SizedBox(height: 74),
+                      Text(
+                        "Welcome Back!",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: SvgPicture.asset(
+                          AssetConst.sittingManSVG,
+                          height: 160,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Google Sign-In
+                      CustomTextButton(
+                        onPressed: () {
+                          controller.loginWithGoogle();
+                        },
+                        title: "Sign in with Google",
+                        svgLocation: AssetConst.googleIc,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Divider
+                      Row(
                         children: [
-                          // Row(
-                          //   children: [
-                          //     Container(
-                          //       margin: const EdgeInsets.only(
-                          //         top: 24,
-                          //       ),
-                          //       width: 50,
-                          //       height: 50,
-                          //       decoration: BoxDecoration(
-                          //         border: Border.all(
-                          //           color: Colors.black.withOpacity(0.3),
-                          //           width: 0.4,
-                          //         ),
-                          //         borderRadius: BorderRadius.circular(50),
-                          //       ),
-                          //       child: Center(
-                          //         child: IconButton(
-                          //           onPressed: () {
-                          //             Get.back();
-                          //           },
-                          //           icon: const Icon(Icons.arrow_back),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     const SizedBox(),
-                          //   ],
-                          // ),
-                          const SizedBox(
-                            height: 74,
-                          ),
-                          Text(
-                            "Welcome Back!",
-                            style: GoogleFonts.poppins(
-                              fontSize: 28,
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              "Or sign in with email",
+                              style: GoogleFonts.poppins(fontSize: 12),
                             ),
                           ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          SvgPicture.asset(
-                            AssetConst.sittingManSVG,
-                          ),
-
-                          /// Button with icon and text
+                          const Expanded(child: Divider()),
                         ],
                       ),
-                      Column(
-                        children: [
-                          CustomTextButton(
-                            onPressed: () {
-                              controller.loginWithGoogle();
-                            },
-                            title: "Sign in with Google",
-                            svgLocation: AssetConst.googleIc,
-                          ),
 
-                          // const SizedBox(
-                          //   height: 24,
-                          // ),
-                          // Text(
-                          //   "Or sign in with email",
-                          //   style: GoogleFonts.poppins(
-                          //     fontSize: 12,
-                          //   ),
-                          // ),
-                          // const SizedBox(
-                          //   height: 24,
-                          // ),
-                          // CustomTextField(
-                          //   controller: controller.emailController,
-                          //   hintText: "Email",
-                          //   keyboardType: TextInputType.emailAddress,
-                          // ),
-                          // const SizedBox(
-                          //   height: 24,
-                          // ),
-                          // CustomTextField(
-                          //   controller: controller.passwordController,
-                          //   hintText: "Password",
-                          //   keyboardType: TextInputType.visiblePassword,
-                          // ),
-                          // const SizedBox(
-                          //   height: 24,
-                          // ),
-                          // CustomTextButton(
-                          //   title: "Sign in",
-                          //   onPressed: () {
-                          //     controller.login();
-                          //   },
-                          //   textColor: Colors.white,
-                          //   backgroundColor: ThemeColor.primary,
-                          // ),
+                      const SizedBox(height: 24),
 
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          Column(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.toNamed(Routes.register);
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Don't have an account?",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      "Sign up",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: ThemeColor.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                "Forgot password?",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: ThemeColor.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      // Email field
+                      CustomTextField(
+                        controller: controller.emailController,
+                        hintText: "Email",
+                        keyboardType: TextInputType.emailAddress,
                       ),
+                      const SizedBox(height: 16),
+
+                      // Password field
+                      CustomTextField(
+                        controller: controller.passwordController,
+                        hintText: "Password",
+                        keyboardType: TextInputType.visiblePassword,
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      // Forgot password
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            // TODO: navigate to forgot password
+                          },
+                          child: Text(
+                            "Forgot password?",
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: ThemeColor.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      // Sign in button
+                      CustomTextButton(
+                        title: "Sign In",
+                        onPressed: () {
+                          controller.login();
+                        },
+                        textColor: Colors.white,
+                        backgroundColor: ThemeColor.primary,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Sign up link
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(Routes.register);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account?",
+                              style: GoogleFonts.poppins(fontSize: 12),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Sign up",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: ThemeColor.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),

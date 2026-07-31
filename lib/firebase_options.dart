@@ -63,8 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '427798358799',
     projectId: 'mood-journal-435b7',
     storageBucket: 'mood-journal-435b7.appspot.com',
-    androidClientId: '427798358799-8dv4gjqs99ehhe6o354jf6mgq17a40nq.apps.googleusercontent.com',
-    iosClientId: '427798358799-li2gcv6hmet7f13t8t1ihicjg10fta14.apps.googleusercontent.com',
+    androidClientId:
+        '427798358799-8dv4gjqs99ehhe6o354jf6mgq17a40nq.apps.googleusercontent.com',
+    iosClientId:
+        '427798358799-li2gcv6hmet7f13t8t1ihicjg10fta14.apps.googleusercontent.com',
     iosBundleId: 'com.moodie.journal',
   );
 }

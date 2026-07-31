@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
-import 'package:get/get.dart';
-import 'package:moodie/shared/widgets/buttons/profile_button.dart';
 import 'package:moodie/shared/widgets/skeleton/skeleton_widget.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -35,12 +33,12 @@ class NotificationCard extends StatelessWidget {
             width: 10,
             height: 10,
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: Spacing.spacing * 2),
+              margin: const EdgeInsets.symmetric(vertical: Spacing.spacing * 2),
               width: Spacing.spacing * 1.5,
               height: Spacing.spacing * 1.5,
               decoration: BoxDecoration(
                 color: isRead ? null : ThemeColor.primary,
-                borderRadius: BorderRadius.all(
+                borderRadius: const BorderRadius.all(
                   Radius.circular(CustomRadius.defaultRadius),
                 ),
               ),

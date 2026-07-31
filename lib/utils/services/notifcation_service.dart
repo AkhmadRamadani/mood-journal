@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +31,7 @@ class NotificationService {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+        ?.requestNotificationsPermission();
 
     requestIOSPermissions();
     await flutterLocalNotificationsPlugin.initialize(
@@ -93,7 +91,7 @@ class NotificationService {
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: Text('Ok'),
+            child: const Text('Ok'),
             onPressed: () async {},
           )
         ],
@@ -148,11 +146,11 @@ class NotificationService {
           priority: Priority.high,
           playSound: true,
         ),
-        iOS: DarwinNotificationDetails(
+        iOS: const DarwinNotificationDetails(
           sound: 'default.wav',
         ),
       ),
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -166,7 +164,7 @@ class NotificationService {
       0,
       'It\'s time to drink water!',
       'After drinking, touch the cup to confirm',
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'your channel id',
           'your channel name',
@@ -207,7 +205,7 @@ class NotificationService {
       0,
       message.notification!.title,
       message.notification!.body,
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'your channel id',
           'your channel name',

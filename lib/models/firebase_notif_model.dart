@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class FirebaseNotificationModel {
   final String? title;
   final String? body;
   final DateTime? date;
   final String? topic;
   final bool? isRead;
-  final String? id;
+  final dynamic id;
 
   FirebaseNotificationModel({
     this.title,
@@ -18,10 +16,21 @@ class FirebaseNotificationModel {
   });
 
   factory FirebaseNotificationModel.fromJson(Map<String, dynamic> json) {
+    DateTime? parsedDate;
+    final rawDate = json['sent_at'] ?? json['created_at'] ?? json['date'];
+    if (rawDate != null) {
+      if (rawDate is DateTime) {
+        parsedDate = rawDate;
+      } else {
+        parsedDate = DateTime.tryParse(rawDate.toString());
+      }
+    }
+
     return FirebaseNotificationModel(
+      id: json['id'],
       title: json['title'],
       body: json['body'],
-      date: json['date'].toDate(),
+      date: parsedDate,
       topic: json['topic'],
       isRead: json['is_read'],
     );
@@ -29,22 +38,22 @@ class FirebaseNotificationModel {
 
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id,
       'title': title,
       'body': body,
-      'date': date,
+      'date': date?.toIso8601String(),
       'topic': topic,
       'is_read': isRead,
     };
   }
 
-  // copy with
   FirebaseNotificationModel copyWith({
     String? title,
     String? body,
     DateTime? date,
     String? topic,
     bool? isRead,
-    String? id,
+    dynamic id,
   }) {
     return FirebaseNotificationModel(
       title: title ?? this.title,
@@ -54,11 +63,5 @@ class FirebaseNotificationModel {
       isRead: isRead ?? this.isRead,
       id: id ?? this.id,
     );
-  }
-
-  factory FirebaseNotificationModel.fromDocument(DocumentSnapshot doc) {
-    return FirebaseNotificationModel.fromJson(
-            doc.data() as Map<String, dynamic>)
-        .copyWith(id: doc.id);
   }
 }

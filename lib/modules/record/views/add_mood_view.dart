@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
@@ -11,7 +9,6 @@ import 'package:moodie/shared/themes/spacing.dart';
 import 'package:get/get.dart';
 import 'package:moodie/shared/widgets/cards/emotions_card.dart';
 import 'package:moodie/shared/widgets/cards/mood_emoticon.dart';
-import 'package:moodie/shared/widgets/cards/select_mood_card.dart';
 
 class AddMood extends StatelessWidget {
   const AddMood({Key? key}) : super(key: key);

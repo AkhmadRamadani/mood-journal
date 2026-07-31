@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moodie/shared/icons/custom_icon.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:moodie/shared/widgets/buttons/profile_button.dart';
-import 'package:moodie/shared/widgets/buttons/rounded_image_button.dart';
 import 'package:moodie/shared/widgets/skeleton/skeleton_widget.dart';
 
 class AbsenceCard extends StatefulWidget {
@@ -75,15 +73,15 @@ class _AbsenceCardState extends State<AbsenceCard> {
     return ElevatedButton(
       onPressed: () => widget.onPressed(1),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(bgColor),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        backgroundColor: WidgetStateProperty.all(bgColor),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(CustomRadius.defaultRadius),
           ),
         ),
-        elevation: MaterialStateProperty.all(0),
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.all(Spacing.spacing * 2)),
+        elevation: WidgetStateProperty.all(0),
+        padding:
+            WidgetStateProperty.all(const EdgeInsets.all(Spacing.spacing * 2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

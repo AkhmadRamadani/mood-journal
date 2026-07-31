@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
@@ -7,14 +5,14 @@ import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 
 class SelectMood extends StatelessWidget {
-  SelectMood({
+  const SelectMood({
     Key? key,
-    required MoodConditions? selectedMood,
-    required Function(MoodConditions) onMoodSelected,
+    this.selectedMood,
+    this.onMoodSelected,
   }) : super(key: key);
 
-  MoodConditions? selectedMood;
-  Function(MoodConditions)? onMoodSelected;
+  final MoodConditions? selectedMood;
+  final Function(MoodConditions)? onMoodSelected;
 
   Widget menuMood(String text, bool isSelected, MoodConditions mood) {
     return Container(

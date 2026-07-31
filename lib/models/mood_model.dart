@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 
 class MoodModel {
@@ -8,7 +7,7 @@ class MoodModel {
   final String note;
   final String title;
   final String userId;
-  final String? id;
+  final dynamic id;
 
   MoodModel({
     required this.mood,
@@ -21,22 +20,46 @@ class MoodModel {
   });
 
   factory MoodModel.fromJson(Map<String, dynamic> json) {
+    DateTime parsedDate;
+    if (json['created_at'] != null) {
+      if (json['created_at'] is DateTime) {
+        parsedDate = json['created_at'];
+      } else {
+        parsedDate =
+            DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now();
+      }
+    } else {
+      parsedDate = DateTime.now();
+    }
+
+    MoodConditions parsedMood;
+    try {
+      parsedMood = MoodConditions.values.firstWhere(
+        (element) =>
+            element.name.toString().toLowerCase() ==
+            json['mood'].toString().toLowerCase(),
+      );
+    } catch (_) {
+      parsedMood = MoodConditions.happy;
+    }
+
     return MoodModel(
-      mood: MoodConditions.values.firstWhere(
-          (element) => element.name.toString() == json['mood'].toString()),
-      emotions: json['emotions'],
-      createdAt: json['created_at'].toDate(),
-      note: json['note'],
-      title: json['title'],
-      userId: json['user_id'],
+      id: json['id'],
+      mood: parsedMood,
+      emotions: json['emotions'] ?? '',
+      createdAt: parsedDate,
+      note: json['note'] ?? '',
+      title: json['title'] ?? '',
+      userId: json['user_id']?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'mood': mood,
+      if (id != null) 'id': id,
+      'mood': mood.name,
       'emotions': emotions,
-      'created_at': createdAt,
+      'created_at': createdAt.toIso8601String(),
       'note': note,
       'title': title,
       'user_id': userId,
@@ -50,7 +73,7 @@ class MoodModel {
     String? note,
     String? title,
     String? userId,
-    String? id,
+    dynamic id,
   }) {
     return MoodModel(
       mood: mood ?? this.mood,
@@ -61,9 +84,5 @@ class MoodModel {
       userId: userId ?? this.userId,
       id: id ?? this.id,
     );
-  }
-
-  factory MoodModel.fromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
-    return MoodModel.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 }

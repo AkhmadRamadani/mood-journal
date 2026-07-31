@@ -196,7 +196,7 @@ class _RecordViewState extends State<RecordView> {
                             ],
                             const SizedBox(height: Spacing.spacing * 3),
                             if (state.isLoading.value) ...[
-                              for (var record in [1, 2, 3]) ...[
+                              for (var _ in [1, 2, 3]) ...[
                                 RecordCard(
                                   type: 0,
                                   isLoading: state.isLoading.value,
@@ -253,7 +253,7 @@ class _RecordViewState extends State<RecordView> {
                                                     .tr,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodyText1!
+                                                    .bodyMedium!
                                                     .copyWith(
                                                       color: ThemeColor
                                                           .neutral_600,
@@ -273,7 +273,7 @@ class _RecordViewState extends State<RecordView> {
                                                     child: Container(
                                                       padding:
                                                           const EdgeInsets
-                                                                  .symmetric(
+                                                              .symmetric(
                                                               horizontal: Spacing
                                                                       .spacing *
                                                                   2,
@@ -293,7 +293,7 @@ class _RecordViewState extends State<RecordView> {
                                                         'Cancel'.tr,
                                                         style: Theme.of(context)
                                                             .textTheme
-                                                            .bodyText1!
+                                                            .bodyMedium!
                                                             .copyWith(
                                                               color: ThemeColor
                                                                   .neutral_600,
@@ -311,7 +311,7 @@ class _RecordViewState extends State<RecordView> {
                                                     child: Container(
                                                       padding:
                                                           const EdgeInsets
-                                                                  .symmetric(
+                                                              .symmetric(
                                                               horizontal: Spacing
                                                                       .spacing *
                                                                   2,
@@ -331,7 +331,7 @@ class _RecordViewState extends State<RecordView> {
                                                         'Delete'.tr,
                                                         style: Theme.of(context)
                                                             .textTheme
-                                                            .bodyText1!
+                                                            .bodyMedium!
                                                             .copyWith(
                                                               color: ThemeColor
                                                                   .neutral_200,
@@ -341,7 +341,7 @@ class _RecordViewState extends State<RecordView> {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: Spacing.spacing * 2,
                                               ),
                                             ],

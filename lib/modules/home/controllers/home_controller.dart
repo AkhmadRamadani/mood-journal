@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:moodie/utils/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
@@ -85,7 +85,7 @@ class HomeController extends GetxController {
               /// logout from firebase
               /// clear all named routes
               /// navigate to login page
-              await FirebaseAuth.instance.signOut();
+              await AuthService().clearSession();
               Get.offAllNamed('/login');
             },
           ),
@@ -112,7 +112,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
+    await AuthService().clearSession();
   }
 
   @override

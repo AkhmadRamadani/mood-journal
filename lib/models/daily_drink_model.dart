@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class DailyDrinkModel {
   final String userId;
   final DateTime createdAt;
@@ -14,18 +12,34 @@ class DailyDrinkModel {
   });
 
   factory DailyDrinkModel.fromJson(Map<String, dynamic> json) {
+    DateTime parsedDate;
+    if (json['entry_date'] != null || json['created_at'] != null) {
+      final rawDate = json['entry_date'] ?? json['created_at'];
+      if (rawDate is DateTime) {
+        parsedDate = rawDate;
+      } else {
+        parsedDate = DateTime.tryParse(rawDate.toString()) ?? DateTime.now();
+      }
+    } else {
+      parsedDate = DateTime.now();
+    }
+
     return DailyDrinkModel(
-      userId: json['user_id'],
-      createdAt: json['created_at'].toDate(),
-      drinkAmount: json['drink_amount'],
-      targetAmount: json['target_amount'],
+      userId: json['user_id']?.toString() ?? '',
+      createdAt: parsedDate,
+      drinkAmount: json['drink_amount'] is int
+          ? json['drink_amount']
+          : int.tryParse(json['drink_amount']?.toString() ?? '0') ?? 0,
+      targetAmount: json['target_amount'] is int
+          ? json['target_amount']
+          : int.tryParse(json['target_amount']?.toString() ?? '2000') ?? 2000,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'user_id': userId,
-      'created_at': createdAt,
+      'created_at': createdAt.toIso8601String(),
       'drink_amount': drinkAmount,
       'target_amount': targetAmount,
     };
@@ -43,10 +57,5 @@ class DailyDrinkModel {
       drinkAmount: drinkAmount ?? this.drinkAmount,
       targetAmount: targetAmount ?? this.targetAmount,
     );
-  }
-
-  factory DailyDrinkModel.fromDocumentSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
-    return DailyDrinkModel.fromJson(documentSnapshot.data()!);
   }
 }

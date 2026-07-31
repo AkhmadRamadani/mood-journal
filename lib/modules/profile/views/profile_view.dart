@@ -3,10 +3,7 @@ import 'package:moodie/modules/profile/controllers/profile_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
-import 'package:moodie/shared/widgets/cards/notification_card.dart';
 import 'package:moodie/shared/widgets/cards/page_header.dart';
-import 'package:moodie/shared/widgets/cards/record_card.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
 
 class ProfileView extends StatelessWidget {
@@ -16,23 +13,21 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     ProfileController controller = Get.put(ProfileController());
     Widget menuItem(String text) {
-      return Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              text,
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    color: ThemeColor.neutral_600,
-                    fontWeight: FontWeight.w400,
-                  ),
-            ),
-            const Icon(
-              Icons.chevron_right,
-              color: ThemeColor.neutral_600,
-            )
-          ],
-        ),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            text,
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  color: ThemeColor.neutral_600,
+                  fontWeight: FontWeight.w400,
+                ),
+          ),
+          const Icon(
+            Icons.chevron_right,
+            color: ThemeColor.neutral_600,
+          )
+        ],
       );
     }
 
@@ -126,26 +121,24 @@ class ProfileView extends StatelessWidget {
                         onTap: () {
                           controller.logout();
                         },
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Log Out',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                      color: ThemeColor.secondary_400,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                              const Icon(
-                                Icons.clear_outlined,
-                                color: ThemeColor.secondary_400,
-                              )
-                            ],
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Log Out',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                    color: ThemeColor.secondary_400,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const Icon(
+                              Icons.clear_outlined,
+                              color: ThemeColor.secondary_400,
+                            )
+                          ],
                         ),
                       ),
                     ],

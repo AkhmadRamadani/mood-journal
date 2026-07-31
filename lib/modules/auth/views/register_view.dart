@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodie/constants/asset_const.dart';
+import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/auth/controllers/register_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
@@ -134,8 +135,10 @@ class RegisterView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 24.0),
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(Routes.login);
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -153,6 +156,7 @@ class RegisterView extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: ThemeColor.primary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],

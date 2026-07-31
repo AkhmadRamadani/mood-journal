@@ -19,7 +19,7 @@ class HelpProfile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 top: 20,
                 left: 20,
                 right: 20,
@@ -27,15 +27,13 @@ class HelpProfile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: ThemeColor.white,
-                      ),
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: ThemeColor.white,
                     ),
                   ),
                   Text(

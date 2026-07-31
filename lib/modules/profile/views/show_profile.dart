@@ -4,10 +4,6 @@ import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:moodie/shared/widgets/buttons/profile_button.dart';
-import 'package:moodie/shared/widgets/cards/notification_card.dart';
-import 'package:moodie/shared/widgets/cards/page_header.dart';
-import 'package:moodie/shared/widgets/cards/record_card.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
 
 class ShowProfile extends StatelessWidget {
@@ -24,7 +20,7 @@ class ShowProfile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 top: 24,
                 left: 20,
                 right: 20,
@@ -32,15 +28,13 @@ class ShowProfile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: ThemeColor.white,
-                      ),
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: ThemeColor.white,
                     ),
                   ),
                   // Container(
