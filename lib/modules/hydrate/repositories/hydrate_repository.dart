@@ -1,79 +1,78 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:moodie/models/daily_drink_model.dart';
 import 'package:moodie/models/target_daily_drink_model.dart';
-import 'package:moodie/utils/extensions/date_extension.dart';
+import 'package:moodie/models/user_model.dart';
+import 'package:moodie/utils/services/api_service.dart';
+import 'package:moodie/utils/services/auth_service.dart';
 
 class HydrateRepository {
-  User? user = FirebaseAuth.instance.currentUser;
-
-  CollectionReference dailyDrink =
-      FirebaseFirestore.instance.collection('daily_drink');
-
-  CollectionReference targetDrink =
-      FirebaseFirestore.instance.collection('target_drink');
-
+  UserModel? get user => AuthService().getUser();
   Future<bool> addDrink(int drink, int target) async {
-    bool isSuccess = false;
-
-    /// set doc to user id + today
-    DateTime now = DateTime.now();
-    DateTime selectedDate =
-        DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-    int today = selectedDate.millisecondsSinceEpoch;
-    String docId = user!.uid + today.toString();
-    await dailyDrink.doc(docId).set({
-      'drink_amount': drink,
-      'target_amount': target,
-      'user_id': user!.uid,
-      'created_at': DateTime.now(),
-    }).then((value) => isSuccess = true);
-    return isSuccess;
+    try {
+      final now = DateTime.now();
+      final dateStr =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final response = await ApiService().storeDailyDrink(
+        drinkAmount: drink,
+        entryDate: dateStr,
+        action: 'set',
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
   }
 
   Future<int> getTodayDrink() async {
-    int drink = 0;
-    DateTime now = DateTime.now();
-    DateTime selectedDate =
-        DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-    int today = selectedDate.millisecondsSinceEpoch;
-    String docId = user!.uid + today.toString();
-    await dailyDrink.doc(docId).get().then((value) {
-      Map<String, dynamic> data = {};
-      if (value.exists) {
-        data = value.data() as Map<String, dynamic>;
-        DailyDrinkModel dailyDrinkModel = DailyDrinkModel.fromJson(data);
-        drink = dailyDrinkModel.drinkAmount;
-      } else {
-        drink = 0;
+    try {
+      final now = DateTime.now();
+      final dateStr =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final response =
+          await ApiService().getDailyDrinks(from: dateStr, to: dateStr);
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data is Map && response.data['data'] != null) {
+          final data = response.data['data'];
+          if (data is Map) {
+            final model =
+                DailyDrinkModel.fromJson(Map<String, dynamic>.from(data));
+            return model.drinkAmount;
+          } else if (data is List && data.isNotEmpty) {
+            final model =
+                DailyDrinkModel.fromJson(Map<String, dynamic>.from(data.first));
+            return model.drinkAmount;
+          }
+        }
       }
-    });
-    return drink;
+    } catch (e) {
+      log(e.toString());
+    }
+    return 0;
   }
 
   Future<bool> addTarget(int target) async {
-    bool isSuccess = false;
-    await targetDrink.doc(user!.uid).set({
-      'target_amount': target,
-      'user_id': user!.uid,
-      'created_at': DateTime.now(),
-    }).then((value) => isSuccess = true);
-    return isSuccess;
+    try {
+      final response = await ApiService().updateTargetDrink(target);
+      return response.statusCode == 200;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
   }
 
   Future<int> getTarget() async {
-    int target = 0;
-    await targetDrink.doc(user!.uid).get().then((value) {
-      Map<String, dynamic> data = {};
-      if (value.exists) {
-        data = value.data() as Map<String, dynamic>;
-        TargetDailyDrinkModel targetDailyDrinkModel =
-            TargetDailyDrinkModel.fromJson(data);
-        target = targetDailyDrinkModel.targetAmount;
-      } else {
-        target = 0;
+    try {
+      final response = await ApiService().getTargetDrink();
+      if (response.statusCode == 200 && response.data != null) {
+        final model = TargetDailyDrinkModel.fromJson(
+            Map<String, dynamic>.from(response.data));
+        return model.targetAmount;
       }
-    });
-    return target;
+    } catch (e) {
+      log(e.toString());
+    }
+    return 0;
   }
 }

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/shared/themes/colors.dart';
-import 'package:moodie/shared/themes/help_text.dart';
-import 'package:moodie/shared/themes/privacy_police_text.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:get/get.dart';
 import 'package:moodie/shared/themes/term_service_text.dart';
-import 'package:moodie/shared/widgets/cards/bulletList_card.dart';
 
 class TermService extends StatelessWidget {
   const TermService({Key? key}) : super(key: key);
@@ -29,15 +26,13 @@ class TermService extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: ThemeColor.white,
-                      ),
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: ThemeColor.white,
                     ),
                   ),
                   Text(

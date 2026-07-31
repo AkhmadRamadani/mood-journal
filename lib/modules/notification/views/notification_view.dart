@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/firebase_notif_model.dart';

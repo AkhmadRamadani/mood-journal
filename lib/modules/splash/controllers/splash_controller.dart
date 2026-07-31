@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
+import 'package:moodie/utils/services/auth_service.dart';
 
 class SplashController extends GetxController {
   static SplashController get to => Get.find();
@@ -21,10 +21,6 @@ class SplashController extends GetxController {
   }
 
   Future<bool> checkIsLoggedIn() async {
-    if (FirebaseAuth.instance.currentUser?.uid == null) {
-      return false;
-    } else {
-      return true;
-    }
+    return AuthService().isLoggedIn;
   }
 }

@@ -1,10 +1,13 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:moodie/constants/routes.dart';
+import 'package:moodie/models/user_model.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
+import 'package:moodie/utils/services/api_service.dart';
+import 'package:moodie/utils/services/auth_service.dart';
 
 class RegisterController extends GetxController {
   static RegisterController get to => Get.find();
@@ -15,26 +18,29 @@ class RegisterController extends GetxController {
 
   RxBool isLoading = false.obs;
 
-  // Firebase Auth register new user
   Future<void> register() async {
     isLoading.value = true;
     update();
     if (await validateForm()) {
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
+        final response = await ApiService().register(
+          name: fullNameController.text.trim(),
+          email: emailController.text.trim(),
           password: passwordController.text,
+          passwordConfirmation: passwordController.text,
         );
-        if (userCredential.user != null) {
-          AlertHelper.showMsg(
-            title: 'Hooray!!!',
-            msg:
-                'Your account has been created successfully. Enjoy your day with Moodie!',
-            isError: false,
-            isWarning: false,
-            onTop: true,
-          );
+
+        if ((response.statusCode == 200 || response.statusCode == 201) &&
+            response.data != null) {
+          final token = response.data['token'];
+          final userJson = response.data['user'];
+          if (token != null && userJson != null) {
+            final user =
+                UserModel.fromJson(Map<String, dynamic>.from(userJson));
+            await AuthService().saveToken(token.toString());
+            await AuthService().saveUser(user);
+          }
+          Get.offAllNamed(Routes.home);
         } else {
           AlertHelper.showMsg(
             title: 'Oops!!!',
@@ -44,26 +50,19 @@ class RegisterController extends GetxController {
             onTop: true,
           );
         }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          AlertHelper.showMsg(
-            title: 'Oops!!!',
-            msg: 'The password provided is too weak.',
-            isError: true,
-            isWarning: false,
-            onTop: true,
-          );
-          log('The password provided is too weak.');
-        } else if (e.code == 'email-already-in-use') {
-          AlertHelper.showMsg(
-            title: 'Oops!!!',
-            msg: 'The account already exists for that email.',
-            isError: true,
-            isWarning: false,
-            onTop: true,
-          );
-          log('The account already exists for that email.');
+      } on DioException catch (e) {
+        String errorMsg = 'Something went wrong. Please try again later.';
+        if (e.response?.data != null && e.response?.data['message'] != null) {
+          errorMsg = e.response?.data['message'];
         }
+        AlertHelper.showMsg(
+          title: 'Oops!!!',
+          msg: errorMsg,
+          isError: true,
+          isWarning: false,
+          onTop: true,
+        );
+        log(e.toString());
       } catch (e) {
         AlertHelper.showMsg(
           title: 'Oops!!!',
@@ -80,61 +79,8 @@ class RegisterController extends GetxController {
     update();
   }
 
-  /// register with google
   Future<void> registerWithGoogle() async {
-    isLoading.value = true;
-    update();
-    try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      if (googleUser != null) {
-        // / Obtain the auth details from the request
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-
-        // Create a new credential
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        // Once signed in, return the UserCredential
-        final userCredential =
-            await FirebaseAuth.instance.signInWithCredential(credential);
-
-        if (userCredential.user != null) {
-          AlertHelper.showMsg(
-            title: 'Hooray!!!',
-            msg:
-                'Your account has been created successfully. Enjoy your day with Moodie!',
-            isError: false,
-            isWarning: false,
-            onTop: true,
-          );
-        } else {
-          AlertHelper.showMsg(
-            title: 'Oops!!!',
-            msg: 'Something went wrong. Please try again later.',
-            isError: true,
-            isWarning: false,
-            onTop: true,
-          );
-        }
-      }
-    } catch (e) {
-      AlertHelper.showMsg(
-        title: 'Oops!!!',
-        msg: 'Something went wrong. Please try again later.',
-        isError: true,
-        isWarning: false,
-        onTop: true,
-      );
-      log(e.toString());
-    }
-
-    isLoading.value = false;
-    update();
+    // Stub for Google registration if needed
   }
 
   Future<bool> validateForm() async {

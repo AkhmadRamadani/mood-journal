@@ -1,19 +1,21 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:moodie/models/firebase_notif_model.dart';
 import 'package:moodie/modules/notification/repositories/notification_repository.dart';
 
+import 'package:moodie/models/user_model.dart';
+import 'package:moodie/utils/services/auth_service.dart';
+
 class NotificationController extends GetxController {
   static NotificationController get to => Get.find();
+
+  UserModel? get user => AuthService().getUser();
 
   List<FirebaseNotificationModel> todaysNotifList = [];
   List<FirebaseNotificationModel> yesterdayNotifList = [];
 
   RxBool isLoading = false.obs;
-
-  User? user = FirebaseAuth.instance.currentUser;
 
   NotificationRepository notificationRepository = NotificationRepository();
 

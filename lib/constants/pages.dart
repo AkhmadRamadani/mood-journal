@@ -79,7 +79,7 @@ class Pages {
       ),
       GetPage(
         name: Routes.hydrate,
-        page: () => HydrateView(),
+        page: () => const HydrateView(),
         binding: BindingsBuilder(() {
           Get.put(HydrateController());
         }),

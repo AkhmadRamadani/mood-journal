@@ -29,104 +29,113 @@ class OnBoardingView extends StatelessWidget {
             ),
           ),
           child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Mood",
-                      style: GoogleFonts.roboto(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Image.asset(
-                      AssetConst.logoSVG,
-                      width: 24,
-                      height: 24,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "Journal",
-                      style: GoogleFonts.roboto(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                // const SizedBox(height: 20),
-                SvgPicture.asset(
-                  AssetConst.sittingManSVG,
-                ),
-                // const SizedBox(height: 100),
-                Column(
-                  children: [
-                    Text(
-                      'Welcome to Moodie',
-                      style: GoogleFonts.openSans(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                      ),
-                      child: Text(
-                        'Moodie is a mood tracker app that helps you to track your mood and improve your mental health.',
-                        textAlign: TextAlign.center,
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Mood",
                         style: GoogleFonts.roboto(
-                          fontSize: 16,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                // const SizedBox(height: 20),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: CustomTextButton(
+                      const SizedBox(width: 10),
+                      Image.asset(
+                        AssetConst.logoSVG,
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Journal",
+                        style: GoogleFonts.roboto(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  SvgPicture.asset(
+                    AssetConst.sittingManSVG,
+                    height: 180,
+                  ),
+                  const SizedBox(height: 30),
+                  Column(
+                    children: [
+                      Text(
+                        'Welcome to Moodie',
+                        style: GoogleFonts.openSans(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Moodie is a mood tracker app that helps you track your mood and improve your mental health.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roboto(
+                          fontSize: 15,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  Column(
+                    children: [
+                      CustomTextButton(
                         onPressed: () {
                           controller.loginWithGoogle();
                         },
                         title: "Sign in with Google",
                         svgLocation: AssetConst.googleIc,
                       ),
-                    ),
-                    // const SizedBox(height: 30),
-                    // RichText(
-                    //   text: TextSpan(
-                    //     text: 'Don\'t have account yet? ',
-                    //     style: GoogleFonts.roboto(
-                    //       fontSize: 16,
-                    //       color: Colors.black.withOpacity(0.4),
-                    //     ),
-                    //     children: [
-                    //       TextSpan(
-                    //         text: 'Sign Up',
-                    //         style: GoogleFonts.roboto(
-                    //           fontSize: 16,
-                    //           color: ThemeColor.primary,
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // )
-                  ],
-                ),
-              ],
+                      const SizedBox(height: 16),
+                      CustomTextButton(
+                        onPressed: () {
+                          Get.toNamed(Routes.login);
+                        },
+                        title: "Sign in with Email",
+                        backgroundColor: ThemeColor.primary,
+                        textColor: Colors.white,
+                      ),
+                      const SizedBox(height: 24),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.register);
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Don\'t have an account yet? ',
+                            style: GoogleFonts.roboto(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.6),
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Sign Up',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: ThemeColor.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

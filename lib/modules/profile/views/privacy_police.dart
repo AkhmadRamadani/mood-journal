@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/shared/themes/colors.dart';
-import 'package:moodie/shared/themes/help_text.dart';
 import 'package:moodie/shared/themes/privacy_police_text.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -20,7 +19,7 @@ class PrivacyPolice extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 top: 20,
                 left: 20,
                 right: 20,
@@ -28,15 +27,13 @@ class PrivacyPolice extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: ThemeColor.white,
-                      ),
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: ThemeColor.white,
                     ),
                   ),
                   Text(

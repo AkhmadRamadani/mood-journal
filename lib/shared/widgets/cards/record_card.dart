@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
-import 'package:moodie/shared/icons/custom_icon.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';

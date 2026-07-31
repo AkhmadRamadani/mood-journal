@@ -115,7 +115,7 @@ class _AlertDialogState extends State<_AlertDialog> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 18,
           vertical: 18,
         ),
@@ -123,7 +123,7 @@ class _AlertDialogState extends State<_AlertDialog> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             SizedBox(
               height: 60,
               child: Builder(builder: (context) {
@@ -158,31 +158,31 @@ class _AlertDialogState extends State<_AlertDialog> {
                 }
               }),
             ),
-            SizedBox(height: 22),
+            const SizedBox(height: 22),
             Text(
               widget.title,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 8,
               ),
               child: Text(
                 widget.msg,
-                style: Theme.of(context).textTheme.subtitle2,
+                style: Theme.of(context).textTheme.titleSmall,
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 18),
+            const SizedBox(height: 18),
             TextButton(
               onPressed: () async {
                 widget.onWillPop?.call() ?? Get.close(1);
               },
               style: TextButton.styleFrom(
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 8,
                   horizontal: 12,
                 ),
@@ -204,13 +204,13 @@ class _AlertDialogState extends State<_AlertDialog> {
                     Text(
                       'Ok'.tr,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: Colors.white,
                           ),
                     ),
                     Text(
                       "$_count",
-                      style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: Colors.white,
                           ),
                     ),

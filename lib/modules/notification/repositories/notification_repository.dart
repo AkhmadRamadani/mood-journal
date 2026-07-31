@@ -1,26 +1,22 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moodie/models/firebase_notif_model.dart';
+import 'package:moodie/utils/services/api_service.dart';
 
 class NotificationRepository {
-  User? user = FirebaseAuth.instance.currentUser;
-  CollectionReference notifications =
-      FirebaseFirestore.instance.collection('notifications');
-
   Future<List<FirebaseNotificationModel>?> getListNotifications() async {
     try {
-      List<FirebaseNotificationModel> listNotifications = [];
-      QuerySnapshot querySnapshot = await notifications
-          .where('user_id', isEqualTo: user!.uid)
-          .orderBy('date', descending: true)
-          .get();
-
-      querySnapshot.docs.forEach((element) {
-        listNotifications.add(FirebaseNotificationModel.fromDocument(element));
-      });
-      return listNotifications;
+      final response = await ApiService().getNotifications(perPage: 50);
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        if (data is List) {
+          return data
+              .map((e) => FirebaseNotificationModel.fromJson(
+                  Map<String, dynamic>.from(e)))
+              .toList();
+        }
+      }
+      return [];
     } catch (e) {
       log(e.toString());
       return null;
@@ -30,10 +26,10 @@ class NotificationRepository {
   Future<bool> readNotification(
       FirebaseNotificationModel firebaseNotificationModel) async {
     try {
-      await notifications
-          .doc(firebaseNotificationModel.id)
-          .update({'is_read': true});
-      return true;
+      if (firebaseNotificationModel.id == null) return false;
+      final response = await ApiService()
+          .markNotificationAsRead(firebaseNotificationModel.id);
+      return response.statusCode == 200;
     } catch (e) {
       log(e.toString());
       return false;

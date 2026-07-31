@@ -9,7 +9,7 @@ class SplashView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: ThemeColor.appBar));
+        const SystemUiOverlayStyle(statusBarColor: ThemeColor.appBar));
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(

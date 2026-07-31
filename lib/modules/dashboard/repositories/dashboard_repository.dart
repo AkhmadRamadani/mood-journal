@@ -1,16 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:moodie/models/quore_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:moodie/models/daily_drink_model.dart';
+import 'package:moodie/models/mood_model.dart';
+import 'package:moodie/models/quore_response.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
+import 'package:moodie/utils/services/api_service.dart';
 
 class DashboardRepository {
-  CollectionReference moods = FirebaseFirestore.instance.collection('moods');
-  CollectionReference dailyDrink =
-      FirebaseFirestore.instance.collection('daily_drink');
-  User? user = FirebaseAuth.instance.currentUser;
   Future<QuoteResponse?> getQuote() async {
     try {
       final response = await http.get(
@@ -28,73 +26,84 @@ class DashboardRepository {
 
   // get latest mood
   Future<MoodConditions?> getLatestMood() async {
-    final snapshot = await moods
-        .where('user_id', isEqualTo: user!.uid)
-        .orderBy('created_at', descending: true)
-        .limit(1)
-        .get();
-    if (snapshot.docs.isNotEmpty) {
-      return MoodConditions.values.firstWhere(
-        (element) => element.name == snapshot.docs.first['mood'],
-      );
-    } else {
-      return null;
+    try {
+      final response = await ApiService().getMoods(perPage: 1);
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        if (data is List && data.isNotEmpty) {
+          final moodModel =
+              MoodModel.fromJson(Map<String, dynamic>.from(data.first));
+          return moodModel.mood;
+        }
+      }
+    } catch (e) {
+      log(e.toString());
     }
+    return null;
   }
 
   // get weekly mood biggest percentage
   Future<Map<MoodConditions, double>?> getWeeklyMood() async {
-    final snapshot = await moods
-        .where('user_id', isEqualTo: user!.uid)
-        .where('created_at',
-            isGreaterThan: DateTime.now().subtract(Duration(days: 7)))
-        .get();
-    if (snapshot.docs.isNotEmpty) {
-      final moodMap = <MoodConditions, double>{};
-      snapshot.docs.forEach((element) {
-        final mood = MoodConditions.values.firstWhere(
-          (e) => e.name == element['mood'],
-        );
-        if (moodMap.containsKey(mood)) {
-          moodMap[mood] = moodMap[mood]! + 1;
-        } else {
-          moodMap[mood] = 1;
+    try {
+      final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+      final response = await ApiService().getMoods(
+        from: sevenDaysAgo.toIso8601String(),
+        perPage: 100,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        if (data is List && data.isNotEmpty) {
+          final moodMap = <MoodConditions, double>{};
+          for (var item in data) {
+            final moodModel =
+                MoodModel.fromJson(Map<String, dynamic>.from(item));
+            final mood = moodModel.mood;
+            moodMap[mood] = (moodMap[mood] ?? 0) + 1;
+          }
+          moodMap.updateAll((key, value) => value / data.length);
+          final topMood =
+              moodMap.entries.reduce((v, e) => v.value > e.value ? v : e);
+          return {topMood.key: topMood.value.toDouble()};
         }
-      });
-      // print(moodMap);
-      // make it to range from 0 to 1
-      moodMap.updateAll((key, value) => value / snapshot.docs.length);
-      // log updated moodMap
-      // print(moodMap);
-      final mood = moodMap.entries.reduce((value, element) {
-        if (value.value > element.value) {
-          return value;
-        } else {
-          return element;
-        }
-      });
-      return {mood.key: mood.value.toDouble()};
-    } else {
-      return null;
+      }
+    } catch (e) {
+      log(e.toString());
     }
+    return null;
   }
 
   /// daily drink mean
   /// get weekly daily drink mean
   Future<double?> getDailyDrinkMean() async {
-    final snapshot = await dailyDrink
-        .where('user_id', isEqualTo: user!.uid)
-        .where('created_at',
-            isGreaterThan: DateTime.now().subtract(Duration(days: 7)))
-        .get();
-    if (snapshot.docs.isNotEmpty) {
-      double total = 0;
-      snapshot.docs.forEach((element) {
-        total += element['drink_amount'];
-      });
-      return total / snapshot.docs.length;
-    } else {
-      return null;
+    try {
+      final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+      final response = await ApiService().getDailyDrinks(
+        from: sevenDaysAgo.toIso8601String(),
+        perPage: 100,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        List items = [];
+        if (data is List) {
+          items = data;
+        } else if (data is Map) {
+          items = [data];
+        }
+        if (items.isNotEmpty) {
+          double total = 0;
+          for (var item in items) {
+            final drink =
+                DailyDrinkModel.fromJson(Map<String, dynamic>.from(item));
+            total += drink.drinkAmount;
+          }
+          return total / items.length;
+        }
+      }
+    } catch (e) {
+      log(e.toString());
     }
+    return null;
   }
 }

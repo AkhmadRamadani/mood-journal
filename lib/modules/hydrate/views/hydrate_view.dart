@@ -11,13 +11,10 @@ import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 import 'package:moodie/shared/widgets/cards/page_header.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
 class HydrateView extends StatelessWidget {
-  HydrateView({super.key});
-
-  static const _backgroundColor = Color(0xFFF15BB5);
+  const HydrateView({super.key});
 
   static const _durations = [
     5000,

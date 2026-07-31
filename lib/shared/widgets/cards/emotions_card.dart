@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 

@@ -26,17 +26,17 @@ class RoundedImageButton extends StatelessWidget {
         onPressed(1);
       },
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all(
+        minimumSize: WidgetStateProperty.all(
             const Size(double.minPositive, double.minPositive)),
-        backgroundColor: MaterialStateProperty.all(bgColor ?? ThemeColor.white),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        backgroundColor: WidgetStateProperty.all(bgColor ?? ThemeColor.white),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(CustomRadius.defaultRadius),
           ),
         ),
-        elevation: MaterialStateProperty.all(0),
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.all(Spacing.spacing * 2)),
+        elevation: WidgetStateProperty.all(0),
+        padding:
+            WidgetStateProperty.all(const EdgeInsets.all(Spacing.spacing * 2)),
       ),
       child: image != null
           ? Image.asset(
