@@ -1,16 +1,136 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:moodie/utils/services/auth_service.dart';
+import 'package:moodie/utils/services/local_db_service.dart';
+
+// ---------------------------------------------------------------------------
+// Result type – replaces silent fallbacks
+// ---------------------------------------------------------------------------
+
+abstract class NetworkResult<T> {
+  const NetworkResult();
+}
+
+class NetworkSuccess<T> extends NetworkResult<T> {
+  final T data;
+  const NetworkSuccess(this.data);
+}
+
+class NetworkFailure<T> extends NetworkResult<T> {
+  final String message;
+  final int? statusCode;
+  final Object? error;
+
+  const NetworkFailure({required this.message, this.statusCode, this.error});
+
+  @override
+  String toString() =>
+      'NetworkFailure(message: $message, statusCode: $statusCode, error: $error)';
+}
+
+extension NetworkResultX<T> on NetworkResult<T> {
+  bool get isSuccess => this is NetworkSuccess<T>;
+  bool get isFailure => this is NetworkFailure<T>;
+
+  T get data => (this as NetworkSuccess<T>).data;
+
+  T dataOr(T fallback) =>
+      isSuccess ? (this as NetworkSuccess<T>).data : fallback;
+
+  NetworkFailure<T> get failure => this as NetworkFailure<T>;
+}
+
+// ---------------------------------------------------------------------------
+// DataSource – controls cache vs network priority
+// ---------------------------------------------------------------------------
+
+enum DataSource {
+  /// Return local cache only. Never hits the network.
+  cacheOnly,
+
+  /// Hit the network only. Never reads from cache.
+  networkOnly,
+
+  /// Return cache if available, otherwise fall back to network.
+  cacheFirst,
+
+  /// Hit network first, persist result, fall back to cache on failure.
+  networkFirst,
+
+  /// Return cache immediately (if available), then fetch network in background
+  /// and persist the fresh result. Use [onRefreshed] in [getData] to react to
+  /// the fresh data and update your UI.
+  staleWhileRevalidate,
+}
+
+// ---------------------------------------------------------------------------
+// HeaderStrategy
+// ---------------------------------------------------------------------------
+
+enum HeaderStrategy {
+  /// Standard authenticated headers (default).
+  global,
+
+  /// Caller supplies headers directly via [customHeader].
+  custom,
+
+  /// No headers at all.
+  none,
+}
+
+// ---------------------------------------------------------------------------
+// TokenRefreshManager – isolates single-flight refresh state
+// ---------------------------------------------------------------------------
+
+class TokenRefreshManager {
+  TokenRefreshManager._();
+  static final TokenRefreshManager instance = TokenRefreshManager._();
+
+  bool _isRefreshing = false;
+  Completer<bool>? _refreshCompleter;
+
+  Future<bool> refresh(Future<bool> Function() doRefresh) async {
+    if (_isRefreshing) {
+      return _refreshCompleter?.future ?? Future.value(false);
+    }
+
+    _isRefreshing = true;
+    _refreshCompleter = Completer<bool>();
+
+    try {
+      final success = await doRefresh();
+      _refreshCompleter!.complete(success);
+      return success;
+    } catch (e) {
+      _refreshCompleter!.complete(false);
+      return false;
+    } finally {
+      _isRefreshing = false;
+      _refreshCompleter = null;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ApiService (NetworkServices with Offline-First)
+// ---------------------------------------------------------------------------
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
   late final Dio dio;
+  final LocalDbService _db = LocalDbService();
+
+  final List<int> _errorStatusCodes = [400, 401, 403, 422, 500];
 
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://3757-103-19-231-251.ngrok-free.app/api',
+        baseUrl: 'https://0feb-103-156-227-0.ngrok-free.app/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -38,6 +158,433 @@ class ApiService {
       ),
     );
   }
+
+  Future<void> init() async {
+    // Handled centrally by LocalDbService
+  }
+
+  Future<void> saveDb(String key, String data) async {
+    await _db.saveCache(key, data);
+  }
+
+  String? getDataDb(String key) {
+    return _db.getCache(key);
+  }
+
+  // ── Public Generic HTTP Methods (Offline-First) ──────────────────────────
+
+  Future<NetworkResult<T>> getData<T>({
+    required String uri,
+    required String dbKey,
+    required T Function(String) fromJson,
+    T? Function(T local, T network)? combineData,
+    DataSource dataSource = DataSource.staleWhileRevalidate,
+    Map<String, String>? headers,
+    HeaderStrategy headerStrategy = HeaderStrategy.global,
+    Duration? timeout,
+    bool requiresAuth = true,
+    bool alreadyRetried = false,
+
+    /// Called with fresh network data after cache is returned (SWR only).
+    void Function(T freshData)? onRefreshed,
+  }) async {
+    return _run<T>(
+      dbKey: dbKey,
+      fromJson: fromJson,
+      dataSource: dataSource,
+      onRefreshed: onRefreshed,
+      makeRequest: () => dio.get(
+        uri,
+        options: Options(
+          headers: _resolveHeaders(
+            strategy: headerStrategy,
+            custom: headers,
+          ),
+          receiveTimeout: timeout,
+        ),
+      ),
+      onSuccess: (response) async {
+        final bodyStr = response.data is String
+            ? response.data as String
+            : jsonEncode(response.data);
+        final networkData = fromJson(bodyStr);
+        if (dbKey.isNotEmpty) {
+          if (combineData != null) {
+            final cached = _readCache(dbKey, fromJson);
+            if (cached != null) {
+              final merged = combineData(cached, networkData) ?? networkData;
+              await saveDb(dbKey, jsonEncode(merged));
+              return merged;
+            }
+          }
+          await saveDb(dbKey, bodyStr);
+        }
+        return networkData;
+      },
+      retry: () => getData<T>(
+        uri: uri,
+        dbKey: dbKey,
+        fromJson: fromJson,
+        combineData: combineData,
+        dataSource: DataSource.networkOnly,
+        headers: headers,
+        headerStrategy: headerStrategy,
+        timeout: timeout,
+        requiresAuth: requiresAuth,
+        alreadyRetried: true,
+      ),
+      requiresAuth: requiresAuth,
+      alreadyRetried: alreadyRetried,
+    );
+  }
+
+  Future<NetworkResult<T>> postData<T>({
+    required String uri,
+    required String dbKey,
+    required T Function(String) fromJson,
+    dynamic params,
+    DataSource dataSource = DataSource.networkOnly,
+    Map<String, String>? customHeader,
+    HeaderStrategy headerStrategy = HeaderStrategy.global,
+    Duration? timeout,
+    bool requiresAuth = true,
+    bool alreadyRetried = false,
+  }) async {
+    return _run<T>(
+      dbKey: dbKey,
+      fromJson: fromJson,
+      dataSource: dataSource,
+      makeRequest: () => dio.post(
+        uri,
+        data: params,
+        options: Options(
+          headers: _resolveHeaders(
+            strategy: headerStrategy,
+            custom: customHeader,
+          ),
+          receiveTimeout: timeout,
+        ),
+      ),
+      onSuccess: (response) async {
+        final bodyStr = response.data is String
+            ? response.data as String
+            : jsonEncode(response.data);
+        final data = fromJson(bodyStr);
+        if (dbKey.isNotEmpty) await saveDb(dbKey, bodyStr);
+        return data;
+      },
+      retry: () => postData<T>(
+        uri: uri,
+        dbKey: dbKey,
+        fromJson: fromJson,
+        params: params,
+        dataSource: DataSource.networkOnly,
+        customHeader: customHeader,
+        headerStrategy: headerStrategy,
+        timeout: timeout,
+        requiresAuth: requiresAuth,
+        alreadyRetried: true,
+      ),
+      requiresAuth: requiresAuth,
+      alreadyRetried: alreadyRetried,
+    );
+  }
+
+  Future<NetworkResult<T>> putData<T>({
+    required String uri,
+    required String dbKey,
+    required T Function(String) fromJson,
+    dynamic params,
+    DataSource dataSource = DataSource.networkOnly,
+    Map<String, String>? customHeader,
+    HeaderStrategy headerStrategy = HeaderStrategy.global,
+    Duration? timeout,
+    bool requiresAuth = true,
+    bool alreadyRetried = false,
+  }) async {
+    return _run<T>(
+      dbKey: dbKey,
+      fromJson: fromJson,
+      dataSource: dataSource,
+      makeRequest: () => dio.put(
+        uri,
+        data: params,
+        options: Options(
+          headers: _resolveHeaders(
+            strategy: headerStrategy,
+            custom: customHeader,
+          ),
+          receiveTimeout: timeout,
+        ),
+      ),
+      onSuccess: (response) async {
+        final bodyStr = response.data is String
+            ? response.data as String
+            : jsonEncode(response.data);
+        final data = fromJson(bodyStr);
+        if (dbKey.isNotEmpty) await saveDb(dbKey, bodyStr);
+        return data;
+      },
+      retry: () => putData<T>(
+        uri: uri,
+        dbKey: dbKey,
+        fromJson: fromJson,
+        params: params,
+        dataSource: DataSource.networkOnly,
+        customHeader: customHeader,
+        headerStrategy: headerStrategy,
+        timeout: timeout,
+        requiresAuth: requiresAuth,
+        alreadyRetried: true,
+      ),
+      requiresAuth: requiresAuth,
+      alreadyRetried: alreadyRetried,
+    );
+  }
+
+  Future<NetworkResult<T>> patchData<T>({
+    required String uri,
+    required String dbKey,
+    required T Function(String) fromJson,
+    dynamic params,
+    DataSource dataSource = DataSource.networkOnly,
+    Map<String, String>? customHeader,
+    HeaderStrategy headerStrategy = HeaderStrategy.global,
+    Duration? timeout,
+    bool requiresAuth = true,
+    bool alreadyRetried = false,
+  }) async {
+    return _run<T>(
+      dbKey: dbKey,
+      fromJson: fromJson,
+      dataSource: dataSource,
+      makeRequest: () => dio.patch(
+        uri,
+        data: params,
+        options: Options(
+          headers: _resolveHeaders(
+            strategy: headerStrategy,
+            custom: customHeader,
+          ),
+          receiveTimeout: timeout,
+        ),
+      ),
+      onSuccess: (response) async {
+        final bodyStr = response.data is String
+            ? response.data as String
+            : jsonEncode(response.data);
+        final data = fromJson(bodyStr);
+        if (dbKey.isNotEmpty) await saveDb(dbKey, bodyStr);
+        return data;
+      },
+      retry: () => patchData<T>(
+        uri: uri,
+        dbKey: dbKey,
+        fromJson: fromJson,
+        params: params,
+        dataSource: DataSource.networkOnly,
+        customHeader: customHeader,
+        headerStrategy: headerStrategy,
+        timeout: timeout,
+        requiresAuth: requiresAuth,
+        alreadyRetried: true,
+      ),
+      requiresAuth: requiresAuth,
+      alreadyRetried: alreadyRetried,
+    );
+  }
+
+  Future<NetworkResult<T>> deleteData<T>({
+    required String uri,
+    required String dbKey,
+    required T Function(String) fromJson,
+    dynamic params,
+    DataSource dataSource = DataSource.networkOnly,
+    Map<String, String>? customHeader,
+    HeaderStrategy headerStrategy = HeaderStrategy.global,
+    Duration? timeout,
+    bool requiresAuth = true,
+    bool alreadyRetried = false,
+  }) async {
+    return _run<T>(
+      dbKey: dbKey,
+      fromJson: fromJson,
+      dataSource: dataSource,
+      makeRequest: () => dio.delete(
+        uri,
+        data: params,
+        options: Options(
+          headers: _resolveHeaders(
+            strategy: headerStrategy,
+            custom: customHeader,
+          ),
+          receiveTimeout: timeout,
+        ),
+      ),
+      onSuccess: (response) async {
+        final bodyStr = response.data is String
+            ? response.data as String
+            : jsonEncode(response.data);
+        final data = fromJson(bodyStr);
+        if (dbKey.isNotEmpty) await saveDb(dbKey, bodyStr);
+        return data;
+      },
+      retry: () => deleteData<T>(
+        uri: uri,
+        dbKey: dbKey,
+        fromJson: fromJson,
+        params: params,
+        dataSource: DataSource.networkOnly,
+        customHeader: customHeader,
+        headerStrategy: headerStrategy,
+        timeout: timeout,
+        requiresAuth: requiresAuth,
+        alreadyRetried: true,
+      ),
+      requiresAuth: requiresAuth,
+      alreadyRetried: alreadyRetried,
+    );
+  }
+
+  // ── Core Execution Engine ────────────────────────────────────────────────
+
+  Future<NetworkResult<T>> _run<T>({
+    required String dbKey,
+    required T Function(String) fromJson,
+    required DataSource dataSource,
+    required Future<Response> Function() makeRequest,
+    required Future<T> Function(Response) onSuccess,
+    required Future<NetworkResult<T>> Function() retry,
+    required bool requiresAuth,
+    required bool alreadyRetried,
+    void Function(T freshData)? onRefreshed,
+  }) async {
+    // 1. Cache-only
+    if (dataSource == DataSource.cacheOnly) {
+      final cached = _readCache(dbKey, fromJson);
+      if (cached != null) return NetworkSuccess(cached);
+      return const NetworkFailure(message: 'No cached data available');
+    }
+
+    // 2. Stale-while-revalidate: return cache immediately, refresh in background
+    if (dataSource == DataSource.staleWhileRevalidate) {
+      final cached = _readCache(dbKey, fromJson);
+      if (cached != null) {
+        // Fire network request in the background
+        unawaited(() async {
+          try {
+            final response = await makeRequest();
+            if (_isResponseValid(response)) {
+              final fresh = await onSuccess(response);
+              onRefreshed?.call(fresh);
+            }
+          } catch (e) {
+            log('SWR background refresh failed for $dbKey: $e');
+          }
+        }());
+        return NetworkSuccess(cached);
+      }
+      // No cache — fall through to normal network request
+    }
+
+    // 3. Cache-first: return cache if available, skip network
+    if (dataSource == DataSource.staleWhileRevalidate) {
+      final cached = _readCache(dbKey, fromJson);
+      if (cached != null) return NetworkSuccess(cached);
+    }
+
+    // 3. Network request
+    try {
+      final response = await makeRequest();
+
+      if (_isResponseValid(response)) {
+        final data = await onSuccess(response);
+        return NetworkSuccess(data);
+      }
+
+      if (_errorStatusCodes.contains(response.statusCode)) {
+        if (response.statusCode == 401 && requiresAuth && !alreadyRetried) {
+          AuthService().clearSession();
+          return const NetworkFailure(
+            message: 'Authentication failed',
+            statusCode: 401,
+          );
+        }
+
+        try {
+          final bodyStr = response.data is String
+              ? response.data as String
+              : jsonEncode(response.data);
+          final errData = fromJson(bodyStr);
+          return NetworkSuccess(errData);
+        } catch (_) {
+          return NetworkFailure(
+            message: 'Request error (${response.statusCode})',
+            statusCode: response.statusCode,
+          );
+        }
+      }
+
+      return NetworkFailure(
+        message: 'Unexpected status code',
+        statusCode: response.statusCode,
+      );
+    } catch (e) {
+      log('Network error: $e');
+
+      // 4. networkFirst: fall back to cache on failure
+      if (dataSource == DataSource.staleWhileRevalidate && dbKey.isNotEmpty) {
+        final cached = _readCache(dbKey, fromJson);
+        if (cached != null) {
+          log('Returning cached data for $dbKey after network failure');
+          return NetworkSuccess(cached);
+        }
+      }
+
+      return NetworkFailure(message: 'Network error', error: e);
+    }
+  }
+
+  bool _isResponseValid(Response? response) {
+    if (response == null) return false;
+    return response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 204;
+  }
+
+  T? _readCache<T>(String dbKey, T Function(String) fromJson) {
+    if (dbKey.isEmpty) return null;
+    try {
+      final raw = getDataDb(dbKey);
+      if (raw == null) return null;
+      return fromJson(raw);
+    } catch (e) {
+      log('Cache read failed for $dbKey: $e');
+      return null;
+    }
+  }
+
+  Map<String, String>? _resolveHeaders({
+    required HeaderStrategy strategy,
+    Map<String, String>? custom,
+  }) {
+    switch (strategy) {
+      case HeaderStrategy.global:
+        final token = AuthService().getToken();
+        return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          if (token != null && token.isNotEmpty)
+            'Authorization': 'Bearer $token',
+        };
+      case HeaderStrategy.custom:
+        return custom;
+      case HeaderStrategy.none:
+        return null;
+    }
+  }
+
+  // ── Existing Endpoints (Preserved for full backward compatibility) ─────────
 
   // Auth Endpoints
   Future<Response> login({
@@ -279,5 +826,22 @@ class ApiService {
 
   Future<Response> deleteMenstrualLog(dynamic id) async {
     return await dio.delete('/menstrual-logs/$id');
+  }
+
+  // Gamification Endpoints
+  Future<Response> getGamificationProfile() async {
+    return await dio.get('/gamification/profile');
+  }
+
+  Future<Response> getGamificationBadges() async {
+    return await dio.get('/gamification/badges');
+  }
+
+  Future<Response> getGamificationChallenges() async {
+    return await dio.get('/gamification/challenges');
+  }
+
+  Future<Response> getGamificationLeaderboard() async {
+    return await dio.get('/gamification/leaderboard');
   }
 }

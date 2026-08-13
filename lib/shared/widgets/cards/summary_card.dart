@@ -8,6 +8,7 @@ class SummaryCard extends StatelessWidget {
   final String header, contentTitle, date, theme;
   final double? chartVal;
   final String? contentDesc;
+  final String? chartSubTitle;
   final bool isChart;
   final Function()? onTap;
 
@@ -18,6 +19,7 @@ class SummaryCard extends StatelessWidget {
     required this.header,
     required this.contentTitle,
     this.contentDesc,
+    this.chartSubTitle,
     this.chartVal,
     this.onTap,
     required this.date,
@@ -73,14 +75,41 @@ class SummaryCard extends StatelessWidget {
                   lineWidth: Spacing.spacing,
                   animation: true,
                   percent: chartVal ?? 0.0,
-                  center: Text(
-                    contentTitle,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: theme == 'primary'
-                              ? ThemeColor.white
-                              : ThemeColor.primary,
-                          fontWeight: FontWeight.w600,
+                  center: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        contentTitle,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: theme == 'primary'
+                                  ? ThemeColor.white
+                                  : ThemeColor.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                            ),
+                      ),
+                      if (chartSubTitle != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          chartSubTitle!,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                color: theme == 'primary'
+                                    ? ThemeColor.white.withValues(alpha: 0.85)
+                                    : ThemeColor.primary
+                                        .withValues(alpha: 0.75),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                         ),
+                      ],
+                    ],
                   ),
                   circularStrokeCap: CircularStrokeCap.round,
                   backgroundColor: ThemeColor.background,

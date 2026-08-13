@@ -1,6 +1,50 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+DateTime parseToLocal(dynamic val) {
+  if (val == null) return DateTime.now();
+  if (val is DateTime) return val.toLocal();
+  final str = val.toString().trim();
+  if (str.isEmpty) return DateTime.now();
+
+  DateTime? dt = DateTime.tryParse(str);
+  if (dt != null) {
+    if (dt.isUtc) {
+      return dt.toLocal();
+    }
+    if (!str.contains('Z') &&
+        !str.contains('+') &&
+        !RegExp(r'-\d{2}:\d{2}$').hasMatch(str)) {
+      final utcDt = DateTime.tryParse('${str.replaceAll(' ', 'T')}Z');
+      if (utcDt != null) return utcDt.toLocal();
+    }
+    return dt.toLocal();
+  }
+  return DateTime.now();
+}
+
+DateTime? parseToLocalOrNull(dynamic val) {
+  if (val == null) return null;
+  if (val is DateTime) return val.toLocal();
+  final str = val.toString().trim();
+  if (str.isEmpty) return null;
+
+  DateTime? dt = DateTime.tryParse(str);
+  if (dt != null) {
+    if (dt.isUtc) {
+      return dt.toLocal();
+    }
+    if (!str.contains('Z') &&
+        !str.contains('+') &&
+        !RegExp(r'-\d{2}:\d{2}$').hasMatch(str)) {
+      final utcDt = DateTime.tryParse('${str.replaceAll(' ', 'T')}Z');
+      if (utcDt != null) return utcDt.toLocal();
+    }
+    return dt.toLocal();
+  }
+  return null;
+}
+
 /// Ekstensi untuk format tanggal
 /// Docs: https://api.flutter.dev/flutter/intl/DateFormat-class.html
 extension DateExtension on DateTime {

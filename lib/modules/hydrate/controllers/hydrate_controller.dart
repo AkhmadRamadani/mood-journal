@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:moodie/constants/asset_const.dart';
+import 'package:moodie/controllers/gamification_controller.dart';
 import 'package:moodie/modules/hydrate/models/cup_choice.dart';
 import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
+import 'package:moodie/utils/services/local_db_service.dart';
 
 class HydrateController extends GetxController {
   static HydrateController get to => Get.find();
@@ -15,7 +16,7 @@ class HydrateController extends GetxController {
   RxInt waterPercentage = 0.obs;
   RxInt remainingWater = 0.obs;
 
-  HydrateRepository repository = HydrateRepository();
+  final HydrateRepository repository = Get.find<HydrateRepository>();
   TextEditingController targetController = TextEditingController();
 
   List<double> heightPercentages = [
@@ -27,7 +28,7 @@ class HydrateController extends GetxController {
 
   CupChoice? selectedCup;
 
-  var box = Hive.box('water');
+  var box = LocalDbService().getBox(LocalDbService.waterBoxName);
 
   final List<CupChoice> cupChoices = [
     CupChoice(
@@ -101,7 +102,15 @@ class HydrateController extends GetxController {
       'remaining',
       'loading',
     ]);
-    int target = await repository.getTarget();
+    int target = await repository.getTarget(
+      onRefreshed: (fresh) {
+        targetWater.value = fresh;
+        setRemainingWater();
+        setPercentage();
+        setHeightPercentages();
+        update();
+      },
+    );
     targetWater.value = target;
     setRemainingWater();
     setPercentage();
@@ -164,6 +173,11 @@ class HydrateController extends GetxController {
       setRemainingWater();
       setPercentage();
       setHeightPercentages();
+      try {
+        GamificationController.to.refreshProfile();
+      } catch (e) {
+        log('Error refreshing gamification profile from hydrate: $e');
+      }
       update();
     }
   }
@@ -183,9 +197,16 @@ class HydrateController extends GetxController {
       'wave',
       'percentage',
     ]);
-    int current = await repository.getTodayDrink();
+    int current = await repository.getTodayDrink(
+      onRefreshed: (fresh) {
+        currentWater.value = fresh;
+        setRemainingWater();
+        setPercentage();
+        setHeightPercentages();
+        update();
+      },
+    );
     currentWater.value = current;
-    // await box.put('current', currentWater.value);
     setRemainingWater();
     setPercentage();
     setHeightPercentages();

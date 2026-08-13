@@ -23,7 +23,7 @@ class AlertHelper {
     Future<bool> Function()? onWillPop,
   }) async {
     _Alert alert = _Alert.isCheck;
-    int _duration = duration ?? 5;
+    int alertDuration = duration ?? 5;
 
     if (isWarning) {
       alert = _Alert.isWarnig;
@@ -31,7 +31,7 @@ class AlertHelper {
 
     if (isError) {
       alert = _Alert.isError;
-      _duration = 10;
+      alertDuration = 10;
     }
 
     if ((Get.isDialogOpen ?? false) && !onTop) return;
@@ -41,7 +41,7 @@ class AlertHelper {
         msg: msg,
         title: title,
         status: alert,
-        duration: _duration,
+        duration: alertDuration,
         countDown: countDown,
         onWillPop: onWillPop,
       ),

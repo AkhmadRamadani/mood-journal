@@ -1,3 +1,5 @@
+import 'package:moodie/utils/extensions/date_extension.dart';
+
 class TargetDailyDrinkModel {
   final int targetAmount;
   final String userId;
@@ -10,17 +12,8 @@ class TargetDailyDrinkModel {
   });
 
   factory TargetDailyDrinkModel.fromJson(Map<String, dynamic> json) {
-    DateTime parsedDate;
-    if (json['updated_at'] != null || json['created_at'] != null) {
-      final rawDate = json['updated_at'] ?? json['created_at'];
-      if (rawDate is DateTime) {
-        parsedDate = rawDate;
-      } else {
-        parsedDate = DateTime.tryParse(rawDate.toString()) ?? DateTime.now();
-      }
-    } else {
-      parsedDate = DateTime.now();
-    }
+    final rawDate = json['updated_at'] ?? json['created_at'];
+    DateTime parsedDate = parseToLocal(rawDate);
 
     return TargetDailyDrinkModel(
       targetAmount: json['target_amount'] is int

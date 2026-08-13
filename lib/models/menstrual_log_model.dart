@@ -1,4 +1,5 @@
 import 'package:moodie/models/mood_model.dart';
+import 'package:moodie/utils/extensions/date_extension.dart';
 
 class MenstrualLogModel {
   final dynamic id;
@@ -31,20 +32,18 @@ class MenstrualLogModel {
 
   factory MenstrualLogModel.fromJson(Map<String, dynamic> json) {
     DateTime? parseDate(dynamic val) {
-      if (val == null) return null;
-      if (val is DateTime) return val;
-      return DateTime.tryParse(val.toString());
+      return parseToLocalOrNull(val);
     }
 
     List<String> parsedSymptoms = [];
     if (json['symptoms'] != null && json['symptoms'] is List) {
-      parsedSymptoms = (json['symptoms'] as List)
-          .map((e) => e.toString())
-          .toList();
+      parsedSymptoms =
+          (json['symptoms'] as List).map((e) => e.toString()).toList();
     }
 
     MoodModel? parsedMoodEntry;
-    if (json['mood_entry'] != null && json['mood_entry'] is Map<String, dynamic>) {
+    if (json['mood_entry'] != null &&
+        json['mood_entry'] is Map<String, dynamic>) {
       parsedMoodEntry = MoodModel.fromJson(json['mood_entry']);
     }
 
@@ -57,7 +56,8 @@ class MenstrualLogModel {
       symptoms: parsedSymptoms,
       mood: json['mood']?.toString(),
       moodEntry: parsedMoodEntry,
-      isPeriodStart: json['is_period_start'] == true || json['is_period_start'] == 1,
+      isPeriodStart:
+          json['is_period_start'] == true || json['is_period_start'] == 1,
       note: json['note']?.toString(),
       createdAt: parseDate(json['created_at']),
       updatedAt: parseDate(json['updated_at']),

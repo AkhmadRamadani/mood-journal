@@ -1,9 +1,11 @@
+import 'package:moodie/utils/extensions/date_extension.dart';
+
 class FirebaseNotificationModel {
   final String? title;
   final String? body;
   final DateTime? date;
   final String? topic;
-  final bool? isRead;
+  bool? isRead;
   final dynamic id;
 
   FirebaseNotificationModel({
@@ -16,15 +18,8 @@ class FirebaseNotificationModel {
   });
 
   factory FirebaseNotificationModel.fromJson(Map<String, dynamic> json) {
-    DateTime? parsedDate;
     final rawDate = json['sent_at'] ?? json['created_at'] ?? json['date'];
-    if (rawDate != null) {
-      if (rawDate is DateTime) {
-        parsedDate = rawDate;
-      } else {
-        parsedDate = DateTime.tryParse(rawDate.toString());
-      }
-    }
+    DateTime? parsedDate = parseToLocalOrNull(rawDate);
 
     return FirebaseNotificationModel(
       id: json['id'],

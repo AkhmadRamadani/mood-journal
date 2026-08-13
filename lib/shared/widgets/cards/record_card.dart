@@ -178,8 +178,8 @@ class _RecordCardState extends State<RecordCard> {
                                 Text(
                                   widget.menstrualLog!.isPeriodStart
                                       ? 'Period Start'
-                                      : widget.menstrualLog!.flow
-                                          .capitalizeFirst!,
+                                      : widget
+                                          .menstrualLog!.flow.capitalizeFirst!,
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,

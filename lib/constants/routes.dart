@@ -15,4 +15,5 @@ class Routes {
   static const String privacyPolice = '/privacy-police';
   static const String termService = '/term-service';
   static const String hydrate = '/hydrate';
+  static const String gamification = '/gamification';
 }

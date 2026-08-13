@@ -17,7 +17,8 @@ class NotificationController extends GetxController {
 
   RxBool isLoading = false.obs;
 
-  NotificationRepository notificationRepository = NotificationRepository();
+  final NotificationRepository notificationRepository =
+      Get.find<NotificationRepository>();
 
   void setTodaysNotifList(List<FirebaseNotificationModel> list) {
     todaysNotifList = list;
@@ -33,14 +34,26 @@ class NotificationController extends GetxController {
     isLoading.value = true;
     isLoading = true.obs;
     update();
-    var list = await notificationRepository.getListNotifications();
-    if (list != null) {
+
+    void applyList(List<FirebaseNotificationModel> list) {
       todaysNotifList = list
           .where((element) => element.date!.day == DateTime.now().day)
           .toList();
       yesterdayNotifList = list
           .where((element) => element.date!.day < DateTime.now().day)
           .toList();
+    }
+
+    var list = await notificationRepository.getListNotifications(
+      onRefreshed: (fresh) {
+        // Called in background when SWR network response arrives
+        applyList(fresh);
+        update();
+        log('NotificationController SWR background refresh done');
+      },
+    );
+    if (list != null) {
+      applyList(list);
     } else {
       log('NotificationController getNotifications list is null');
     }
@@ -51,20 +64,45 @@ class NotificationController extends GetxController {
 
   Future<void> readNotification(
       FirebaseNotificationModel firebaseNotificationModel) async {
-    isLoading.value = true;
-    isLoading = true.obs;
+    // Optimistically mark as read in the local list for instant UI update
+    for (final notif in todaysNotifList) {
+      if (notif.id == firebaseNotificationModel.id) {
+        notif.isRead = true;
+        break;
+      }
+    }
+    for (final notif in yesterdayNotifList) {
+      if (notif.id == firebaseNotificationModel.id) {
+        notif.isRead = true;
+        break;
+      }
+    }
     update();
-    var result = await notificationRepository
+
+    // Sync with backend in background
+    final result = await notificationRepository
         .readNotification(firebaseNotificationModel);
     if (result) {
-      await getNotifications();
       log('NotificationController updateNotification result is true');
     } else {
       log('NotificationController updateNotification result is false');
     }
-    isLoading.value = false;
-    isLoading = false.obs;
+  }
+
+  void markAllAsRead() {
+    // Optimistically mark all as read locally
+    for (final notif in todaysNotifList) {
+      notif.isRead = true;
+    }
+    for (final notif in yesterdayNotifList) {
+      notif.isRead = true;
+    }
     update();
+
+    // Sync with backend in background
+    notificationRepository.markAllAsRead().then((result) {
+      log('NotificationController markAllAsRead result: $result');
+    });
   }
 
   @override

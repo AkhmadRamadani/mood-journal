@@ -7,6 +7,7 @@ import 'package:moodie/modules/auth/views/on_boarding_view.dart';
 import 'package:moodie/modules/auth/views/register_view.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
 import 'package:moodie/modules/home/pages/home_page.dart';
+import 'package:moodie/modules/gamification/views/gamification_screen.dart';
 import 'package:moodie/modules/hydrate/controllers/hydrate_controller.dart';
 import 'package:moodie/modules/hydrate/views/hydrate_view.dart';
 import 'package:moodie/modules/profile/views/show_profile.dart';
@@ -83,7 +84,11 @@ class Pages {
         binding: BindingsBuilder(() {
           Get.put(HydrateController());
         }),
-      )
+      ),
+      GetPage(
+        name: Routes.gamification,
+        page: () => const GamificationScreen(),
+      ),
     ];
   }
 }
