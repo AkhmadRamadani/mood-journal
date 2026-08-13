@@ -2,17 +2,19 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:moodie/controllers/gamification_controller.dart';
 import 'package:moodie/models/mood_model.dart';
+import 'package:moodie/models/user_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
+import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
-import 'package:moodie/utils/services/api_service.dart';
-
-import 'package:moodie/models/user_model.dart';
 import 'package:moodie/utils/services/auth_service.dart';
 
 class RecordController extends GetxController {
   static RecordController get to => Get.put(RecordController());
+
+  final RecordRepository _recordRepository = Get.find<RecordRepository>();
 
   UserModel? get user => AuthService().getUser();
 
@@ -30,6 +32,7 @@ class RecordController extends GetxController {
   DateTime selectedDate = DateTime.now();
 
   List<MoodModel?> listMood = [];
+  List<MoodModel> weeklyMoods = [];
 
   void setMood(MoodConditions mood) {
     this.mood = mood;
@@ -47,14 +50,14 @@ class RecordController extends GetxController {
     update(['addMood']);
 
     try {
-      final response = await ApiService().storeMood(
+      final success = await _recordRepository.storeMood(
         mood: mood!.name,
         emotions: emotions,
         title: titleController.text,
         note: noteController.text,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (success) {
         // reset form
         noteController.clear();
         titleController.clear();
@@ -70,8 +73,9 @@ class RecordController extends GetxController {
         );
 
         DashboardController.to.refresh();
+        GamificationController.to.refreshProfile();
       } else {
-        throw Exception("Server returned ${response.statusCode}");
+        throw Exception("Failed to store mood");
       }
     } catch (error) {
       log(error.toString());
@@ -94,32 +98,22 @@ class RecordController extends GetxController {
     update(['addMood']);
   }
 
-  // get list mood based on date
+  // get list mood based on date via repository
   Future<void> getMoodByDate() async {
     isLoading.value = true;
     isLoading = true.obs;
     update(['record']);
     listMood.clear();
 
-    final fromDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0);
-    final toDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 59);
-
     try {
-      final response = await ApiService().getMoods(
-        from: fromDate.toIso8601String(),
-        to: toDate.toIso8601String(),
+      final moods = await _recordRepository.getMoodsByDate(
+        selectedDate,
+        onRefreshed: (fresh) {
+          listMood.assignAll(fresh);
+          update(['record']);
+        },
       );
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'];
-        if (data is List) {
-          for (var item in data) {
-            listMood.add(MoodModel.fromJson(Map<String, dynamic>.from(item)));
-          }
-        }
-      }
+      listMood.assignAll(moods);
     } catch (error) {
       log(error.toString());
       AlertHelper.showMsg(
@@ -130,24 +124,47 @@ class RecordController extends GetxController {
     }
     isLoading.value = false;
     update(['record']);
+    fetchWeeklyMoods();
   }
 
-  // delete mood
+  // Fetch moods for the visible calendar week so water drop markers stay visible for all days
+  Future<void> fetchWeeklyMoods() async {
+    try {
+      final monday =
+          selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
+      final sunday = monday.add(const Duration(days: 6));
+      final moods = await _recordRepository.getMoodsByDateRange(
+        monday,
+        sunday,
+        onRefreshed: (fresh) {
+          weeklyMoods.assignAll(fresh);
+          update(['calendar']);
+        },
+      );
+      weeklyMoods.assignAll(moods);
+      update(['calendar']);
+    } catch (e) {
+      log('Error fetching weekly moods: $e');
+    }
+  }
+
+  // delete mood via repository
   Future<void> deleteMood(MoodModel moodModel) async {
     isLoading.value = true;
     isLoading = true.obs;
     update(['record']);
 
     try {
-      final response = await ApiService().deleteMood(moodModel.id);
-      if (response.statusCode == 200) {
+      final success = await _recordRepository.deleteMood(moodModel.id);
+      if (success) {
         listMood.remove(moodModel);
+        weeklyMoods.removeWhere((m) => m.id == moodModel.id);
         AlertHelper.showMsg(
           title: "Success to delete mood",
           msg: "Your mood has been deleted.",
         );
       } else {
-        throw Exception("Delete status ${response.statusCode}");
+        throw Exception("Failed to delete mood");
       }
     } catch (error) {
       log(error.toString());
@@ -158,7 +175,7 @@ class RecordController extends GetxController {
       );
     }
     isLoading.value = false;
-    update(['record']);
+    update(['record', 'calendar']);
   }
 
   @override

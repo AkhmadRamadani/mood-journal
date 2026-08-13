@@ -1,14 +1,19 @@
 import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:moodie/models/quore_response.dart';
+import 'package:moodie/models/user_model.dart';
 import 'package:moodie/modules/dashboard/repositories/dashboard_repository.dart';
 import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
-import 'package:moodie/models/user_model.dart';
 import 'package:moodie/utils/services/auth_service.dart';
 
 class DashboardController extends GetxController {
   static DashboardController get to => Get.find();
+
+  final DashboardRepository _dashboardRepository =
+      Get.find<DashboardRepository>();
+  final HydrateRepository _hydrateRepository = Get.find<HydrateRepository>();
 
   UserModel? get user => AuthService().getUser();
 
@@ -24,8 +29,6 @@ class DashboardController extends GetxController {
   RxDouble waterPercentage = 0.0.obs;
   RxDouble dailyDrinkMean = 0.0.obs;
 
-  HydrateRepository hydrateRepository = HydrateRepository();
-
   String salute() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
@@ -40,13 +43,18 @@ class DashboardController extends GetxController {
   Future<void> setQuote() async {
     isLoading.value = true;
     update(['quote']);
-    quoteResponse = await DashboardRepository().getQuote();
+    quoteResponse = await _dashboardRepository.getQuote();
     isLoading.value = false;
     update(['quote']);
   }
 
   Future<void> setLatestMood() async {
-    latestMood = await DashboardRepository().getLatestMood();
+    latestMood = await _dashboardRepository.getLatestMood(
+      onRefreshed: (fresh) {
+        latestMood = fresh;
+        update(['latestMood']);
+      },
+    );
     update(['latestMood']);
   }
 
@@ -66,7 +74,12 @@ class DashboardController extends GetxController {
   }
 
   Future<void> setBiggestMood() async {
-    biggestMood = await DashboardRepository().getWeeklyMood();
+    biggestMood = await _dashboardRepository.getWeeklyMood(
+      onRefreshed: (fresh) {
+        biggestMood = fresh;
+        update(['biggestMood']);
+      },
+    );
     update(['biggestMood']);
   }
 
@@ -91,10 +104,10 @@ class DashboardController extends GetxController {
   }
 
   Future<void> setWaterPercentage() async {
-    final water = await hydrateRepository.getTarget();
+    final water = await _hydrateRepository.getTarget();
     targetWater.value = water;
 
-    currentWater.value = await hydrateRepository.getTodayDrink();
+    currentWater.value = await _hydrateRepository.getTodayDrink();
 
     waterPercentage.value = (currentWater.value / targetWater.value * 100);
     log(waterPercentage.value.toString());
@@ -146,8 +159,14 @@ class DashboardController extends GetxController {
   }
 
   Future<void> getDailyDrinkMean() async {
-    dailyDrinkMean.value =
-        (await DashboardRepository().getDailyDrinkMean() ?? 0.0) / 1000;
+    dailyDrinkMean.value = (await _dashboardRepository.getDailyDrinkMean(
+              onRefreshed: (fresh) {
+                dailyDrinkMean.value = (fresh ?? 0.0) / 1000;
+                update(['water']);
+              },
+            ) ??
+            0.0) /
+        1000;
     update(['water']);
   }
 
@@ -166,7 +185,6 @@ class DashboardController extends GetxController {
     setBiggestMood();
     setWaterPercentage();
     getDailyDrinkMean();
-    // setDrinkWaterReminder();
     super.onInit();
   }
 }

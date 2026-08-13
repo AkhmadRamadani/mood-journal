@@ -1,5 +1,6 @@
 import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
+import 'package:moodie/utils/extensions/date_extension.dart';
 
 class MoodModel {
   final MoodConditions mood;
@@ -23,17 +24,7 @@ class MoodModel {
   });
 
   factory MoodModel.fromJson(Map<String, dynamic> json) {
-    DateTime parsedDate;
-    if (json['created_at'] != null) {
-      if (json['created_at'] is DateTime) {
-        parsedDate = json['created_at'];
-      } else {
-        parsedDate =
-            DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now();
-      }
-    } else {
-      parsedDate = DateTime.now();
-    }
+    DateTime parsedDate = parseToLocal(json['created_at']);
 
     MoodConditions parsedMood;
     try {
@@ -47,9 +38,10 @@ class MoodModel {
     }
 
     MenstrualLogModel? parsedMenstrualLog;
-    if (json['menstrual_log'] != null && json['menstrual_log'] is Map<String, dynamic>) {
-      parsedMenstrualLog =
-          MenstrualLogModel.fromJson(Map<String, dynamic>.from(json['menstrual_log']));
+    if (json['menstrual_log'] != null &&
+        json['menstrual_log'] is Map<String, dynamic>) {
+      parsedMenstrualLog = MenstrualLogModel.fromJson(
+          Map<String, dynamic>.from(json['menstrual_log']));
     }
 
     return MoodModel(

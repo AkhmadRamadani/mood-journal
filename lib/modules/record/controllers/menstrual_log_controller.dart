@@ -1,17 +1,23 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/models/menstrual_log_model.dart';
+import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
+import 'package:moodie/modules/record/repositories/menstrual_log_repository.dart';
+import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
-import 'package:moodie/utils/services/api_service.dart';
 
 class MenstrualLogController extends GetxController {
   static MenstrualLogController get to => Get.put(MenstrualLogController());
+
+  final RecordRepository _recordRepository = Get.find<RecordRepository>();
+  final MenstrualLogRepository _menstrualLogRepository =
+      Get.find<MenstrualLogRepository>();
 
   DateTime selectedDate = DateTime.now();
 
@@ -70,32 +76,17 @@ class MenstrualLogController extends GetxController {
     selectedDate = DateTime.now();
   }
 
-  // Fetch moods logged for a specific date
+  // Fetch moods logged for a specific date via RecordRepository
   Future<List<MoodModel>> fetchMoodsForDate(DateTime date) async {
-    final fromDate = DateTime(date.year, date.month, date.day, 0, 0, 0);
-    final toDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
-
     try {
-      final response = await ApiService().getMoods(
-        from: fromDate.toIso8601String(),
-        to: toDate.toIso8601String(),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'];
-        if (data is List) {
-          return data
-              .map((item) => MoodModel.fromJson(Map<String, dynamic>.from(item)))
-              .toList();
-        }
-      }
+      return await _recordRepository.getMoodsByDate(date);
     } catch (e) {
       log('Error fetching moods for date: $e');
+      return [];
     }
-    return [];
   }
 
-  // Submit Menstrual Log to API
+  // Submit Menstrual Log via MenstrualLogRepository
   Future<MenstrualLogModel?> submitMenstrualLog({dynamic moodId}) async {
     isLoading.value = true;
     update(['menstrual_form']);
@@ -104,7 +95,7 @@ class MenstrualLogController extends GetxController {
         "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
 
     try {
-      final response = await ApiService().storeMenstrualLog(
+      final model = await _menstrualLogRepository.storeMenstrualLog(
         date: formattedDate,
         moodId: moodId,
         flow: flow.value,
@@ -113,11 +104,7 @@ class MenstrualLogController extends GetxController {
         note: noteController.text.isNotEmpty ? noteController.text : null,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data['data'];
-        MenstrualLogModel model =
-            MenstrualLogModel.fromJson(Map<String, dynamic>.from(data));
-
+      if (model != null) {
         resetForm();
 
         AlertHelper.showMsg(
@@ -136,7 +123,7 @@ class MenstrualLogController extends GetxController {
         update(['menstrual_form']);
         return model;
       } else {
-        throw Exception("Failed to store menstrual log: ${response.statusCode}");
+        throw Exception("Failed to store menstrual log");
       }
     } catch (e) {
       log('Error storing menstrual log: $e');
@@ -165,17 +152,14 @@ class MenstrualLogController extends GetxController {
 
     if (moods.isEmpty) {
       // SCENARIO 1: Mood for that day is empty
-      // Save draft menstrual log data, then open Add Mood view, then link
       _proceedWithEmptyMoodFlow();
     } else {
       // SCENARIO 2: Mood for that day already exists
-      // Show choice: Use existing mood OR create new mood
       _showExistingMoodChoiceDialog(moods);
     }
   }
 
   void _proceedWithEmptyMoodFlow() {
-    // Keep current log parameters in closure
     final draftDate = selectedDate;
     final draftFlow = flow.value;
     final draftSymptoms = List<String>.from(symptoms);
@@ -208,7 +192,6 @@ class MenstrualLogController extends GetxController {
       isScrollControlled: true,
       enableDrag: true,
     ).then((_) async {
-      // Check if mood was created in RecordController
       final recordCtrl = RecordController.to;
       if (recordCtrl.listMood.isNotEmpty) {
         final latestMood = recordCtrl.listMood.first;
@@ -216,7 +199,7 @@ class MenstrualLogController extends GetxController {
           final formattedDate =
               "${draftDate.year.toString().padLeft(4, '0')}-${draftDate.month.toString().padLeft(2, '0')}-${draftDate.day.toString().padLeft(2, '0')}";
 
-          await ApiService().storeMenstrualLog(
+          await _menstrualLogRepository.storeMenstrualLog(
             date: formattedDate,
             moodId: latestMood.id,
             flow: draftFlow,
@@ -288,7 +271,8 @@ class MenstrualLogController extends GetxController {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.add_circle_outline, color: ThemeColor.primary),
+              leading: const Icon(Icons.add_circle_outline,
+                  color: ThemeColor.primary),
               title: const Text('Create New Mood & Link'),
               onTap: () {
                 Get.back(); // close choice dialog

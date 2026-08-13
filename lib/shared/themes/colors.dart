@@ -18,6 +18,7 @@ class ThemeColor {
   // Neutral Color
   static const Color black = Color.fromARGB(255, 33, 34, 38);
   static const Color neutral_900 = Color.fromRGBO(15, 23, 42, 1);
+  static const Color neutral_700 = Color.fromRGBO(51, 65, 85, 1);
   static const Color neutral_600 = Color.fromRGBO(71, 85, 105, 1);
   static const Color neutral_500 = Color.fromRGBO(100, 116, 139, 1);
   static const Color neutral_400 = Color.fromRGBO(148, 163, 187, 1);

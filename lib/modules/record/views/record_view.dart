@@ -85,10 +85,13 @@ class _RecordViewState extends State<RecordView> {
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
-                              if (state.listMood.any((m) =>
-                                  m != null &&
-                                  m.menstrualLog != null &&
-                                  isSameDay(m.createdAt, date)))
+                              if (state.weeklyMoods.any((m) =>
+                                      m.menstrualLog != null &&
+                                      isSameDay(m.createdAt, date)) ||
+                                  state.listMood.any((m) =>
+                                      m != null &&
+                                      m.menstrualLog != null &&
+                                      isSameDay(m.createdAt, date)))
                                 const Positioned(
                                   bottom: 2,
                                   child: Icon(
@@ -121,10 +124,13 @@ class _RecordViewState extends State<RecordView> {
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
-                              if (state.listMood.any((m) =>
-                                  m != null &&
-                                  m.menstrualLog != null &&
-                                  isSameDay(m.createdAt, date)))
+                              if (state.weeklyMoods.any((m) =>
+                                      m.menstrualLog != null &&
+                                      isSameDay(m.createdAt, date)) ||
+                                  state.listMood.any((m) =>
+                                      m != null &&
+                                      m.menstrualLog != null &&
+                                      isSameDay(m.createdAt, date)))
                                 const Positioned(
                                   bottom: 2,
                                   child: Icon(
@@ -137,10 +143,13 @@ class _RecordViewState extends State<RecordView> {
                           ),
                         ),
                         defaultBuilder: (context, date, events) {
-                          final hasMenstrual = state.listMood.any((m) =>
-                              m != null &&
-                              m.menstrualLog != null &&
-                              isSameDay(m.createdAt, date));
+                          final hasMenstrual = state.weeklyMoods.any((m) =>
+                                  m.menstrualLog != null &&
+                                  isSameDay(m.createdAt, date)) ||
+                              state.listMood.any((m) =>
+                                  m != null &&
+                                  m.menstrualLog != null &&
+                                  isSameDay(m.createdAt, date));
                           if (hasMenstrual) {
                             return Container(
                               margin: const EdgeInsets.all(4.0),
