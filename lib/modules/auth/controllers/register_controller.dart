@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/user_model.dart';
+import 'package:moodie/modules/auth/controllers/login_controller.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
 import 'package:moodie/utils/services/api_service.dart';
 import 'package:moodie/utils/services/auth_service.dart';
@@ -80,7 +81,10 @@ class RegisterController extends GetxController {
   }
 
   Future<void> registerWithGoogle() async {
-    // Stub for Google registration if needed
+    final loginCtrl = Get.isRegistered<LoginController>()
+        ? LoginController.to
+        : Get.put(LoginController());
+    await loginCtrl.loginWithGoogle();
   }
 
   Future<bool> validateForm() async {
