@@ -10,7 +10,7 @@ class ApiService {
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://4706-103-156-227-0.ngrok-free.app/api',
+        baseUrl: 'https://3757-103-19-231-251.ngrok-free.app/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -63,6 +63,20 @@ class ApiService {
       'email': email,
       'password': password,
       'password_confirmation': passwordConfirmation,
+    });
+  }
+
+  Future<Response> googleLogin({
+    required String email,
+    required String name,
+    String? googleId,
+    String? avatarUrl,
+  }) async {
+    return await dio.post('/google-login', data: {
+      'email': email,
+      'name': name,
+      if (googleId != null) 'google_id': googleId,
+      if (avatarUrl != null) 'avatar_url': avatarUrl,
     });
   }
 
@@ -197,5 +211,73 @@ class ApiService {
 
   Future<Response> markNotificationAsRead(dynamic id) async {
     return await dio.patch('/notifications/$id/read');
+  }
+
+  // Menstrual Logs
+  Future<Response> getMenstrualLogs({
+    String? flow,
+    dynamic moodId,
+    bool? isPeriodStart,
+    String? from,
+    String? to,
+    int perPage = 15,
+  }) async {
+    return await dio.get('/menstrual-logs', queryParameters: {
+      if (flow != null) 'flow': flow,
+      if (moodId != null) 'mood_id': moodId,
+      if (isPeriodStart != null) 'is_period_start': isPeriodStart,
+      if (from != null) 'from': from,
+      if (to != null) 'to': to,
+      'per_page': perPage,
+    });
+  }
+
+  Future<Response> storeMenstrualLog({
+    required String date,
+    dynamic moodId,
+    String? flow,
+    List<String>? symptoms,
+    String? mood,
+    bool? isPeriodStart,
+    String? note,
+  }) async {
+    return await dio.post('/menstrual-logs', data: {
+      'date': date,
+      if (moodId != null) 'mood_id': moodId,
+      if (flow != null) 'flow': flow,
+      if (symptoms != null) 'symptoms': symptoms,
+      if (mood != null) 'mood': mood,
+      if (isPeriodStart != null) 'is_period_start': isPeriodStart,
+      if (note != null) 'note': note,
+    });
+  }
+
+  Future<Response> showMenstrualLog(dynamic id) async {
+    return await dio.get('/menstrual-logs/$id');
+  }
+
+  Future<Response> updateMenstrualLog({
+    required dynamic id,
+    String? date,
+    dynamic moodId,
+    String? flow,
+    List<String>? symptoms,
+    String? mood,
+    bool? isPeriodStart,
+    String? note,
+  }) async {
+    return await dio.put('/menstrual-logs/$id', data: {
+      if (date != null) 'date': date,
+      if (moodId != null) 'mood_id': moodId,
+      if (flow != null) 'flow': flow,
+      if (symptoms != null) 'symptoms': symptoms,
+      if (mood != null) 'mood': mood,
+      if (isPeriodStart != null) 'is_period_start': isPeriodStart,
+      if (note != null) 'note': note,
+    });
+  }
+
+  Future<Response> deleteMenstrualLog(dynamic id) async {
+    return await dio.delete('/menstrual-logs/$id');
   }
 }

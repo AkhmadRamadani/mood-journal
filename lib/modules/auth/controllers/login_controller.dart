@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/user_model.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
@@ -77,7 +79,87 @@ class LoginController extends GetxController {
   }
 
   Future<void> loginWithGoogle() async {
-    // Stub or implementation for Google Login if needed
+    isLoading.value = true;
+    update();
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User canceled Google sign in
+        isLoading.value = false;
+        update();
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      final User? firebaseUser = userCredential.user;
+
+      final String email = firebaseUser?.email ?? googleUser.email;
+      final String name =
+          firebaseUser?.displayName ?? googleUser.displayName ?? 'Google User';
+      final String? avatarUrl = firebaseUser?.photoURL ?? googleUser.photoUrl;
+      final String googleId = googleUser.id;
+
+      try {
+        final response = await ApiService().googleLogin(
+          email: email,
+          name: name,
+          googleId: googleId,
+          avatarUrl: avatarUrl,
+        );
+
+        if ((response.statusCode == 200 || response.statusCode == 201) &&
+            response.data != null) {
+          final token = response.data['token'];
+          final userJson = response.data['user'];
+          if (token != null && userJson != null) {
+            final user =
+                UserModel.fromJson(Map<String, dynamic>.from(userJson));
+            await AuthService().saveToken(token.toString());
+            await AuthService().saveUser(user);
+            Get.offAllNamed(Routes.home);
+            isLoading.value = false;
+            update();
+            return;
+          }
+        }
+      } catch (apiErr) {
+        log('Backend googleLogin failed, falling back to local session: $apiErr');
+      }
+
+      final fallbackUser = UserModel(
+        id: googleId.hashCode.abs(),
+        name: name,
+        email: email,
+        avatarUrl: avatarUrl,
+      );
+      await AuthService().saveToken('google_token_$googleId');
+      await AuthService().saveUser(fallbackUser);
+      Get.offAllNamed(Routes.home);
+    } catch (e) {
+      log('Google Login Error: $e');
+      AlertHelper.showMsg(
+        title: 'Google Sign-In Failed',
+        msg: 'Failed to sign in with Google. Please try again.',
+        isError: true,
+        isWarning: false,
+        onTop: true,
+      );
+    }
+
+    isLoading.value = false;
+    update();
   }
 
   Future<bool> validateForm() async {

@@ -72,15 +72,32 @@ class _RecordViewState extends State<RecordView> {
                             borderRadius: BorderRadius.circular(
                                 CustomRadius.defaultRadius * 5),
                           ),
-                          child: Text(
-                            date.day.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: ThemeColor.primary,
-                                  fontWeight: FontWeight.w600,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                date.day.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: ThemeColor.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              if (state.listMood.any((m) =>
+                                  m != null &&
+                                  m.menstrualLog != null &&
+                                  isSameDay(m.createdAt, date)))
+                                const Positioned(
+                                  bottom: 2,
+                                  child: Icon(
+                                    Icons.water_drop,
+                                    size: 10,
+                                    color: ThemeColor.purple_400,
+                                  ),
                                 ),
+                            ],
                           ),
                         ),
                         todayBuilder: (context, date, events) => Container(
@@ -91,17 +108,66 @@ class _RecordViewState extends State<RecordView> {
                             borderRadius: BorderRadius.circular(
                                 CustomRadius.defaultRadius * 5),
                           ),
-                          child: Text(
-                            date.day.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: ThemeColor.primary,
-                                  fontWeight: FontWeight.w600,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                date.day.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: ThemeColor.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              if (state.listMood.any((m) =>
+                                  m != null &&
+                                  m.menstrualLog != null &&
+                                  isSameDay(m.createdAt, date)))
+                                const Positioned(
+                                  bottom: 2,
+                                  child: Icon(
+                                    Icons.water_drop,
+                                    size: 10,
+                                    color: ThemeColor.purple_400,
+                                  ),
                                 ),
+                            ],
                           ),
                         ),
+                        defaultBuilder: (context, date, events) {
+                          final hasMenstrual = state.listMood.any((m) =>
+                              m != null &&
+                              m.menstrualLog != null &&
+                              isSameDay(m.createdAt, date));
+                          if (hasMenstrual) {
+                            return Container(
+                              margin: const EdgeInsets.all(4.0),
+                              alignment: Alignment.center,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    date.day.toString(),
+                                    style: const TextStyle(
+                                      color: ThemeColor.white,
+                                    ),
+                                  ),
+                                  const Positioned(
+                                    bottom: 2,
+                                    child: Icon(
+                                      Icons.water_drop,
+                                      size: 10,
+                                      color: ThemeColor.secondary_200,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return null;
+                        },
                       ),
                       startingDayOfWeek: StartingDayOfWeek.monday,
                       headerStyle: const HeaderStyle(
@@ -358,6 +424,7 @@ class _RecordViewState extends State<RecordView> {
                                       desc: record?.note ?? '',
                                       mood: record?.mood,
                                       time: record?.createdAt.toTimeString(),
+                                      menstrualLog: record?.menstrualLog,
                                     ),
                                   ),
                                   const SizedBox(height: Spacing.spacing * 3),

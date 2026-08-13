@@ -1,3 +1,4 @@
+import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 
 class MoodModel {
@@ -8,6 +9,7 @@ class MoodModel {
   final String title;
   final String userId;
   final dynamic id;
+  final MenstrualLogModel? menstrualLog;
 
   MoodModel({
     required this.mood,
@@ -17,6 +19,7 @@ class MoodModel {
     required this.title,
     required this.userId,
     this.id,
+    this.menstrualLog,
   });
 
   factory MoodModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +46,12 @@ class MoodModel {
       parsedMood = MoodConditions.happy;
     }
 
+    MenstrualLogModel? parsedMenstrualLog;
+    if (json['menstrual_log'] != null && json['menstrual_log'] is Map<String, dynamic>) {
+      parsedMenstrualLog =
+          MenstrualLogModel.fromJson(Map<String, dynamic>.from(json['menstrual_log']));
+    }
+
     return MoodModel(
       id: json['id'],
       mood: parsedMood,
@@ -51,6 +60,7 @@ class MoodModel {
       note: json['note'] ?? '',
       title: json['title'] ?? '',
       userId: json['user_id']?.toString() ?? '',
+      menstrualLog: parsedMenstrualLog,
     );
   }
 
@@ -63,6 +73,7 @@ class MoodModel {
       'note': note,
       'title': title,
       'user_id': userId,
+      if (menstrualLog != null) 'menstrual_log': menstrualLog!.toJson(),
     };
   }
 
@@ -74,6 +85,7 @@ class MoodModel {
     String? title,
     String? userId,
     dynamic id,
+    MenstrualLogModel? menstrualLog,
   }) {
     return MoodModel(
       mood: mood ?? this.mood,
@@ -83,6 +95,7 @@ class MoodModel {
       title: title ?? this.title,
       userId: userId ?? this.userId,
       id: id ?? this.id,
+      menstrualLog: menstrualLog ?? this.menstrualLog,
     );
   }
 }
