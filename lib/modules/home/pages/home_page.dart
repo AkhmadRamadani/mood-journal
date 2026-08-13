@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/modules/record/views/add_menstrual_log_view.dart';
-import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/icons/custom_icon.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -51,22 +51,7 @@ class HomePage extends StatelessWidget {
             InkWell(
               onTap: () async {
                 Get.back();
-                await Get.bottomSheet(
-                  GetBuilder<RecordController>(
-                    init: RecordController(),
-                    builder: (state) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: Get.height / 1.2,
-                        child: const AddMood(),
-                      );
-                    },
-                  ),
-                  isScrollControlled: true,
-                  enableDrag: true,
-                );
+                await Get.toNamed(Routes.addMood);
                 if (controller.currentPageIndex.value == 0) {
                   DashboardController.to.refresh();
                 } else if (controller.currentPageIndex.value == 1) {
@@ -109,14 +94,7 @@ class HomePage extends StatelessWidget {
             InkWell(
               onTap: () async {
                 Get.back();
-                await Get.bottomSheet(
-                  SizedBox(
-                    height: Get.height / 1.2,
-                    child: const AddMenstrualLogView(),
-                  ),
-                  isScrollControlled: true,
-                  enableDrag: true,
-                );
+                await Get.to(() => const AddMenstrualLogView());
                 if (controller.currentPageIndex.value == 0) {
                   DashboardController.to.refresh();
                 } else if (controller.currentPageIndex.value == 1) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
+import 'package:moodie/modules/record/views/mood_detail_view.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -292,137 +293,11 @@ class _RecordViewState extends State<RecordView> {
                               ] else ...[
                                 for (var record in state.listMood) ...[
                                   GestureDetector(
-                                    onLongPress: () {
-                                      Get.bottomSheet(
-                                        Container(
-                                          padding: const EdgeInsets.all(
-                                              Spacing.spacing * 3),
-                                          decoration: const BoxDecoration(
-                                            color: ThemeColor.background,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(
-                                                  CustomRadius.defaultRadius),
-                                              topRight: Radius.circular(
-                                                  CustomRadius.defaultRadius),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                'Delete Record'.tr,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium!
-                                                    .copyWith(
-                                                      color: ThemeColor
-                                                          .neutral_900,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                              ),
-                                              const SizedBox(
-                                                  height: Spacing.spacing * 3),
-                                              Text(
-                                                'Are you sure you want to delete this record?'
-                                                    .tr,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium!
-                                                    .copyWith(
-                                                      color: ThemeColor
-                                                          .neutral_600,
-                                                    ),
-                                              ),
-                                              const SizedBox(
-                                                  height: Spacing.spacing * 3),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Get.back();
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: Spacing
-                                                                      .spacing *
-                                                                  2,
-                                                              vertical: Spacing
-                                                                  .spacing),
-                                                      decoration: BoxDecoration(
-                                                        color: ThemeColor
-                                                            .neutral_200,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          CustomRadius
-                                                              .defaultRadius,
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                        'Cancel'.tr,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium!
-                                                            .copyWith(
-                                                              color: ThemeColor
-                                                                  .neutral_600,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      Get.back();
-                                                      await state
-                                                          .deleteMood(record!);
-                                                      state.update(['record']);
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: Spacing
-                                                                      .spacing *
-                                                                  2,
-                                                              vertical: Spacing
-                                                                  .spacing),
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            ThemeColor.primary,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          CustomRadius
-                                                              .defaultRadius,
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                        'Delete'.tr,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium!
-                                                            .copyWith(
-                                                              color: ThemeColor
-                                                                  .neutral_200,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: Spacing.spacing * 2,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
+                                    onTap: () {
+                                      if (record != null) {
+                                        Get.to(() =>
+                                            MoodDetailView(record: record));
+                                      }
                                     },
                                     child: RecordCard(
                                       type: 0,
@@ -434,6 +309,12 @@ class _RecordViewState extends State<RecordView> {
                                       mood: record?.mood,
                                       time: record?.createdAt.toTimeString(),
                                       menstrualLog: record?.menstrualLog,
+                                      onTap: () {
+                                        if (record != null) {
+                                          Get.to(() =>
+                                              MoodDetailView(record: record));
+                                        }
+                                      },
                                     ),
                                   ),
                                   const SizedBox(height: Spacing.spacing * 3),

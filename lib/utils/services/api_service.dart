@@ -130,7 +130,7 @@ class ApiService {
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://0feb-103-156-227-0.ngrok-free.app/api',
+        baseUrl: 'https://ef40-103-156-227-0.ngrok-free.app/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -705,12 +705,14 @@ class ApiService {
   Future<Response> storeMood({
     required String mood,
     required String emotions,
+    double? intensity,
     String? title,
     String? note,
   }) async {
     return await dio.post('/moods', data: {
       'mood': mood,
       'emotions': emotions,
+      if (intensity != null) 'intensity': intensity,
       if (title != null) 'title': title,
       if (note != null) 'note': note,
     });
@@ -724,12 +726,14 @@ class ApiService {
     required dynamic id,
     String? mood,
     String? emotions,
+    double? intensity,
     String? title,
     String? note,
   }) async {
     return await dio.put('/moods/$id', data: {
       if (mood != null) 'mood': mood,
       if (emotions != null) 'emotions': emotions,
+      if (intensity != null) 'intensity': intensity,
       if (title != null) 'title': title,
       if (note != null) 'note': note,
     });

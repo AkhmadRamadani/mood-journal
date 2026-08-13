@@ -15,6 +15,7 @@ class RecordCard extends StatefulWidget {
   final String? title, desc, time, date, emotions;
   final MoodConditions? mood;
   final MenstrualLogModel? menstrualLog;
+  final VoidCallback? onTap;
 
   const RecordCard({
     Key? key,
@@ -27,6 +28,7 @@ class RecordCard extends StatefulWidget {
     this.mood,
     this.emotions,
     this.menstrualLog,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -53,6 +55,9 @@ class _RecordCardState extends State<RecordCard> {
         setState(() {
           _isExpanded = !_isExpanded;
         });
+        if (widget.onTap != null) {
+          widget.onTap!();
+        }
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

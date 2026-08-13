@@ -96,6 +96,7 @@ class RecordRepository {
   Future<bool> storeMood({
     required String mood,
     required String emotions,
+    double? intensity,
     String? title,
     String? note,
   }) async {
@@ -103,12 +104,37 @@ class RecordRepository {
       final response = await _apiService.storeMood(
         mood: mood,
         emotions: emotions,
+        intensity: intensity,
         title: title,
         note: note,
       );
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (error) {
       log('RecordRepository storeMood error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> updateMood({
+    required dynamic id,
+    String? mood,
+    String? emotions,
+    double? intensity,
+    String? title,
+    String? note,
+  }) async {
+    try {
+      final response = await _apiService.updateMood(
+        id: id,
+        mood: mood,
+        emotions: emotions,
+        intensity: intensity,
+        title: title,
+        note: note,
+      );
+      return response.statusCode == 200;
+    } catch (error) {
+      log('RecordRepository updateMood error: $error');
       return false;
     }
   }
