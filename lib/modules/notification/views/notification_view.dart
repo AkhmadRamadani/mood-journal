@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/firebase_notif_model.dart';
 import 'package:moodie/modules/notification/controllers/notification_controller.dart';
-import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/radius.dart';
 import 'package:moodie/shared/themes/spacing.dart';
@@ -205,15 +204,7 @@ class NotificationView extends StatelessWidget {
     if (notif.topic == 'drinkReminder') {
       await Get.toNamed(Routes.hydrate);
     } else if (notif.topic == 'fillJournal') {
-      await Get.bottomSheet(
-        Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-          height: Get.height / 1.2,
-          child: const AddMood(),
-        ),
-        isScrollControlled: true,
-        enableDrag: true,
-      );
+      await Get.toNamed(Routes.addMood);
     }
 
     // Mark as read in background — don't block the UI

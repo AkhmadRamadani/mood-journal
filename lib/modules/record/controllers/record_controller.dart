@@ -20,7 +20,9 @@ class RecordController extends GetxController {
 
   MoodConditions? mood;
   String? note;
-  String emotions = '';
+  double intensity = 0.5;
+  List<String> selectedEmotions = [];
+  String get emotions => selectedEmotions.join(', ');
   String? title;
 
   TextEditingController noteController = TextEditingController();
@@ -39,9 +41,55 @@ class RecordController extends GetxController {
     update(['mood']);
   }
 
-  void setEmotions(String emotions) {
-    this.emotions = emotions;
+  void setIntensity(double val) {
+    intensity = val;
+    update(['intensity']);
+  }
+
+  void toggleEmotion(String emotion) {
+    if (selectedEmotions.contains(emotion)) {
+      selectedEmotions.remove(emotion);
+    } else {
+      selectedEmotions.add(emotion);
+    }
     update(['emotions']);
+  }
+
+  void setEmotions(String emotionsStr) {
+    if (emotionsStr.isEmpty) {
+      selectedEmotions.clear();
+    } else {
+      selectedEmotions = emotionsStr
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    update(['emotions']);
+  }
+
+  MoodModel? editingMoodModel;
+
+  void initEditMood(MoodModel moodModel) {
+    editingMoodModel = moodModel;
+    mood = moodModel.mood;
+    intensity = moodModel.intensity;
+    setEmotions(moodModel.emotions);
+    titleController.text = moodModel.title;
+    noteController.text = moodModel.note;
+    update(['mood', 'intensity', 'emotions']);
+  }
+
+  void resetForm() {
+    editingMoodModel = null;
+    noteController.clear();
+    titleController.clear();
+    mood = null;
+    intensity = 0.5;
+    selectedEmotions.clear();
+    note = null;
+    title = null;
+    update(['mood', 'intensity', 'emotions']);
   }
 
   Future<void> addMood() async {
@@ -50,45 +98,57 @@ class RecordController extends GetxController {
     update(['addMood']);
 
     try {
-      final success = await _recordRepository.storeMood(
-        mood: mood!.name,
-        emotions: emotions,
-        title: titleController.text,
-        note: noteController.text,
-      );
+      final isEditing = editingMoodModel != null;
+      final bool success;
+
+      if (isEditing) {
+        success = await _recordRepository.updateMood(
+          id: editingMoodModel!.id,
+          mood: mood!.name,
+          emotions: emotions,
+          intensity: intensity,
+          title: titleController.text,
+          note: noteController.text,
+        );
+      } else {
+        success = await _recordRepository.storeMood(
+          mood: mood!.name,
+          emotions: emotions,
+          intensity: intensity,
+          title: titleController.text,
+          note: noteController.text,
+        );
+      }
 
       if (success) {
-        // reset form
-        noteController.clear();
-        titleController.clear();
-        mood = null;
-        emotions = '';
-        note = null;
-        title = null;
-
-        Get.close(2);
+        resetForm();
+        Get.back();
         AlertHelper.showMsg(
-          title: "Success to add mood",
-          msg: "Your mood has been added, thank you. Enjoy your day!",
+          title: isEditing ? "Success to update mood" : "Success to add mood",
+          msg: isEditing
+              ? "Your mood entry has been updated."
+              : "Your mood has been added, thank you. Enjoy your day!",
         );
 
-        DashboardController.to.refresh();
-        GamificationController.to.refreshProfile();
+        await getMoodByDate();
+        if (Get.isRegistered<DashboardController>()) {
+          DashboardController.to.refresh();
+        }
+        if (Get.isRegistered<GamificationController>()) {
+          GamificationController.to.refreshProfile();
+        }
       } else {
-        throw Exception("Failed to store mood");
+        throw Exception(
+            isEditing ? "Failed to update mood" : "Failed to store mood");
       }
     } catch (error) {
       log(error.toString());
-      // reset form
-      noteController.clear();
-      titleController.clear();
-      mood = null;
-      emotions = '';
-      note = null;
-      title = null;
-      Get.close(2);
+      resetForm();
+      Get.back();
       AlertHelper.showMsg(
-        title: "Failed to add mood",
+        title: editingMoodModel != null
+            ? "Failed to update mood"
+            : "Failed to add mood",
         msg: "Something went wrong, please try again later.",
         isError: true,
       );

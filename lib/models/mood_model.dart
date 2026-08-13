@@ -5,6 +5,7 @@ import 'package:moodie/utils/extensions/date_extension.dart';
 class MoodModel {
   final MoodConditions mood;
   final String emotions;
+  final double intensity;
   final DateTime createdAt;
   final String note;
   final String title;
@@ -15,6 +16,7 @@ class MoodModel {
   MoodModel({
     required this.mood,
     required this.emotions,
+    this.intensity = 0.5,
     required this.createdAt,
     required this.note,
     required this.title,
@@ -44,10 +46,20 @@ class MoodModel {
           Map<String, dynamic>.from(json['menstrual_log']));
     }
 
+    double parsedIntensity = 0.5;
+    if (json['intensity'] != null) {
+      if (json['intensity'] is num) {
+        parsedIntensity = (json['intensity'] as num).toDouble();
+      } else {
+        parsedIntensity = double.tryParse(json['intensity'].toString()) ?? 0.5;
+      }
+    }
+
     return MoodModel(
       id: json['id'],
       mood: parsedMood,
       emotions: json['emotions'] ?? '',
+      intensity: parsedIntensity,
       createdAt: parsedDate,
       note: json['note'] ?? '',
       title: json['title'] ?? '',
@@ -61,6 +73,7 @@ class MoodModel {
       if (id != null) 'id': id,
       'mood': mood.name,
       'emotions': emotions,
+      'intensity': intensity,
       'created_at': createdAt.toIso8601String(),
       'note': note,
       'title': title,
@@ -72,6 +85,7 @@ class MoodModel {
   MoodModel copyWith({
     MoodConditions? mood,
     String? emotions,
+    double? intensity,
     DateTime? createdAt,
     String? note,
     String? title,
@@ -82,6 +96,7 @@ class MoodModel {
     return MoodModel(
       mood: mood ?? this.mood,
       emotions: emotions ?? this.emotions,
+      intensity: intensity ?? this.intensity,
       createdAt: createdAt ?? this.createdAt,
       note: note ?? this.note,
       title: title ?? this.title,

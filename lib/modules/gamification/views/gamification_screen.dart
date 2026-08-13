@@ -47,7 +47,7 @@ class _GamificationScreenState extends State<GamificationScreen>
           onPressed: () => Get.back(),
         ),
         title: const Text(
-          'Gamification Hub',
+          'Journey',
           style: TextStyle(
             color: ThemeColor.neutral_900,
             fontWeight: FontWeight.bold,

@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/modules/record/repositories/menstrual_log_repository.dart';
 import 'package:moodie/modules/record/repositories/record_repository.dart';
-import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
 
@@ -107,6 +107,7 @@ class MenstrualLogController extends GetxController {
       if (model != null) {
         resetForm();
 
+        Get.back();
         AlertHelper.showMsg(
           title: "Success",
           msg: "Menstrual log entry created successfully.",
@@ -177,21 +178,8 @@ class MenstrualLogController extends GetxController {
       duration: const Duration(seconds: 3),
     );
 
-    // Open Add Mood bottom sheet
-    Get.bottomSheet(
-      GetBuilder<RecordController>(
-        init: RecordController(),
-        builder: (state) {
-          return Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            height: Get.height / 1.2,
-            child: const AddMood(),
-          );
-        },
-      ),
-      isScrollControlled: true,
-      enableDrag: true,
-    ).then((_) async {
+    // Open Add Mood full-page wizard
+    Get.toNamed(Routes.addMood)?.then((_) async {
       final recordCtrl = RecordController.to;
       if (recordCtrl.listMood.isNotEmpty) {
         final latestMood = recordCtrl.listMood.first;
