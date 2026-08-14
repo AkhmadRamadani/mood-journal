@@ -43,3 +43,46 @@ class ThemeColor {
 
   static const Color primaryColorDark = Color.fromRGBO(50, 48, 98, 1);
 }
+
+/// Generates a MaterialColor swatch from any single Color.
+MaterialColor generateMaterialColor(Color color) {
+  final int primaryValue = color.toARGB32();
+  final int r = (color.r * 255).round();
+  final int g = (color.g * 255).round();
+  final int b = (color.b * 255).round();
+
+  return MaterialColor(primaryValue, {
+    50: _tintColor(r, g, b, 0.9),
+    100: _tintColor(r, g, b, 0.8),
+    200: _tintColor(r, g, b, 0.6),
+    300: _tintColor(r, g, b, 0.4),
+    400: _tintColor(r, g, b, 0.2),
+    500: color,
+    600: _shadeColor(r, g, b, 0.1),
+    700: _shadeColor(r, g, b, 0.2),
+    800: _shadeColor(r, g, b, 0.3),
+    900: _shadeColor(r, g, b, 0.4),
+  });
+}
+
+/// Lighten toward white
+Color _tintColor(int r, int g, int b, double factor) => Color.fromRGBO(
+      _tintValue(r, factor),
+      _tintValue(g, factor),
+      _tintValue(b, factor),
+      1,
+    );
+
+int _tintValue(int value, double factor) =>
+    (value + ((255 - value) * factor)).round().clamp(0, 255);
+
+/// Darken toward black
+Color _shadeColor(int r, int g, int b, double factor) => Color.fromRGBO(
+      _shadeValue(r, factor),
+      _shadeValue(g, factor),
+      _shadeValue(b, factor),
+      1,
+    );
+
+int _shadeValue(int value, double factor) =>
+    (value - (value * factor)).round().clamp(0, 255);

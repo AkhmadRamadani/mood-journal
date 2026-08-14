@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:moodie/controllers/gamification_controller.dart';
+import 'package:moodie/modules/gamification/controllers/gamification_controller.dart';
 import 'package:moodie/models/badge_model.dart';
 import 'package:moodie/models/gamification_profile_model.dart';
 import 'package:moodie/models/challenge_model.dart';

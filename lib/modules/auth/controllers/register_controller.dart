@@ -11,7 +11,12 @@ import 'package:moodie/utils/services/api_service.dart';
 import 'package:moodie/utils/services/auth_service.dart';
 
 class RegisterController extends GetxController {
-  static RegisterController get to => Get.find();
+  static RegisterController get to {
+    if (!Get.isRegistered<RegisterController>()) {
+      return Get.put(RegisterController());
+    }
+    return Get.find<RegisterController>();
+  }
 
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();

@@ -1,15 +1,24 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:moodie/models/quore_response.dart';
 import 'package:moodie/models/user_model.dart';
 import 'package:moodie/modules/dashboard/repositories/dashboard_repository.dart';
+import 'package:moodie/modules/gamification/controllers/gamification_controller.dart';
 import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
+import 'package:moodie/utils/extensions/get_extension.dart';
 import 'package:moodie/utils/services/auth_service.dart';
+import 'package:moodie/utils/services/event_bus.dart';
 
 class DashboardController extends GetxController {
-  static DashboardController get to => Get.find();
+  static DashboardController get to {
+    if (!Get.isRegistered<DashboardController>()) {
+      return Get.put(DashboardController());
+    }
+    return Get.find<DashboardController>();
+  }
 
   final DashboardRepository _dashboardRepository =
       Get.find<DashboardRepository>();
@@ -29,6 +38,11 @@ class DashboardController extends GetxController {
   RxDouble waterPercentage = 0.0.obs;
   RxDouble dailyDrinkMean = 0.0.obs;
 
+  StreamSubscription? _waterSub;
+  StreamSubscription? _moodSub;
+  StreamSubscription? _gamificationSub;
+  StreamSubscription? _menstrualSub;
+
   String salute() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
@@ -42,20 +56,20 @@ class DashboardController extends GetxController {
 
   Future<void> setQuote() async {
     isLoading.value = true;
-    update(['quote']);
+    safeUpdate(['quote']);
     quoteResponse = await _dashboardRepository.getQuote();
     isLoading.value = false;
-    update(['quote']);
+    safeUpdate(['quote']);
   }
 
   Future<void> setLatestMood() async {
     latestMood = await _dashboardRepository.getLatestMood(
       onRefreshed: (fresh) {
         latestMood = fresh;
-        update(['latestMood']);
+        safeUpdate(['latestMood']);
       },
     );
-    update(['latestMood']);
+    safeUpdate(['latestMood']);
   }
 
   String latestMoodSubText() {
@@ -77,10 +91,10 @@ class DashboardController extends GetxController {
     biggestMood = await _dashboardRepository.getWeeklyMood(
       onRefreshed: (fresh) {
         biggestMood = fresh;
-        update(['biggestMood']);
+        safeUpdate(['biggestMood']);
       },
     );
-    update(['biggestMood']);
+    safeUpdate(['biggestMood']);
   }
 
   // biggestMood Text
@@ -111,7 +125,7 @@ class DashboardController extends GetxController {
 
     waterPercentage.value = (currentWater.value / targetWater.value * 100);
     log(waterPercentage.value.toString());
-    update(['water']);
+    safeUpdate(['water']);
   }
 
   String drinkTodaySubText() {
@@ -162,12 +176,12 @@ class DashboardController extends GetxController {
     dailyDrinkMean.value = (await _dashboardRepository.getDailyDrinkMean(
               onRefreshed: (fresh) {
                 dailyDrinkMean.value = (fresh ?? 0.0) / 1000;
-                update(['water']);
+                safeUpdate(['water']);
               },
             ) ??
             0.0) /
         1000;
-    update(['water']);
+    safeUpdate(['water']);
   }
 
   @override
@@ -176,15 +190,40 @@ class DashboardController extends GetxController {
     setBiggestMood();
     getDailyDrinkMean();
     setWaterPercentage();
+    GamificationController.to.refreshProfile();
   }
 
   @override
   void onInit() {
+    Get.put(GamificationController());
     setQuote();
     setLatestMood();
     setBiggestMood();
     setWaterPercentage();
     getDailyDrinkMean();
+
+    _waterSub = eventBus.on<WaterIntakeUpdatedEvent>().listen((_) {
+      setWaterPercentage();
+      getDailyDrinkMean();
+    });
+    _moodSub = eventBus.on<MoodLoggedEvent>().listen((_) {
+      setLatestMood();
+      setBiggestMood();
+    });
+    _gamificationSub = eventBus.on<GamificationUpdatedEvent>().listen((_) {});
+    _menstrualSub = eventBus.on<MenstrualLogUpdatedEvent>().listen((_) {
+      refresh();
+    });
+
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _waterSub?.cancel();
+    _moodSub?.cancel();
+    _gamificationSub?.cancel();
+    _menstrualSub?.cancel();
+    super.onClose();
   }
 }

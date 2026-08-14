@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodie/constants/asset_const.dart';
 import 'package:moodie/constants/routes.dart';
-import 'package:moodie/modules/auth/controllers/login_controller.dart';
+import 'package:moodie/modules/auth/controllers/forgot_password_controller.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
 import 'package:moodie/shared/widgets/text_field/custom_text_field.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+class ForgotPasswordView extends StatelessWidget {
+  const ForgotPasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = LoginController.to;
+    final controller = ForgotPasswordController.to;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Stack(
@@ -37,51 +36,50 @@ class LoginView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 74),
+                      Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 24),
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color:
+                                    Colors.black.withAlpha((0.3 * 255).toInt()),
+                                width: 0.4,
+                              ),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Center(
+                              child: IconButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                icon: const Icon(Icons.arrow_back),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
                       Text(
-                        "Welcome Back!",
+                        "Forgot Password?",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: SvgPicture.asset(
-                          AssetConst.sittingManSVG,
-                          height: 160,
+                      const SizedBox(height: 16),
+                      Text(
+                        "Enter your registered email address and we'll send you a link to reset your password.",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.black54,
                         ),
                       ),
                       const SizedBox(height: 32),
-
-                      // Google Sign-In
-                      CustomTextButton(
-                        onPressed: () {
-                          controller.loginWithGoogle();
-                        },
-                        title: "Sign in with Google",
-                        svgLocation: AssetConst.googleIc,
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Divider
-                      Row(
-                        children: [
-                          const Expanded(child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              "Or sign in with email",
-                              style: GoogleFonts.poppins(fontSize: 12),
-                            ),
-                          ),
-                          const Expanded(child: Divider()),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
 
                       // Email field
                       CustomTextField(
@@ -89,63 +87,34 @@ class LoginView extends StatelessWidget {
                         hintText: "Email",
                         keyboardType: TextInputType.emailAddress,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
-                      // Password field
-                      CustomTextField(
-                        controller: controller.passwordController,
-                        hintText: "Password",
-                        keyboardType: TextInputType.visiblePassword,
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      // Forgot password
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Get.toNamed(Routes.forgotPassword);
-                          },
-                          child: Text(
-                            "Forgot password?",
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: ThemeColor.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      // Sign in button
+                      // Submit button
                       CustomTextButton(
-                        title: "Sign In",
+                        title: "Send Reset Link",
                         onPressed: () {
-                          controller.login();
+                          controller.sendForgotPasswordLink();
                         },
                         textColor: Colors.white,
                         backgroundColor: ThemeColor.primary,
                       ),
-
                       const SizedBox(height: 24),
 
-                      // Sign up link
+                      // Back to login
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.register);
+                          Get.offAllNamed(Routes.login);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Don't have an account?",
+                              "Remember your password?",
                               style: GoogleFonts.poppins(fontSize: 12),
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              "Sign up",
+                              "Sign in",
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: ThemeColor.primary,
@@ -163,7 +132,7 @@ class LoginView extends StatelessWidget {
               ),
             ),
           ),
-          GetBuilder<LoginController>(
+          GetBuilder<ForgotPasswordController>(
             builder: (controller) {
               if (controller.isLoading.value) {
                 return Container(

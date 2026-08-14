@@ -15,9 +15,11 @@ class DashboardRepository {
 
   Future<QuoteResponse?> getQuote() async {
     try {
-      final response = await http.get(
-        Uri.parse('https://api.quotable.io/random?tags=happiness'),
-      );
+      final response = await http
+          .get(
+            Uri.parse('https://api.quotable.io/random?tags=happiness'),
+          )
+          .timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         return QuoteResponse.fromJson(jsonDecode(response.body));
       } else {

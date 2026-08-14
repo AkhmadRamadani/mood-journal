@@ -49,6 +49,25 @@ class ChallengeModel {
       return val.toString().toLowerCase() == 'true' || val.toString() == '1';
     }
 
+    final progressVal = parseInt(json['progress']);
+    final targetCountVal =
+        parseInt(json['target_count'] ?? json['targetCount']);
+    double pct =
+        parseDouble(json['progress_percentage'] ?? json['progressPercentage']);
+
+    if (pct > 1.0) {
+      pct = pct / 100.0;
+    }
+    if (pct == 0.0 && targetCountVal > 0 && progressVal > 0) {
+      pct = (progressVal / targetCountVal).clamp(0.0, 1.0);
+    }
+
+    bool completed = parseBool(
+        json['is_completed'] ?? json['isCompleted'] ?? json['completed']);
+    if (!completed && targetCountVal > 0 && progressVal >= targetCountVal) {
+      completed = true;
+    }
+
     return ChallengeModel(
       id: parseInt(json['id']),
       title: json['title'] ?? '',
@@ -56,14 +75,12 @@ class ChallengeModel {
       description: json['description'] ?? '',
       type: json['type'],
       targetType: json['target_type'] ?? json['targetType'],
-      targetCount: parseInt(json['target_count'] ?? json['targetCount']),
+      targetCount: targetCountVal,
       xpReward: parseInt(
           json['xp_reward'] ?? json['xpReward'] ?? json['points_reward']),
-      progress: parseInt(json['progress']),
-      progressPercentage: parseDouble(
-          json['progress_percentage'] ?? json['progressPercentage']),
-      isCompleted: parseBool(
-          json['is_completed'] ?? json['isCompleted'] ?? json['completed']),
+      progress: progressVal,
+      progressPercentage: pct,
+      isCompleted: completed,
       completedAt: json['completed_at'] ?? json['completedAt'],
     );
   }

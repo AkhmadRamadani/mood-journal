@@ -10,7 +10,7 @@ import 'package:moodie/utils/services/api_service.dart';
 class GamificationService {
   final ApiService _apiService = ApiService();
 
-  Future<GamificationProfileModel> fetchProfile({
+  Future<GamificationProfileModel?> fetchProfile({
     void Function(GamificationProfileModel fresh)? onRefreshed,
   }) async {
     try {
@@ -33,10 +33,10 @@ class GamificationService {
       if (result.isSuccess) {
         return result.data;
       }
-      throw Exception(result.failure.message);
+      return null;
     } catch (e) {
       log('Error fetching gamification profile: $e');
-      rethrow;
+      return null;
     }
   }
 
@@ -75,12 +75,13 @@ class GamificationService {
 
   Future<List<ChallengeModel>> fetchChallenges({
     void Function(List<ChallengeModel> fresh)? onRefreshed,
+    DataSource dataSource = DataSource.staleWhileRevalidate,
   }) async {
     try {
       final result = await _apiService.getData<List<ChallengeModel>>(
         uri: '/gamification/challenges',
         dbKey: 'gamification_challenges',
-        dataSource: DataSource.staleWhileRevalidate,
+        dataSource: dataSource,
         onRefreshed: onRefreshed,
         fromJson: (jsonStr) {
           final data = jsonDecode(jsonStr);

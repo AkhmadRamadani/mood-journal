@@ -6,10 +6,12 @@ class Routes {
   static const String home = '/home';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
 
   static const String onBoarding = '/onboarding';
 
   static const String showProfile = '/show-profile';
+  static const String changePassword = '/change-password';
   static const String addMood = '/add-mood';
   static const String helpProfile = '/help-profile';
   static const String privacyPolice = '/privacy-police';

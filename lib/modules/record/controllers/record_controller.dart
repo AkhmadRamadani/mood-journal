@@ -2,18 +2,22 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:moodie/controllers/gamification_controller.dart';
 import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/models/user_model.dart';
-import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:moodie/modules/record/controllers/year_in_pixels_controller.dart';
 import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
+import 'package:moodie/utils/extensions/get_extension.dart';
 import 'package:moodie/utils/services/auth_service.dart';
+import 'package:moodie/utils/services/event_bus.dart';
 
 class RecordController extends GetxController {
-  static RecordController get to => Get.put(RecordController());
+  static RecordController get to {
+    if (!Get.isRegistered<RecordController>()) {
+      return Get.put(RecordController());
+    }
+    return Get.find<RecordController>();
+  }
 
   final RecordRepository _recordRepository = Get.find<RecordRepository>();
 
@@ -39,12 +43,12 @@ class RecordController extends GetxController {
 
   void setMood(MoodConditions mood) {
     this.mood = mood;
-    update(['mood']);
+    safeUpdate(['mood']);
   }
 
   void setIntensity(double val) {
     intensity = val;
-    update(['intensity']);
+    safeUpdate(['intensity']);
   }
 
   void toggleEmotion(String emotion) {
@@ -53,7 +57,7 @@ class RecordController extends GetxController {
     } else {
       selectedEmotions.add(emotion);
     }
-    update(['emotions']);
+    safeUpdate(['emotions']);
   }
 
   void setEmotions(String emotionsStr) {
@@ -66,7 +70,7 @@ class RecordController extends GetxController {
           .where((e) => e.isNotEmpty)
           .toList();
     }
-    update(['emotions']);
+    safeUpdate(['emotions']);
   }
 
   MoodModel? editingMoodModel;
@@ -78,7 +82,7 @@ class RecordController extends GetxController {
     setEmotions(moodModel.emotions);
     titleController.text = moodModel.title;
     noteController.text = moodModel.note;
-    update(['mood', 'intensity', 'emotions']);
+    safeUpdate(['mood', 'intensity', 'emotions']);
   }
 
   void resetForm() {
@@ -90,13 +94,13 @@ class RecordController extends GetxController {
     selectedEmotions.clear();
     note = null;
     title = null;
-    update(['mood', 'intensity', 'emotions']);
+    safeUpdate(['mood', 'intensity', 'emotions']);
   }
 
   Future<void> addMood() async {
     isLoadingInsert.value = true;
     isLoadingInsert = true.obs;
-    update(['addMood']);
+    safeUpdate(['addMood']);
 
     try {
       final isEditing = editingMoodModel != null;
@@ -133,16 +137,7 @@ class RecordController extends GetxController {
         );
 
         await getMoodByDate();
-        if (Get.isRegistered<DashboardController>()) {
-          DashboardController.to.refresh();
-        }
-        if (Get.isRegistered<GamificationController>()) {
-          GamificationController.to.refreshProfile();
-        }
-        if (Get.isRegistered<YearInPixelsController>()) {
-          YearInPixelsController.to
-              .loadYear(YearInPixelsController.to.selectedYear.value);
-        }
+        eventBus.fire(const MoodLoggedEvent());
       } else {
         throw Exception(
             isEditing ? "Failed to update mood" : "Failed to store mood");
@@ -161,14 +156,14 @@ class RecordController extends GetxController {
     }
     isLoadingInsert.value = false;
     isLoadingInsert = false.obs;
-    update(['addMood']);
+    safeUpdate(['addMood']);
   }
 
   // get list mood based on date via repository
   Future<void> getMoodByDate() async {
     isLoading.value = true;
     isLoading = true.obs;
-    update(['record']);
+    safeUpdate(['record']);
     listMood.clear();
 
     try {
@@ -176,7 +171,7 @@ class RecordController extends GetxController {
         selectedDate,
         onRefreshed: (fresh) {
           listMood.assignAll(fresh);
-          update(['record']);
+          safeUpdate(['record']);
         },
       );
       listMood.assignAll(moods);
@@ -189,7 +184,7 @@ class RecordController extends GetxController {
       );
     }
     isLoading.value = false;
-    update(['record']);
+    safeUpdate(['record']);
     fetchWeeklyMoods();
   }
 
@@ -204,11 +199,11 @@ class RecordController extends GetxController {
         sunday,
         onRefreshed: (fresh) {
           weeklyMoods.assignAll(fresh);
-          update(['calendar']);
+          safeUpdate(['calendar']);
         },
       );
       weeklyMoods.assignAll(moods);
-      update(['calendar']);
+      safeUpdate(['calendar']);
     } catch (e) {
       log('Error fetching weekly moods: $e');
     }
@@ -218,13 +213,14 @@ class RecordController extends GetxController {
   Future<void> deleteMood(MoodModel moodModel) async {
     isLoading.value = true;
     isLoading = true.obs;
-    update(['record']);
+    safeUpdate(['record']);
 
     try {
       final success = await _recordRepository.deleteMood(moodModel.id);
       if (success) {
         listMood.remove(moodModel);
         weeklyMoods.removeWhere((m) => m.id == moodModel.id);
+        eventBus.fire(const MoodLoggedEvent());
         AlertHelper.showMsg(
           title: "Success to delete mood",
           msg: "Your mood has been deleted.",
@@ -241,7 +237,7 @@ class RecordController extends GetxController {
       );
     }
     isLoading.value = false;
-    update(['record', 'calendar']);
+    safeUpdate(['record', 'calendar']);
   }
 
   @override

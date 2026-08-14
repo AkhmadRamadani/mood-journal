@@ -11,7 +11,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
   final int currentIndex;
 
   @override
-  _CustomBottomNavigationBarState createState() =>
+  State<CustomBottomNavigationBar> createState() =>
       _CustomBottomNavigationBarState();
 }
 

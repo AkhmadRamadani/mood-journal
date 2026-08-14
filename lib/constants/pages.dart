@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
+import 'package:moodie/modules/auth/controllers/forgot_password_controller.dart';
 import 'package:moodie/modules/auth/controllers/login_controller.dart';
 import 'package:moodie/modules/auth/controllers/register_controller.dart';
+import 'package:moodie/modules/auth/views/forgot_password_view.dart';
 import 'package:moodie/modules/auth/views/login_view.dart';
 import 'package:moodie/modules/auth/views/on_boarding_view.dart';
 import 'package:moodie/modules/auth/views/register_view.dart';
@@ -10,6 +12,8 @@ import 'package:moodie/modules/home/pages/home_page.dart';
 import 'package:moodie/modules/gamification/views/gamification_screen.dart';
 import 'package:moodie/modules/hydrate/controllers/hydrate_controller.dart';
 import 'package:moodie/modules/hydrate/views/hydrate_view.dart';
+import 'package:moodie/modules/profile/controllers/change_password_controller.dart';
+import 'package:moodie/modules/profile/views/change_password_view.dart';
 import 'package:moodie/modules/profile/views/show_profile.dart';
 import 'package:moodie/modules/profile/views/help_profile.dart';
 import 'package:moodie/modules/profile/views/privacy_police.dart';
@@ -52,6 +56,13 @@ class Pages {
         }),
       ),
       GetPage(
+        name: Routes.forgotPassword,
+        page: () => const ForgotPasswordView(),
+        binding: BindingsBuilder(() {
+          Get.put(ForgotPasswordController());
+        }),
+      ),
+      GetPage(
         name: Routes.home,
         page: () => const HomePage(),
         binding: BindingsBuilder(() {
@@ -61,6 +72,13 @@ class Pages {
       GetPage(
         name: Routes.showProfile,
         page: () => const ShowProfile(),
+      ),
+      GetPage(
+        name: Routes.changePassword,
+        page: () => const ChangePasswordView(),
+        binding: BindingsBuilder(() {
+          Get.put(ChangePasswordController());
+        }),
       ),
       GetPage(
         name: Routes.addMood,
