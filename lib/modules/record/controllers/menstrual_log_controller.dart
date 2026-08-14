@@ -5,16 +5,20 @@ import 'package:get/get.dart';
 import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/models/mood_model.dart';
-import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
-import 'package:moodie/modules/record/controllers/year_in_pixels_controller.dart';
 import 'package:moodie/modules/record/repositories/menstrual_log_repository.dart';
 import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
+import 'package:moodie/utils/services/event_bus.dart';
 
 class MenstrualLogController extends GetxController {
-  static MenstrualLogController get to => Get.put(MenstrualLogController());
+  static MenstrualLogController get to {
+    if (!Get.isRegistered<MenstrualLogController>()) {
+      return Get.put(MenstrualLogController());
+    }
+    return Get.find<MenstrualLogController>();
+  }
 
   final RecordRepository _recordRepository = Get.find<RecordRepository>();
   final MenstrualLogRepository _menstrualLogRepository =
@@ -114,16 +118,7 @@ class MenstrualLogController extends GetxController {
           msg: "Menstrual log entry created successfully.",
         );
 
-        if (Get.isRegistered<DashboardController>()) {
-          DashboardController.to.refresh();
-        }
-        if (Get.isRegistered<RecordController>()) {
-          RecordController.to.refresh();
-        }
-        if (Get.isRegistered<YearInPixelsController>()) {
-          YearInPixelsController.to
-              .loadYear(YearInPixelsController.to.selectedYear.value);
-        }
+        eventBus.fire(const MenstrualLogUpdatedEvent());
 
         isLoading.value = false;
         update(['menstrual_form']);
@@ -201,10 +196,7 @@ class MenstrualLogController extends GetxController {
             note: draftNote.isNotEmpty ? draftNote : null,
           );
           resetForm();
-          if (Get.isRegistered<DashboardController>()) {
-            DashboardController.to.refresh();
-          }
-          recordCtrl.refresh();
+          eventBus.fire(const MenstrualLogUpdatedEvent());
         }
       }
     });

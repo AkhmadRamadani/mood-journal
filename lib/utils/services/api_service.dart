@@ -130,7 +130,7 @@ class ApiService {
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://dc11-103-19-231-218.ngrok-free.app/api',
+        baseUrl: 'https://2b0b-103-156-227-0.ngrok-free.app/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -627,12 +627,54 @@ class ApiService {
     });
   }
 
+  Future<Response> forgotPassword({
+    required String email,
+  }) async {
+    return await dio.post('/forgot-password', data: {
+      'email': email,
+    });
+  }
+
+  Future<Response> resetPassword({
+    required String email,
+    required String token,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    return await dio.post('/reset-password', data: {
+      'email': email,
+      'token': token,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    });
+  }
+
   Future<Response> logout() async {
     return await dio.post('/logout');
   }
 
   Future<Response> getUser() async {
     return await dio.get('/user');
+  }
+
+  Future<Response> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    return await dio.put('/user/password', data: {
+      'current_password': currentPassword,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    });
+  }
+
+  Future<Response> deleteUserAccount({
+    required String password,
+  }) async {
+    return await dio.delete('/user', data: {
+      'password': password,
+    });
   }
 
   Future<Response> updateProfile({

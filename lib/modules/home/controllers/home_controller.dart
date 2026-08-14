@@ -7,6 +7,7 @@ import 'package:moodie/constants/routes.dart';
 import 'package:moodie/models/notification_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/dashboard/views/dashboard_view.dart';
+import 'package:moodie/modules/gamification/controllers/gamification_controller.dart';
 import 'package:moodie/modules/notification/controllers/notification_controller.dart';
 import 'package:moodie/modules/notification/views/notification_view.dart';
 import 'package:moodie/modules/profile/views/profile_view.dart';
@@ -16,6 +17,8 @@ import 'package:moodie/shared/widgets/buttons/custom_text_button.dart';
 import 'package:moodie/utils/services/notifcation_service.dart';
 
 class HomeController extends GetxController {
+  static HomeController get to => Get.find<HomeController>();
+
   List<NotifcationModel> timeToDrinkWater = [
     NotifcationModel(
         id: 1,
@@ -91,12 +94,13 @@ class HomeController extends GetxController {
           ),
         )),
   ];
-  RecordController recordController = Get.put(RecordController());
-  NotificationController notificationController =
-      Get.put(NotificationController());
+  RecordController get recordController => RecordController.to;
+  NotificationController get notificationController =>
+      NotificationController.to;
 
   void setPageIndex(int index) {
     currentPageIndex.value = index;
+    update();
 
     if (index == 0) {
       DashboardController.to.refresh();
@@ -119,6 +123,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     log("initialize");
-    // setDrinkWaterReminder();
+    Get.put(GamificationController());
   }
 }

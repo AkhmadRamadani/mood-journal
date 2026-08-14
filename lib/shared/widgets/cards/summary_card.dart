@@ -73,8 +73,12 @@ class SummaryCard extends StatelessWidget {
                 child: CircularPercentIndicator(
                   radius: Spacing.spacing * 8,
                   lineWidth: Spacing.spacing,
-                  animation: true,
-                  percent: chartVal ?? 0.0,
+                  animation: false,
+                  percent: (chartVal == null ||
+                          chartVal!.isNaN ||
+                          chartVal!.isInfinite)
+                      ? 0.0
+                      : chartVal!.clamp(0.0, 1.0),
                   center: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

@@ -3,13 +3,18 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodie/constants/asset_const.dart';
-import 'package:moodie/controllers/gamification_controller.dart';
 import 'package:moodie/modules/hydrate/models/cup_choice.dart';
 import 'package:moodie/modules/hydrate/repositories/hydrate_repository.dart';
+import 'package:moodie/utils/services/event_bus.dart';
 import 'package:moodie/utils/services/local_db_service.dart';
 
 class HydrateController extends GetxController {
-  static HydrateController get to => Get.find();
+  static HydrateController get to {
+    if (!Get.isRegistered<HydrateController>()) {
+      return Get.put(HydrateController());
+    }
+    return Get.find<HydrateController>();
+  }
 
   RxInt currentWater = 0.obs;
   RxInt targetWater = 0.obs;
@@ -85,6 +90,10 @@ class HydrateController extends GetxController {
     setPercentage();
     setHeightPercentages();
     if (isSuccess) {
+      eventBus.fire(WaterIntakeUpdatedEvent(
+        drinkAmount: currentWater.value,
+        targetAmount: targetWater.value,
+      ));
       Get.back();
     } else {
       Get.snackbar("Error", "Failed to add target");
@@ -173,11 +182,10 @@ class HydrateController extends GetxController {
       setRemainingWater();
       setPercentage();
       setHeightPercentages();
-      try {
-        GamificationController.to.refreshProfile();
-      } catch (e) {
-        log('Error refreshing gamification profile from hydrate: $e');
-      }
+      eventBus.fire(WaterIntakeUpdatedEvent(
+        drinkAmount: currentWater.value,
+        targetAmount: targetWater.value,
+      ));
       update();
     }
   }

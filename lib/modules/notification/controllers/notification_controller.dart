@@ -8,7 +8,12 @@ import 'package:moodie/models/user_model.dart';
 import 'package:moodie/utils/services/auth_service.dart';
 
 class NotificationController extends GetxController {
-  static NotificationController get to => Get.find();
+  static NotificationController get to {
+    if (!Get.isRegistered<NotificationController>()) {
+      return Get.put(NotificationController());
+    }
+    return Get.find<NotificationController>();
+  }
 
   UserModel? get user => AuthService().getUser();
 

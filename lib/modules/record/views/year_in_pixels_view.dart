@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:moodie/models/cycle_stats_model.dart';
 import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/modules/record/controllers/menstrual_log_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
@@ -11,6 +12,7 @@ import 'package:moodie/modules/record/views/mood_wizard_view.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
+import 'package:moodie/utils/helpers/phase_predictor.dart';
 
 class YearInPixelsView extends StatefulWidget {
   const YearInPixelsView({Key? key}) : super(key: key);
@@ -25,7 +27,7 @@ class YearInPixelsView extends StatefulWidget {
   };
 
   static const _emptyColor = Color(0xFFE2E8F0);
-  static const _periodOnlyColor = Color(0xFFF8BBD0); // Soft Rose Pink
+  static const _periodOnlyColor = Color(0xFFE53935); // Vibrant Red
 
   static const _months = [
     'January',
@@ -42,21 +44,6 @@ class YearInPixelsView extends StatefulWidget {
     'December',
   ];
 
-  static const _shortMonths = [
-    'J',
-    'F',
-    'M',
-    'A',
-    'M',
-    'J',
-    'J',
-    'A',
-    'S',
-    'O',
-    'N',
-    'D',
-  ];
-
   @override
   State<YearInPixelsView> createState() => _YearInPixelsViewState();
 }
@@ -64,7 +51,7 @@ class YearInPixelsView extends StatefulWidget {
 class _YearInPixelsViewState extends State<YearInPixelsView> {
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(YearInPixelsController());
+    final controller = YearInPixelsController.to;
 
     return Scaffold(
       backgroundColor: ThemeColor.primary,
@@ -91,7 +78,7 @@ class _YearInPixelsViewState extends State<YearInPixelsView> {
                   return CustomScrollView(
                     physics: const BouncingScrollPhysics(),
                     slivers: [
-                      // 1. Stats & Analytics Header
+                      // 1. Stats, Cycle Status & Analytics Header
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(
                           Spacing.spacing * 2,
@@ -101,24 +88,36 @@ class _YearInPixelsViewState extends State<YearInPixelsView> {
                         ),
                         sliver: SliverToBoxAdapter(
                           child: GetBuilder<YearInPixelsController>(
-                            builder: (state) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _StatsStrip(
-                                  currentStreak: state.currentStreak,
-                                  longestStreak: state.longestStreak,
-                                  totalLogged: state.totalDaysLogged,
-                                  totalPeriodDays: state.totalPeriodDays,
-                                ),
-                                const SizedBox(height: Spacing.spacing * 2),
-                                _AnalyticsSection(controller: state),
-                              ],
-                            ),
+                            builder: (state) {
+                              final cycle = state.cycleStats;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _StatsStrip(
+                                    currentStreak: state.currentStreak,
+                                    longestStreak: state.longestStreak,
+                                    totalLogged: state.totalDaysLogged,
+                                    totalPeriodDays: state.totalPeriodDays,
+                                  ),
+                                  if (cycle != null) ...[
+                                    const SizedBox(
+                                        height: Spacing.spacing * 1.2),
+                                    _CycleStatusCard(cycle: cycle),
+                                  ],
+                                  const SizedBox(height: Spacing.spacing * 2),
+                                  _AnalyticsSection(
+                                    controller: state,
+                                    cycle: cycle,
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ),
                       ),
 
-                      // 2. Sticky Legend Header
+                      // 2. Sticky Legend Header (mood filters only — cycle
+                      //    phases moved to an on-demand sheet to cut clutter)
                       SliverPersistentHeader(
                         pinned: true,
                         delegate: _StickyLegendDelegate(
@@ -332,6 +331,126 @@ class _Header extends StatelessWidget {
   }
 }
 
+// ── Cycle Status Card ────────────────────────────────────────────────────────
+// This is the piece that was missing: a plain-language answer to "where am I
+// in my cycle right now, and what's next" — instead of making the user
+// decode grid colors to infer it.
+
+class _CycleStatusCard extends StatelessWidget {
+  final CycleStats cycle;
+
+  const _CycleStatusCard({required this.cycle});
+
+  @override
+  Widget build(BuildContext context) {
+    final phase = cycle.phase;
+    final daysUntil = cycle.daysUntilNextPeriod;
+
+    String predictionText;
+    if (daysUntil == null) {
+      predictionText = 'Log a couple more cycles for period predictions';
+    } else if (daysUntil <= 0) {
+      predictionText = daysUntil == 0
+          ? 'Period expected today'
+          : 'Period may be a few days late';
+    } else if (daysUntil == 1) {
+      predictionText = 'Period expected tomorrow';
+    } else {
+      predictionText = 'Period expected in ~$daysUntil days';
+    }
+
+    final phaseColor = phase?.color ?? ThemeColor.neutral_200;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: ThemeColor.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: ThemeColor.primary.withAlpha(12),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: phaseColor.withValues(alpha: 0.18),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              phase?.icon ?? '📆',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Cycle Day ${cycle.cycleDay}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: ThemeColor.neutral_900,
+                      ),
+                    ),
+                    if (phase != null) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        '· ${phase.label}',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: phase.color,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  predictionText,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w500,
+                    color: ThemeColor.neutral_400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (cycle.avgCycleLengthDays != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: ThemeColor.primary.withAlpha(15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${cycle.avgCycleLengthDays}d avg',
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: ThemeColor.primary,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Stats Strip ──────────────────────────────────────────────────────────────
 
 class _StatsStrip extends StatelessWidget {
@@ -439,16 +558,33 @@ class _StatItem extends StatelessWidget {
 }
 
 // ── Analytics Section ────────────────────────────────────────────────────────
+// Now split into two questions: "what's my overall mood mix" (kept from the
+// original) and the one the app actually promises to answer: "does my mood
+// track my cycle" (new). The second is the useful part.
 
 class _AnalyticsSection extends StatelessWidget {
   final YearInPixelsController controller;
+  final CycleStats? cycle;
 
-  const _AnalyticsSection({required this.controller});
+  const _AnalyticsSection({required this.controller, required this.cycle});
 
   @override
   Widget build(BuildContext context) {
     if (controller.totalEntriesLogged == 0) return const SizedBox();
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildOverallMoodCard(),
+        if (cycle != null && cycle!.hasEnoughDataForInsight) ...[
+          const SizedBox(height: Spacing.spacing * 1.5),
+          _buildMoodByPhaseCard(cycle!),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildOverallMoodCard() {
     return Container(
       padding: const EdgeInsets.all(Spacing.spacing * 2),
       decoration: BoxDecoration(
@@ -566,9 +702,135 @@ class _AnalyticsSection extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildMoodByPhaseCard(CycleStats cycle) {
+    // Pick the phase with the most logs as the headline insight, if any.
+    CyclePhase? headlinePhase;
+    MoodConditions? headlineMood;
+    int headlineCount = 0;
+    for (final phase in CyclePhase.values) {
+      final dominant = cycle.dominantMoodFor(phase);
+      final count = cycle.totalLogsFor(phase);
+      if (dominant != null && count > headlineCount) {
+        headlinePhase = phase;
+        headlineMood = dominant;
+        headlineCount = count;
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(Spacing.spacing * 2),
+      decoration: BoxDecoration(
+        color: ThemeColor.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: ThemeColor.primary.withAlpha(12),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'MOOD BY CYCLE PHASE',
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+              color: ThemeColor.neutral_400,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: CyclePhase.values.map((phase) {
+              final dominant = cycle.dominantMoodFor(phase);
+              final count = cycle.totalLogsFor(phase);
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: phase.color.withValues(alpha: 0.16),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: phase.color.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          dominant != null
+                              ? _getEmojiForMood(dominant)
+                              : phase.icon,
+                          style: const TextStyle(fontSize: 17),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        phase.label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: ThemeColor.neutral_700,
+                        ),
+                      ),
+                      Text(
+                        count > 0 ? '$count logs' : 'No data',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w500,
+                          color: count > 0
+                              ? ThemeColor.neutral_400
+                              : ThemeColor.neutral_300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          if (headlinePhase != null && headlineMood != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: headlinePhase.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: headlinePhase.color.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                'You log "${headlineMood.label}" most often during your '
+                '${headlinePhase.label.toLowerCase()} phase',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: headlinePhase.textColor == Colors.white
+                      ? ThemeColor.neutral_700
+                      : headlinePhase.textColor,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 // ── Sticky Legend Header Delegate ────────────────────────────────────────────
+// Trimmed to mood filters + period, since these are the only chips that
+// double as tap-to-filter controls. Cycle phase colors are explained on
+// demand via the info button instead of permanently competing for space.
 
 class _StickyLegendDelegate extends SliverPersistentHeaderDelegate {
   final YearInPixelsController controller;
@@ -588,73 +850,162 @@ class _StickyLegendDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 46;
 
+  void _showPhaseLegendSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(Spacing.spacing * 3),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'CYCLE PHASE COLORS',
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+                color: ThemeColor.neutral_400,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'A dashed ring means the phase is predicted, not logged.',
+              style: TextStyle(
+                fontSize: 11.5,
+                color: ThemeColor.neutral_500,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...CyclePhase.values.map((phase) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: phase.color.withValues(alpha: 0.18),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(phase.icon,
+                            style: const TextStyle(fontSize: 12)),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        phase.label,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeColor.neutral_900,
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            const SizedBox(height: 6),
+          ],
+        ),
+      ),
+      isScrollControlled: false,
+    );
+  }
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: ThemeColor.background,
       child: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Obx(() {
-            final activeMood = controller.activeMoodFilter.value;
-            final isPeriodActive = controller.filterPeriodOnly.value;
+        child: Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.only(left: 16, top: 4, bottom: 4),
+                child: Obx(() {
+                  final activeMood = controller.activeMoodFilter.value;
+                  final isPeriodActive = controller.filterPeriodOnly.value;
 
-            return Row(
-              children: [
-                if (activeMood != null || isPeriodActive) ...[
-                  GestureDetector(
-                    onTap: controller.clearFilters,
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: ThemeColor.neutral_900,
-                        borderRadius: BorderRadius.circular(14),
+                  return Row(
+                    children: [
+                      if (activeMood != null || isPeriodActive) ...[
+                        GestureDetector(
+                          onTap: controller.clearFilters,
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: ThemeColor.neutral_900,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.close_rounded,
+                                    color: Colors.white, size: 12),
+                                SizedBox(width: 3),
+                                Text('Clear',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                      ...moodColors.entries.map((e) {
+                        final isSelected = activeMood == e.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GestureDetector(
+                            onTap: () => controller.toggleMoodFilter(e.key),
+                            child: _LegendChip(
+                              color: e.value,
+                              label: moodLabels[e.key]!,
+                              isSelected: isSelected,
+                            ),
+                          ),
+                        );
+                      }),
+                      GestureDetector(
+                        onTap: controller.togglePeriodFilter,
+                        child: _LegendChip(
+                          marker: const _PeriodDot(isStart: true, size: 8),
+                          label: 'Period',
+                          isSelected: isPeriodActive,
+                        ),
                       ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.close_rounded,
-                              color: Colors.white, size: 12),
-                          SizedBox(width: 3),
-                          Text('Clear',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-                ...moodColors.entries.map((e) {
-                  final isSelected = activeMood == e.key;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: GestureDetector(
-                      onTap: () => controller.toggleMoodFilter(e.key),
-                      child: _LegendChip(
-                        color: e.value,
-                        label: moodLabels[e.key]!,
-                        isSelected: isSelected,
-                      ),
-                    ),
+                    ],
                   );
                 }),
-                GestureDetector(
-                  onTap: controller.togglePeriodFilter,
-                  child: _LegendChip(
-                    marker: const _PeriodDot(isStart: true, size: 8),
-                    label: 'Period',
-                    isSelected: isPeriodActive,
-                  ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => _showPhaseLegendSheet(context),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: ThemeColor.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ThemeColor.neutral_200),
                 ),
-              ],
-            );
-          }),
+                child: const Icon(
+                  Icons.info_outline_rounded,
+                  size: 15,
+                  color: ThemeColor.neutral_400,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -687,7 +1038,7 @@ class _LegendChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isSelected ? ThemeColor.primary : Colors.transparent,
-          width: 1.5,
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
@@ -763,6 +1114,71 @@ class _PeriodDot extends StatelessWidget {
             blurRadius: size * 0.6,
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Dashed Ring (marks "predicted", never "confirmed") ──────────────────────
+// Used anywhere a cell shows a predicted cycle phase but has no actual
+// logged mood or period for that day, so users don't mistake a guess for
+// a fact.
+
+class _DashedRingPainter extends CustomPainter {
+  final Color color;
+  final double radius;
+
+  static const double strokeWidth = 1.4;
+  static const double dashLength = 3.0;
+  static const double gapLength = 2.5;
+
+  _DashedRingPainter({
+    required this.color,
+    this.radius = 6,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rrect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(strokeWidth / 2, strokeWidth / 2, size.width - strokeWidth,
+          size.height - strokeWidth),
+      Radius.circular(radius),
+    );
+    final path = Path()..addRRect(rrect);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    for (final metric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < metric.length) {
+        final next = distance + dashLength;
+        canvas.drawPath(
+          metric.extractPath(distance, next.clamp(0, metric.length)),
+          paint,
+        );
+        distance = next + gapLength;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedRingPainter oldDelegate) =>
+      oldDelegate.color != color;
+}
+
+class _DashedRing extends StatelessWidget {
+  final Color color;
+  final double radius;
+
+  const _DashedRing({required this.color, this.radius = 6});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: CustomPaint(
+        painter: _DashedRingPainter(color: color, radius: radius),
       ),
     );
   }
@@ -930,6 +1346,8 @@ class _MonthGrid extends StatelessWidget {
 
                   final periodLog = periodMap[key];
                   final dayMoods = controller.dailyMoodsMap[key] ?? [];
+                  final hasConfirmedData =
+                      dayMoods.isNotEmpty || periodLog != null;
 
                   final isToday = date.year == now.year &&
                       date.month == now.month &&
@@ -944,6 +1362,11 @@ class _MonthGrid extends StatelessWidget {
                   if (filterPeriod && periodLog == null) {
                     isDimmed = true;
                   }
+
+                  final predictedPhase =
+                      controller.phasePredictor.getPrimaryPhase(date);
+                  final isPredictionOnly =
+                      predictedPhase != null && !hasConfirmedData;
 
                   // Render mood dots chronologically for up to 3 logged moods
                   final dots = <Widget>[];
@@ -963,14 +1386,36 @@ class _MonthGrid extends StatelessWidget {
                   if (periodLog != null) {
                     dots.add(_PeriodDot(
                         isStart: periodLog.isPeriodStart, size: 4.5));
+                  } else if (dayMoods.isEmpty && predictedPhase != null) {
+                    dots.add(
+                      Container(
+                        width: 4.5,
+                        height: 4.5,
+                        decoration: BoxDecoration(
+                            color: predictedPhase.color,
+                            shape: BoxShape.circle),
+                      ),
+                    );
+                  }
+
+                  // Confirmed data gets a solid wash; predicted-only phase
+                  // gets a dashed ring instead of a filled background so it
+                  // never reads as "logged".
+                  final Color cellBgColor;
+                  if (isToday) {
+                    cellBgColor =
+                        YearInPixelsView._periodOnlyColor.withAlpha(90);
+                  } else if (hasConfirmedData && predictedPhase != null) {
+                    cellBgColor = predictedPhase.color.withValues(alpha: 0.22);
+                  } else {
+                    cellBgColor = Colors.transparent;
                   }
 
                   return Expanded(
                     child: AspectRatio(
                       aspectRatio: 1,
                       child: GestureDetector(
-                        onTap:
-                            isFuture ? null : () => _inspectDay(context, date),
+                        onTap: () => _inspectDay(context, date),
                         child: AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: isDimmed ? 0.2 : 1.0,
@@ -980,10 +1425,7 @@ class _MonthGrid extends StatelessWidget {
                               Container(
                                 margin: const EdgeInsets.all(1.5),
                                 decoration: BoxDecoration(
-                                  color: isToday
-                                      ? YearInPixelsView._periodOnlyColor
-                                          .withAlpha(90)
-                                      : Colors.transparent,
+                                  color: cellBgColor,
                                   borderRadius: BorderRadius.circular(12),
                                   border: isToday
                                       ? Border.all(
@@ -1001,14 +1443,14 @@ class _MonthGrid extends StatelessWidget {
                                             ? FontWeight.w700
                                             : FontWeight.w500,
                                         color: isFuture
-                                            ? ThemeColor.neutral_300
+                                            ? ThemeColor.neutral_400
                                             : ThemeColor.neutral_900,
                                       ),
                                     ),
                                     const SizedBox(height: 2),
                                     SizedBox(
                                       height: 5,
-                                      child: (dots.isNotEmpty && !isFuture)
+                                      child: (dots.isNotEmpty)
                                           ? Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
@@ -1027,6 +1469,11 @@ class _MonthGrid extends StatelessWidget {
                                 ),
                               ),
 
+                              if (isPredictionOnly && !isToday)
+                                _DashedRing(
+                                    color: predictedPhase.color
+                                        .withValues(alpha: 0.55)),
+
                               // Multi-log indicator badge (+) if 2+ logs exist
                               if (dayMoods.length > 1)
                                 Positioned(
@@ -1040,7 +1487,7 @@ class _MonthGrid extends StatelessWidget {
                                     ),
                                     child: const Icon(
                                       Icons.add,
-                                      size: 7,
+                                      size: 8,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -1065,9 +1512,10 @@ class _MonthGrid extends StatelessWidget {
 class _CanvasMatrixGrid extends StatelessWidget {
   final YearInPixelsController controller;
 
-  const _CanvasMatrixGrid({required this.controller});
+  const _CanvasMatrixGrid({Key? key, required this.controller})
+      : super(key: key);
 
-  String _key(int y, int m, int d) =>
+  static String _key(int y, int m, int d) =>
       '$y-${m.toString().padLeft(2, '0')}-${d.toString().padLeft(2, '0')}';
 
   @override
@@ -1075,157 +1523,209 @@ class _CanvasMatrixGrid extends StatelessWidget {
     final year = controller.selectedYear.value;
     final now = DateTime.now();
 
-    return Obx(() {
-      final activeFilter = controller.activeMoodFilter.value;
-      final filterPeriod = controller.filterPeriodOnly.value;
+    return GetBuilder<YearInPixelsController>(
+      builder: (controller) {
+        final activeFilter = controller.activeMoodFilter.value;
+        final filterPeriod = controller.filterPeriodOnly.value;
 
-      return Container(
-        padding: const EdgeInsets.all(Spacing.spacing * 2),
-        decoration: BoxDecoration(
-          color: ThemeColor.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: ThemeColor.primary.withAlpha(14),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  '365-DAY PIXEL CANVAS',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    color: ThemeColor.neutral_900,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  'Year $year',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: ThemeColor.neutral_400,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Column Month Headers (Jan..Dec)
-            Row(
-              children: List.generate(12, (index) {
-                return Expanded(
-                  child: Text(
-                    YearInPixelsView._shortMonths[index],
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.bold,
-                      color: ThemeColor.neutral_400,
-                    ),
-                  ),
-                );
-              }),
-            ),
-            const SizedBox(height: 8),
-
-            // 31 Rows (Days) x 12 Columns (Months)
-            Column(
-              children: List.generate(31, (rowDayIndex) {
-                final dayNum = rowDayIndex + 1;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
-                  child: Row(
-                    children: List.generate(12, (colMonthIndex) {
-                      final monthNum = colMonthIndex + 1;
-                      final daysInMonth =
-                          DateUtils.getDaysInMonth(year, monthNum);
-
-                      if (dayNum > daysInMonth) {
-                        return const Expanded(child: SizedBox());
-                      }
-
-                      final date = DateTime(year, monthNum, dayNum);
-                      final isFuture = date.isAfter(now);
-                      final key = _key(year, monthNum, dayNum);
-
-                      final mood = controller.pixelMap[key];
-                      final periodLog = controller.periodMap[key];
-                      final dayMoods = controller.dailyMoodsMap[key] ?? [];
-
-                      final color = isFuture
-                          ? Colors.transparent
-                          : mood != null
-                              ? mood.color
-                              : (periodLog != null
-                                  ? YearInPixelsView._periodOnlyColor
-                                  : YearInPixelsView._emptyColor);
-
-                      // Filter check
-                      bool isDimmed = false;
-                      if (activeFilter != null &&
-                          !dayMoods.any((m) => m.mood == activeFilter)) {
-                        isDimmed = true;
-                      }
-                      if (filterPeriod && periodLog == null) {
-                        isDimmed = true;
-                      }
-
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: isFuture
-                              ? null
-                              : () => _showDayInspectBottomSheet(
-                                  context, date, controller),
-                          child: AnimatedOpacity(
-                            duration: const Duration(milliseconds: 200),
-                            opacity: isDimmed ? 0.2 : 1.0,
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 14,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 1),
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                ),
-                                if (dayMoods.length > 1)
-                                  Positioned(
-                                    top: 1,
-                                    right: 2,
-                                    child: Container(
-                                      width: 3,
-                                      height: 3,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
-                              ],
+        return Container(
+          padding: const EdgeInsets.all(Spacing.spacing * 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Month Header Row
+              Row(
+                children: [
+                  const SizedBox(width: 24), // Offset for day number column
+                  Expanded(
+                    child: Row(
+                      children: List.generate(12, (index) {
+                        final monthName = DateFormat('MMM')
+                            .format(DateTime(year, index + 1, 1));
+                        return Expanded(
+                          child: Text(
+                            monthName,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                              color: ThemeColor.neutral_500,
                             ),
                           ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+
+              // 31 Day Rows
+              ...List.generate(31, (dayIndex) {
+                final dayNum = dayIndex + 1;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 1.5),
+                  child: Row(
+                    children: [
+                      // Day label (1..31)
+                      SizedBox(
+                        width: 24,
+                        child: Text(
+                          '$dayNum',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: ThemeColor.neutral_400,
+                          ),
                         ),
-                      );
-                    }),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: List.generate(12, (colMonthIndex) {
+                            final monthNum = colMonthIndex + 1;
+                            final daysInMonth =
+                                DateUtils.getDaysInMonth(year, monthNum);
+
+                            if (dayNum > daysInMonth) {
+                              return const Expanded(child: SizedBox());
+                            }
+
+                            final date = DateTime(year, monthNum, dayNum);
+                            final isFuture = date.isAfter(now);
+                            final key = _key(year, monthNum, dayNum);
+
+                            final mood = controller.pixelMap[key];
+                            final periodLog = controller.periodMap[key];
+                            final dayMoods =
+                                controller.dailyMoodsMap[key] ?? [];
+
+                            final predictedPhase =
+                                controller.phasePredictor.getPrimaryPhase(date);
+
+                            final hasMood = mood != null;
+                            final hasPeriod = periodLog != null;
+                            final hasConfirmedData = hasMood || hasPeriod;
+                            final isPredictionOnly =
+                                predictedPhase != null && !hasConfirmedData;
+
+                            // ── Distinct Visual Hierarchy ──
+                            // Solid opaque color: logged moods only.
+                            // Confirmed period: soft solid wash + bottom pill.
+                            // Predicted-only phase: near-transparent fill +
+                            // dashed ring, so it can never be mistaken for
+                            // confirmed data.
+                            final Color baseColor;
+                            if (hasMood) {
+                              baseColor = mood.color;
+                            } else if (hasPeriod) {
+                              baseColor = CyclePhase.menstruation.color
+                                  .withValues(alpha: 0.28);
+                            } else if (isFuture) {
+                              baseColor = Colors.transparent;
+                            } else if (isPredictionOnly) {
+                              baseColor =
+                                  predictedPhase.color.withValues(alpha: 0.08);
+                            } else {
+                              baseColor = YearInPixelsView._emptyColor;
+                            }
+
+                            final Color? indicatorColor = hasPeriod
+                                ? CyclePhase.menstruation.color
+                                : null;
+
+                            // Filter check
+                            bool isDimmed = false;
+                            if (activeFilter != null &&
+                                !dayMoods.any((m) => m.mood == activeFilter)) {
+                              isDimmed = true;
+                            }
+                            if (filterPeriod && periodLog == null) {
+                              isDimmed = true;
+                            }
+
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: isFuture
+                                    ? null
+                                    : () => _showDayInspectBottomSheet(
+                                        context, date, controller),
+                                child: AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 200),
+                                  opacity: isDimmed ? 0.2 : 1.0,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: 14,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 1),
+                                        decoration: BoxDecoration(
+                                          color: baseColor,
+                                          borderRadius:
+                                              BorderRadius.circular(3),
+                                          border: (isFuture &&
+                                                  !hasConfirmedData &&
+                                                  !isPredictionOnly)
+                                              ? Border.all(
+                                                  color: ThemeColor.neutral_200
+                                                      .withAlpha(60),
+                                                  width: 0.5,
+                                                )
+                                              : null,
+                                        ),
+                                      ),
+                                      if (isPredictionOnly)
+                                        _DashedRing(
+                                          color: predictedPhase.color
+                                              .withValues(alpha: 0.6),
+                                          radius: 3,
+                                        ),
+                                      if (indicatorColor != null)
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 1,
+                                          right: 1,
+                                          child: Container(
+                                            height: 2.5,
+                                            decoration: BoxDecoration(
+                                              color: indicatorColor,
+                                              borderRadius:
+                                                  const BorderRadius.vertical(
+                                                bottom: Radius.circular(3),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      if (dayMoods.length > 1)
+                                        Positioned(
+                                          top: 1,
+                                          right: 2,
+                                          child: Container(
+                                            width: 3,
+                                            height: 3,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -1244,6 +1744,18 @@ void _showDayInspectBottomSheet(
 
   final dateFormatted =
       '${date.day} ${YearInPixelsView._months[date.month - 1]} ${date.year}';
+
+  // Cycle day for this specific date, derived the same way as the header
+  // status card, so the two never disagree.
+  int? cycleDayForDate;
+  final cycleStats = controller.cycleStats;
+  if (cycleStats != null) {
+    final diff = date.difference(cycleStats.lastPeriodStart).inDays;
+    // Only show a cycle-day number when it's a plausible forward count from
+    // the most recent known period start (avoids nonsense for dates far
+    // outside tracked history).
+    if (diff >= 0) cycleDayForDate = diff + 1;
+  }
 
   Get.bottomSheet(
     Container(
@@ -1309,7 +1821,70 @@ void _showDayInspectBottomSheet(
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+
+          Builder(builder: (context) {
+            final phase = controller.phasePredictor.getPrimaryPhase(date);
+            final isFertile = controller.phasePredictor.isInFertileWindow(date);
+            if (phase == null) return const SizedBox.shrink();
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: phase.color,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: phase.color.withValues(alpha: 0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('${phase.icon} ${phase.label}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: phase.textColor)),
+                  if (cycleDayForDate != null) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text('Day $cycleDayForDate',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: phase.textColor)),
+                    ),
+                  ],
+                  if (isFertile) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text('💖 Fertile Window',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: phase.textColor)),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
 
           Flexible(
             child: SingleChildScrollView(

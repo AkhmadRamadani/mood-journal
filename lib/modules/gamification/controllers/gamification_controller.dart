@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -8,9 +9,15 @@ import 'package:moodie/models/leaderboard_user_model.dart';
 import 'package:moodie/services/gamification_service.dart';
 import 'package:moodie/shared/widgets/dialogs/badge_unlocked_dialog.dart';
 import 'package:moodie/shared/widgets/dialogs/level_up_dialog.dart';
+import 'package:moodie/utils/services/event_bus.dart';
 
 class GamificationController extends GetxController {
-  static GamificationController get to => Get.find<GamificationController>();
+  static GamificationController get to {
+    if (!Get.isRegistered<GamificationController>()) {
+      return Get.put(GamificationController());
+    }
+    return Get.find<GamificationController>();
+  }
 
   final GamificationService _service = GamificationService();
 
@@ -21,10 +28,32 @@ class GamificationController extends GetxController {
   final RxList<LeaderboardUserModel> leaderboard = <LeaderboardUserModel>[].obs;
   final RxBool isLoading = false.obs;
 
+  StreamSubscription? _waterSub;
+  StreamSubscription? _moodSub;
+  StreamSubscription? _menstrualSub;
+
   @override
   void onInit() {
     super.onInit();
     loadGamificationData();
+
+    _waterSub = eventBus.on<WaterIntakeUpdatedEvent>().listen((_) {
+      refreshProfile();
+    });
+    _moodSub = eventBus.on<MoodLoggedEvent>().listen((_) {
+      refreshProfile();
+    });
+    _menstrualSub = eventBus.on<MenstrualLogUpdatedEvent>().listen((_) {
+      refreshProfile();
+    });
+  }
+
+  @override
+  void onClose() {
+    _waterSub?.cancel();
+    _moodSub?.cancel();
+    _menstrualSub?.cancel();
+    super.onClose();
   }
 
   Future<void> loadGamificationData() async {
@@ -35,6 +64,7 @@ class GamificationController extends GetxController {
           onRefreshed: (fresh) {
             checkLevelUpOrBadgeUnlock(profile.value, fresh);
             profile.value = fresh;
+            eventBus.fire(GamificationUpdatedEvent(fresh));
           },
         ),
         _service.fetchBadges(
@@ -52,10 +82,15 @@ class GamificationController extends GetxController {
       if (newProfile != null) {
         checkLevelUpOrBadgeUnlock(profile.value, newProfile);
         profile.value = newProfile;
+        eventBus.fire(GamificationUpdatedEvent(newProfile));
       }
-      badges.value = results[1] as List<BadgeModel>;
-      challenges.value = results[2] as List<ChallengeModel>;
-      leaderboard.value = results[3] as List<LeaderboardUserModel>;
+      if (results[1] != null) badges.value = results[1] as List<BadgeModel>;
+      if (results[2] != null) {
+        challenges.value = results[2] as List<ChallengeModel>;
+      }
+      if (results[3] != null) {
+        leaderboard.value = results[3] as List<LeaderboardUserModel>;
+      }
     } catch (e) {
       log('Error loading gamification data: $e');
     } finally {
@@ -64,18 +99,7 @@ class GamificationController extends GetxController {
   }
 
   Future<void> refreshProfile() async {
-    try {
-      final newProfile = await _service.fetchProfile();
-      checkLevelUpOrBadgeUnlock(profile.value, newProfile);
-      profile.value = newProfile;
-
-      // Also refresh challenges and badges in background
-      _service.fetchBadges().then((b) => badges.value = b);
-      _service.fetchChallenges().then((c) => challenges.value = c);
-      _service.fetchLeaderboard().then((l) => leaderboard.value = l);
-    } catch (e) {
-      log('Error refreshing gamification profile: $e');
-    }
+    await loadGamificationData();
   }
 
   void checkLevelUpOrBadgeUnlock(GamificationProfileModel? oldProfile,
