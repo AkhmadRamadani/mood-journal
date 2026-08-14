@@ -33,7 +33,7 @@ class CustomTextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha((0.1 * 255).toInt()),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

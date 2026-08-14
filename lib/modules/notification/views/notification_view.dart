@@ -20,6 +20,7 @@ class NotificationView extends StatelessWidget {
     return Scaffold(
       backgroundColor: ThemeColor.primary,
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -44,7 +45,10 @@ class NotificationView extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(Spacing.spacing * 3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Spacing.spacing * 3,
+                  vertical: Spacing.spacing * 0.5,
+                ),
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: ThemeColor.background,
@@ -63,6 +67,7 @@ class NotificationView extends StatelessWidget {
                     },
                     child: ListView(
                       children: [
+                        const SizedBox(height: Spacing.spacing * 2),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -139,6 +144,7 @@ class NotificationView extends StatelessWidget {
                             }
                           },
                         ),
+                        const SizedBox(height: Spacing.spacing * 2),
                       ],
                     ),
                   ),

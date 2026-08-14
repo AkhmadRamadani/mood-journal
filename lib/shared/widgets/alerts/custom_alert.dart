@@ -46,7 +46,7 @@ class AlertHelper {
         onWillPop: onWillPop,
       ),
       barrierDismissible: onWillPop != null ? false : true,
-      barrierColor: Colors.grey.withOpacity(0.3),
+      barrierColor: Colors.grey.withAlpha((0.3 * 255).toInt()),
     );
   }
 }

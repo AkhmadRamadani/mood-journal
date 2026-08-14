@@ -130,7 +130,7 @@ class ApiService {
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://ef40-103-156-227-0.ngrok-free.app/api',
+        baseUrl: 'https://dc11-103-19-231-218.ngrok-free.app/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -708,6 +708,7 @@ class ApiService {
     double? intensity,
     String? title,
     String? note,
+    DateTime? createdAt,
   }) async {
     return await dio.post('/moods', data: {
       'mood': mood,
@@ -715,6 +716,7 @@ class ApiService {
       if (intensity != null) 'intensity': intensity,
       if (title != null) 'title': title,
       if (note != null) 'note': note,
+      if (createdAt != null) 'created_at': createdAt.toIso8601String(),
     });
   }
 

@@ -22,7 +22,10 @@ class ThemeColor {
   static const Color neutral_600 = Color.fromRGBO(71, 85, 105, 1);
   static const Color neutral_500 = Color.fromRGBO(100, 116, 139, 1);
   static const Color neutral_400 = Color.fromRGBO(148, 163, 187, 1);
+  static const Color neutral_300 = Color.fromRGBO(203, 213, 225, 1);
   static const Color neutral_200 = Color.fromARGB(255, 227, 228, 248);
+  static const Color neutral_100 = Color.fromRGBO(241, 245, 249, 1);
+  static const Color neutral_50 = Color.fromRGBO(248, 250, 252, 1);
   static const Color white = Color.fromARGB(255, 255, 255, 255);
 
   static const Color success_400 = Color.fromRGBO(39, 174, 96, 1);

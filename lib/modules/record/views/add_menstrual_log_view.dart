@@ -6,7 +6,8 @@ import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
 
 class AddMenstrualLogView extends StatefulWidget {
-  const AddMenstrualLogView({Key? key}) : super(key: key);
+  final DateTime? initialDate;
+  const AddMenstrualLogView({Key? key, this.initialDate}) : super(key: key);
 
   @override
   State<AddMenstrualLogView> createState() => _AddMenstrualLogViewState();
@@ -21,6 +22,15 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
     'Flow & Symptoms',
     'Notes & Submission',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = Get.put(MenstrualLogController());
+    if (widget.initialDate != null) {
+      controller.selectedDate = widget.initialDate!;
+    }
+  }
 
   @override
   void dispose() {
@@ -164,7 +174,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: accentColor.withOpacity(0.15),
+                                color:
+                                    accentColor.withAlpha((0.15 * 255).toInt()),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -191,7 +202,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                               height: 6,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: ThemeColor.neutral_200.withOpacity(0.6),
+                                color: ThemeColor.neutral_200
+                                    .withAlpha((0.6 * 255).toInt()),
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             ),
@@ -238,10 +250,12 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                       Container(
                         padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                         decoration: BoxDecoration(
-                          color: ThemeColor.white.withOpacity(0.92),
+                          color:
+                              ThemeColor.white.withAlpha((0.92 * 255).toInt()),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color:
+                                  Colors.black.withAlpha((0.04 * 255).toInt()),
                               blurRadius: 10,
                               offset: const Offset(0, -4),
                             ),
@@ -285,7 +299,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 14),
                                   elevation: 2,
-                                  shadowColor: accentColor.withOpacity(0.4),
+                                  shadowColor: accentColor
+                                      .withAlpha((0.4 * 255).toInt()),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -345,10 +360,10 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
             height: 140,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: accentColor.withOpacity(0.12),
+              color: accentColor.withAlpha((0.12 * 255).toInt()),
               boxShadow: [
                 BoxShadow(
-                  color: accentColor.withOpacity(0.35),
+                  color: accentColor.withAlpha((0.35 * 255).toInt()),
                   blurRadius: 35,
                   spreadRadius: 6,
                 ),
@@ -379,11 +394,11 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
           Container(
             padding: const EdgeInsets.all(Spacing.spacing * 2.5),
             decoration: BoxDecoration(
-              color: ThemeColor.white.withOpacity(0.9),
+              color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withAlpha((0.04 * 255).toInt()),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -415,7 +430,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: accentColor.withOpacity(0.15),
+                    backgroundColor:
+                        accentColor.withAlpha((0.15 * 255).toInt()),
                     elevation: 0,
                     foregroundColor: accentColor,
                     shape: RoundedRectangleBorder(
@@ -454,11 +470,11 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                 vertical: Spacing.spacing * 1.5,
               ),
               decoration: BoxDecoration(
-                color: ThemeColor.white.withOpacity(0.9),
+                color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withAlpha((0.04 * 255).toInt()),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -467,7 +483,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: accentColor.withOpacity(0.15),
+                    backgroundColor:
+                        accentColor.withAlpha((0.15 * 255).toInt()),
                     child: Icon(Icons.opacity_rounded, color: accentColor),
                   ),
                   const SizedBox(width: 16),
@@ -496,7 +513,7 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                   ),
                   Switch(
                     value: controller.isPeriodStart.value,
-                    activeColor: accentColor,
+                    activeThumbColor: accentColor,
                     onChanged: (val) {
                       controller.setPeriodStart(val);
                     },
@@ -542,11 +559,11 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
               width: double.infinity,
               padding: const EdgeInsets.all(Spacing.spacing * 2),
               decoration: BoxDecoration(
-                color: ThemeColor.white.withOpacity(0.9),
+                color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withAlpha((0.04 * 255).toInt()),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -570,7 +587,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                     ),
                     selected: isSelected,
                     selectedColor: accentColor,
-                    backgroundColor: ThemeColor.neutral_200.withOpacity(0.8),
+                    backgroundColor:
+                        ThemeColor.neutral_200.withAlpha((0.8 * 255).toInt()),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
                     onSelected: (bool selected) {
@@ -606,11 +624,11 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
               width: double.infinity,
               padding: const EdgeInsets.all(Spacing.spacing * 2),
               decoration: BoxDecoration(
-                color: ThemeColor.white.withOpacity(0.9),
+                color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withAlpha((0.04 * 255).toInt()),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -634,7 +652,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                     ),
                     selected: isSelected,
                     selectedColor: accentColor,
-                    backgroundColor: ThemeColor.neutral_200.withOpacity(0.8),
+                    backgroundColor:
+                        ThemeColor.neutral_200.withAlpha((0.8 * 255).toInt()),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     onSelected: (_) {
@@ -679,11 +698,11 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
           Container(
             padding: const EdgeInsets.all(Spacing.spacing * 2),
             decoration: BoxDecoration(
-              color: ThemeColor.white.withOpacity(0.9),
+              color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withAlpha((0.04 * 255).toInt()),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -758,7 +777,8 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: accentColor.withOpacity(0.12),
+                                  color: accentColor
+                                      .withAlpha((0.12 * 255).toInt()),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
@@ -789,7 +809,7 @@ class _AddMenstrualLogViewState extends State<AddMenstrualLogView> {
               hintText: 'Additional notes or symptoms details...',
               hintStyle: const TextStyle(color: ThemeColor.neutral_400),
               contentPadding: const EdgeInsets.all(18),
-              fillColor: ThemeColor.white.withOpacity(0.9),
+              fillColor: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
               filled: true,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),

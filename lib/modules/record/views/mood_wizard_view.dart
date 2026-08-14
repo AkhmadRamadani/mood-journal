@@ -6,6 +6,7 @@ import 'package:moodie/modules/record/controllers/record_controller.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/themes/colors.dart';
 import 'package:moodie/shared/themes/spacing.dart';
+import 'package:moodie/shared/widgets/buttons/voice_dictation_button.dart';
 import 'package:moodie/shared/widgets/cards/emotions_card.dart';
 
 class MoodWizardView extends StatefulWidget {
@@ -190,20 +191,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
   }
 
   Color _getMoodAuraColor(MoodConditions? mood) {
-    switch (mood) {
-      case MoodConditions.tired:
-        return const Color(0xFF7E57C2);
-      case MoodConditions.sad:
-        return const Color(0xFF42A5F5);
-      case MoodConditions.excited:
-        return const Color(0xFFFFA726);
-      case MoodConditions.cheerful:
-        return const Color(0xFFEC407A);
-      case MoodConditions.happy:
-        return const Color(0xFF66BB6A);
-      default:
-        return ThemeColor.primary;
-    }
+    return mood?.color ?? ThemeColor.primary;
   }
 
   @override
@@ -223,6 +211,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
               gradient: _getMoodGradient(currentMood),
             ),
             child: SafeArea(
+              bottom: false,
               child: Stack(
                 children: [
                   Column(
@@ -264,7 +253,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                               ),
                               decoration: BoxDecoration(
                                 color: _getMoodAuraColor(currentMood)
-                                    .withOpacity(0.15),
+                                    .withAlpha((0.15 * 255).toInt()),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -291,7 +280,8 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                               height: 6,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: ThemeColor.neutral_200.withOpacity(0.6),
+                                color: ThemeColor.neutral_200
+                                    .withAlpha((0.6 * 255).toInt()),
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             ),
@@ -338,10 +328,12 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                       Container(
                         padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                         decoration: BoxDecoration(
-                          color: ThemeColor.white.withOpacity(0.92),
+                          color:
+                              ThemeColor.white.withAlpha((0.92 * 255).toInt()),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color:
+                                  Colors.black.withAlpha((0.04 * 255).toInt()),
                               blurRadius: 10,
                               offset: const Offset(0, -4),
                             ),
@@ -387,7 +379,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                                       const EdgeInsets.symmetric(vertical: 14),
                                   elevation: 2,
                                   shadowColor: _getMoodAuraColor(currentMood)
-                                      .withOpacity(0.4),
+                                      .withAlpha((0.4 * 255).toInt()),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -417,7 +409,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                     builder: (state) {
                       if (state.isLoadingInsert.value) {
                         return Container(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withAlpha((0.3 * 255).toInt()),
                           child: Center(
                             child: Lottie.asset(
                               AssetConst.animationLoading,
@@ -461,15 +453,15 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                 height: 160,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: auraColor.withOpacity(0.12),
+                  color: auraColor.withAlpha((0.12 * 255).toInt()),
                   boxShadow: [
                     BoxShadow(
-                      color: auraColor.withOpacity(0.4),
+                      color: auraColor.withAlpha((0.4 * 255).toInt()),
                       blurRadius: 40,
                       spreadRadius: 8,
                     ),
                     BoxShadow(
-                      color: auraColor.withOpacity(0.2),
+                      color: auraColor.withAlpha((0.2 * 255).toInt()),
                       blurRadius: 70,
                       spreadRadius: 15,
                     ),
@@ -509,11 +501,11 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                   horizontal: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: ThemeColor.white.withOpacity(0.9),
+                  color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withAlpha((0.04 * 255).toInt()),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -534,7 +526,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? itemAura.withOpacity(0.18)
+                              ? itemAura.withAlpha((0.18 * 255).toInt())
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                           border: isSelected
@@ -558,11 +550,11 @@ class _MoodWizardViewState extends State<MoodWizardView> {
               Container(
                 padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                 decoration: BoxDecoration(
-                  color: ThemeColor.white.withOpacity(0.9),
+                  color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withAlpha((0.04 * 255).toInt()),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -605,7 +597,8 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                             activeTrackColor: auraColor,
                             inactiveTrackColor: ThemeColor.neutral_200,
                             thumbColor: auraColor,
-                            overlayColor: auraColor.withOpacity(0.2),
+                            overlayColor:
+                                auraColor.withAlpha((0.2 * 255).toInt()),
                             trackHeight: 6,
                           ),
                           child: Slider(
@@ -682,9 +675,9 @@ class _MoodWizardViewState extends State<MoodWizardView> {
                       color: ThemeColor.primary.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
+                    child: const Text(
                       ' selected',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ThemeColor.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -701,13 +694,13 @@ class _MoodWizardViewState extends State<MoodWizardView> {
             builder: (state) {
               return Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(Spacing.spacing * 2),
+                padding: const EdgeInsets.all(Spacing.spacing * 2),
                 decoration: BoxDecoration(
-                  color: ThemeColor.white.withOpacity(0.9),
+                  color: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withAlpha((0.04 * 255).toInt()),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -737,12 +730,22 @@ class _MoodWizardViewState extends State<MoodWizardView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: Spacing.spacing),
-          Text(
-            'Express your thoughts and capture this moment:',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: ThemeColor.neutral_700,
-                  fontWeight: FontWeight.w500,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Express your thoughts and capture this moment:',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: ThemeColor.neutral_700,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
+              ),
+              VoiceDictationButton(
+                targetController: controller.noteController,
+              ),
+            ],
           ),
           const SizedBox(height: Spacing.spacing * 2),
 
@@ -757,7 +760,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
               hintText: 'Entry Title (e.g. Great Workout, Quiet Evening)',
               hintStyle: const TextStyle(color: ThemeColor.neutral_400),
               contentPadding: const EdgeInsets.all(18),
-              fillColor: ThemeColor.white.withOpacity(0.9),
+              fillColor: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
               filled: true,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -784,7 +787,7 @@ class _MoodWizardViewState extends State<MoodWizardView> {
               hintText: 'Write down what happened or how you feel...',
               hintStyle: const TextStyle(color: ThemeColor.neutral_400),
               contentPadding: const EdgeInsets.all(18),
-              fillColor: ThemeColor.white.withOpacity(0.9),
+              fillColor: ThemeColor.white.withAlpha((0.9 * 255).toInt()),
               filled: true,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),

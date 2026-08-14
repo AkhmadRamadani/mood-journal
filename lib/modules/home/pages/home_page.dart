@@ -94,7 +94,11 @@ class HomePage extends StatelessWidget {
             InkWell(
               onTap: () async {
                 Get.back();
-                await Get.to(() => const AddMenstrualLogView());
+                final targetDate = Get.isRegistered<RecordController>()
+                    ? RecordController.to.selectedDate
+                    : DateTime.now();
+                await Get.to(
+                    () => AddMenstrualLogView(initialDate: targetDate));
                 if (controller.currentPageIndex.value == 0) {
                   DashboardController.to.refresh();
                 } else if (controller.currentPageIndex.value == 1) {

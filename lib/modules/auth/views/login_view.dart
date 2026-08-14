@@ -167,7 +167,7 @@ class LoginView extends StatelessWidget {
             builder: (controller) {
               if (controller.isLoading.value) {
                 return Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withAlpha((0.3 * 255).toInt()),
                   child: Center(
                     child: Lottie.asset(
                       AssetConst.animationLoading,

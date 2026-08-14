@@ -66,18 +66,7 @@ class MoodDetailView extends StatelessWidget {
   }
 
   Color _getMoodAuraColor(MoodConditions mood) {
-    switch (mood) {
-      case MoodConditions.tired:
-        return const Color(0xFF7E57C2);
-      case MoodConditions.sad:
-        return const Color(0xFF42A5F5);
-      case MoodConditions.excited:
-        return const Color(0xFFFFA726);
-      case MoodConditions.cheerful:
-        return const Color(0xFFEC407A);
-      case MoodConditions.happy:
-        return const Color(0xFF66BB6A);
-    }
+    return mood.color;
   }
 
   void _showDeleteConfirmation(BuildContext context) {
@@ -135,6 +124,7 @@ class MoodDetailView extends StatelessWidget {
           gradient: _getMoodGradient(record.mood),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Top Bar
@@ -194,10 +184,10 @@ class MoodDetailView extends StatelessWidget {
                         height: 150,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: auraColor.withOpacity(0.12),
+                          color: auraColor.withAlpha((0.12 * 255).toInt()),
                           boxShadow: [
                             BoxShadow(
-                              color: auraColor.withOpacity(0.35),
+                              color: auraColor.withAlpha((0.35 * 255).toInt()),
                               blurRadius: 35,
                               spreadRadius: 6,
                             ),
@@ -242,11 +232,13 @@ class MoodDetailView extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                         decoration: BoxDecoration(
-                          color: ThemeColor.white.withOpacity(0.9),
+                          color:
+                              ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
+                              color:
+                                  Colors.black.withAlpha((0.03 * 255).toInt()),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -303,11 +295,13 @@ class MoodDetailView extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                           decoration: BoxDecoration(
-                            color: ThemeColor.white.withOpacity(0.9),
+                            color:
+                                ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black
+                                    .withAlpha((0.03 * 255).toInt()),
                                 blurRadius: 10,
                                 offset: const Offset(0, 2),
                               ),
@@ -336,7 +330,8 @@ class MoodDetailView extends StatelessWidget {
                                           vertical: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: auraColor.withOpacity(0.15),
+                                          color: auraColor
+                                              .withAlpha((0.15 * 255).toInt()),
                                           borderRadius:
                                               BorderRadius.circular(20),
                                         ),
@@ -363,11 +358,13 @@ class MoodDetailView extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                         decoration: BoxDecoration(
-                          color: ThemeColor.white.withOpacity(0.9),
+                          color:
+                              ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
+                              color:
+                                  Colors.black.withAlpha((0.03 * 255).toInt()),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -410,15 +407,18 @@ class MoodDetailView extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                           decoration: BoxDecoration(
-                            color: ThemeColor.white.withOpacity(0.9),
+                            color:
+                                ThemeColor.white.withAlpha((0.9 * 255).toInt()),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: ThemeColor.purple_400.withOpacity(0.4),
+                              color: ThemeColor.purple_400
+                                  .withAlpha((0.4 * 255).toInt()),
                               width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black
+                                    .withAlpha((0.03 * 255).toInt()),
                                 blurRadius: 10,
                                 offset: const Offset(0, 2),
                               ),
@@ -473,7 +473,8 @@ class MoodDetailView extends StatelessWidget {
                                                 horizontal: 8, vertical: 4),
                                             decoration: BoxDecoration(
                                               color: ThemeColor.purple_400
-                                                  .withOpacity(0.12),
+                                                  .withAlpha(
+                                                      (0.12 * 255).toInt()),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -504,10 +505,10 @@ class MoodDetailView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(Spacing.spacing * 2.5),
                 decoration: BoxDecoration(
-                  color: ThemeColor.white.withOpacity(0.95),
+                  color: ThemeColor.white.withAlpha((0.95 * 255).toInt()),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withAlpha((0.04 * 255).toInt()),
                       blurRadius: 10,
                       offset: const Offset(0, -4),
                     ),
@@ -549,7 +550,7 @@ class MoodDetailView extends StatelessWidget {
                           backgroundColor: auraColor,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 2,
-                          shadowColor: auraColor.withOpacity(0.4),
+                          shadowColor: auraColor.withAlpha((0.4 * 255).toInt()),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),

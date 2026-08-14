@@ -116,7 +116,8 @@ class OnBoardingView extends StatelessWidget {
                             text: 'Don\'t have an account yet? ',
                             style: GoogleFonts.roboto(
                               fontSize: 14,
-                              color: Colors.black.withOpacity(0.6),
+                              color:
+                                  Colors.black.withAlpha((0.6 * 255).toInt()),
                             ),
                             children: [
                               TextSpan(

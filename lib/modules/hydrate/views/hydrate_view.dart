@@ -37,7 +37,7 @@ class HydrateView extends StatelessWidget {
                     return WaveWidget(
                       config: CustomConfig(
                         colors: [
-                          ThemeColor.primary.withOpacity(0.5),
+                          ThemeColor.primary.withAlpha((0.5 * 255).toInt()),
                           ThemeColor.primary,
                         ],
                         durations: _durations,
@@ -380,7 +380,7 @@ class HydrateView extends StatelessWidget {
             builder: (state) {
               if (state.isLoading.value) {
                 return Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withAlpha((0.3 * 255).toInt()),
                   child: Center(
                     child: Lottie.asset(AssetConst.animationLoading, width: 48),
                   ),

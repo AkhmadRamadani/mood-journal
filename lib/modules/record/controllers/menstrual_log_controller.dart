@@ -7,6 +7,7 @@ import 'package:moodie/models/menstrual_log_model.dart';
 import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/record/controllers/record_controller.dart';
+import 'package:moodie/modules/record/controllers/year_in_pixels_controller.dart';
 import 'package:moodie/modules/record/repositories/menstrual_log_repository.dart';
 import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/shared/themes/colors.dart';
@@ -118,6 +119,10 @@ class MenstrualLogController extends GetxController {
         }
         if (Get.isRegistered<RecordController>()) {
           RecordController.to.refresh();
+        }
+        if (Get.isRegistered<YearInPixelsController>()) {
+          YearInPixelsController.to
+              .loadYear(YearInPixelsController.to.selectedYear.value);
         }
 
         isLoading.value = false;
