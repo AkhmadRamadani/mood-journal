@@ -82,9 +82,9 @@ class _RecordCardState extends State<RecordCard> {
             child: Container(
               width: Spacing.spacing * 6,
               height: Spacing.spacing * 6,
-              decoration: const BoxDecoration(
-                color: ThemeColor.primary,
-                borderRadius: BorderRadius.all(
+              decoration: BoxDecoration(
+                color: widget.mood?.color ?? ThemeColor.primary,
+                borderRadius: const BorderRadius.all(
                   Radius.circular(CustomRadius.defaultRadius),
                 ),
               ),

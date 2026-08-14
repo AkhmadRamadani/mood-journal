@@ -132,7 +132,7 @@ class AddMoodDesc extends StatelessWidget {
               builder: (state) {
                 if (state.isLoadingInsert.value) {
                   return Container(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withAlpha((0.3 * 255).toInt()),
                     child: Center(
                       child:
                           Lottie.asset(AssetConst.animationLoading, width: 48),

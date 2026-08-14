@@ -60,6 +60,7 @@ dependencies:
   http: ^1.2.0
   intl: ^0.17.0
   dio: ^5.4.0
+  speech_to_text: ^7.4.0
 
 
 

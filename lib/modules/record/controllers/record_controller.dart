@@ -6,6 +6,7 @@ import 'package:moodie/controllers/gamification_controller.dart';
 import 'package:moodie/models/mood_model.dart';
 import 'package:moodie/models/user_model.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
+import 'package:moodie/modules/record/controllers/year_in_pixels_controller.dart';
 import 'package:moodie/modules/record/repositories/record_repository.dart';
 import 'package:moodie/shared/enum/mood_enum.dart';
 import 'package:moodie/shared/widgets/alerts/custom_alert.dart';
@@ -117,6 +118,7 @@ class RecordController extends GetxController {
           intensity: intensity,
           title: titleController.text,
           note: noteController.text,
+          createdAt: selectedDate,
         );
       }
 
@@ -136,6 +138,10 @@ class RecordController extends GetxController {
         }
         if (Get.isRegistered<GamificationController>()) {
           GamificationController.to.refreshProfile();
+        }
+        if (Get.isRegistered<YearInPixelsController>()) {
+          YearInPixelsController.to
+              .loadYear(YearInPixelsController.to.selectedYear.value);
         }
       } else {
         throw Exception(

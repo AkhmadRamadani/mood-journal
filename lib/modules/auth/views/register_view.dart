@@ -50,7 +50,8 @@ class RegisterView extends StatelessWidget {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black
+                                        .withAlpha((0.3 * 255).toInt()),
                                     width: 0.4,
                                   ),
                                   borderRadius: BorderRadius.circular(50),
@@ -172,7 +173,7 @@ class RegisterView extends StatelessWidget {
             builder: (controller) {
               if (controller.isLoading.value) {
                 return Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withAlpha((0.3 * 255).toInt()),
                   child: Center(
                     child: Lottie.asset(AssetConst.animationLoading, width: 48),
                   ),

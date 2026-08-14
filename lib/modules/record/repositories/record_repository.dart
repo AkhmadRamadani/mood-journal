@@ -25,7 +25,7 @@ class RecordRepository {
       final result = await _apiService.getData<List<MoodModel>>(
         uri: '/moods?from=$fromStr&to=$toStr',
         dbKey: 'moods_${date.year}_${date.month}_${date.day}',
-        dataSource: DataSource.staleWhileRevalidate,
+        dataSource: DataSource.networkFirst,
         onRefreshed: onRefreshed,
         fromJson: (jsonStr) {
           final responseData = jsonDecode(jsonStr);
@@ -67,7 +67,7 @@ class RecordRepository {
         uri: '/moods?from=$fromStr&to=$toStr&per_page=100',
         dbKey:
             'moods_range_${start.year}_${start.month}_${start.day}_to_${end.year}_${end.month}_${end.day}',
-        dataSource: DataSource.staleWhileRevalidate,
+        dataSource: DataSource.networkFirst,
         onRefreshed: onRefreshed,
         fromJson: (jsonStr) {
           final responseData = jsonDecode(jsonStr);
@@ -99,6 +99,7 @@ class RecordRepository {
     double? intensity,
     String? title,
     String? note,
+    DateTime? createdAt,
   }) async {
     try {
       final response = await _apiService.storeMood(
@@ -107,6 +108,7 @@ class RecordRepository {
         intensity: intensity,
         title: title,
         note: note,
+        createdAt: createdAt,
       );
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (error) {
