@@ -130,7 +130,7 @@ class ApiService {
   ApiService._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://2b0b-103-156-227-0.ngrok-free.app/api',
+        baseUrl: 'https://moodie.aramadani.my.id/api',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
