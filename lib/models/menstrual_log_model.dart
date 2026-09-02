@@ -76,8 +76,8 @@ class MenstrualLogModel {
       if (moodEntry != null) 'mood_entry': moodEntry!.toJson(),
       'is_period_start': isPeriodStart,
       if (note != null) 'note': note,
-      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-      if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
+      if (createdAt != null) 'created_at': createdAt!.toUtc().toIso8601String(),
+      if (updatedAt != null) 'updated_at': updatedAt!.toUtc().toIso8601String(),
     };
   }
 

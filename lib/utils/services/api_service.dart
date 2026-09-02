@@ -758,7 +758,7 @@ class ApiService {
       if (intensity != null) 'intensity': intensity,
       if (title != null) 'title': title,
       if (note != null) 'note': note,
-      if (createdAt != null) 'created_at': createdAt.toIso8601String(),
+      if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
     });
   }
 

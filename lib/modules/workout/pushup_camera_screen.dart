@@ -54,7 +54,8 @@ class _Tokens {
     }
   }
 
-  static const double radiusPanel = 4; // near-square panels — deliberately not rounded-everything
+  static const double radiusPanel =
+      4; // near-square panels — deliberately not rounded-everything
   static const double radiusChip = 8;
 
   static const FontWeight weightDisplay = FontWeight.w700;
@@ -278,7 +279,10 @@ class _PushUpCameraScreenState extends State<PushUpCameraScreen> {
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
-      return _ErrorScreen(error: _error!, onRetry: _setup, onBack: () => Navigator.of(context).pop());
+      return _ErrorScreen(
+          error: _error!,
+          onRetry: _setup,
+          onBack: () => Navigator.of(context).pop());
     }
 
     if (!_ready || _camera == null) {
@@ -430,8 +434,12 @@ class _TopStrip extends StatelessWidget {
                       Text(
                         type.label,
                         style: TextStyle(
-                          color: isSelected ? _Tokens.textPrimary : _Tokens.textMuted,
-                          fontWeight: isSelected ? _Tokens.weightLabel : FontWeight.normal,
+                          color: isSelected
+                              ? _Tokens.textPrimary
+                              : _Tokens.textMuted,
+                          fontWeight: isSelected
+                              ? _Tokens.weightLabel
+                              : FontWeight.normal,
                         ),
                       ),
                       if (isSelected) ...[
@@ -439,7 +447,8 @@ class _TopStrip extends StatelessWidget {
                         Container(
                           width: 6,
                           height: 6,
-                          decoration: BoxDecoration(color: itemAccent, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                              color: itemAccent, shape: BoxShape.circle),
                         ),
                       ],
                     ],
@@ -464,7 +473,8 @@ class _TopStrip extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.expand_more_rounded, color: _Tokens.textMuted, size: 18),
+                  const Icon(Icons.expand_more_rounded,
+                      color: _Tokens.textMuted, size: 18),
                 ],
               ),
             ),
@@ -505,7 +515,9 @@ class _IconTap extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Icon(icon,
-            color: enabled ? _Tokens.textPrimary : _Tokens.textMuted.withValues(alpha: 0.4),
+            color: enabled
+                ? _Tokens.textPrimary
+                : _Tokens.textMuted.withValues(alpha: 0.4),
             size: 20),
       ),
     );
@@ -561,7 +573,10 @@ class _RepReadout extends StatelessWidget {
               if (exerciseType == ExerciseType.plank) ...[
                 const SizedBox(width: 4),
                 const Text('s',
-                    style: TextStyle(color: _Tokens.textMuted, fontSize: 20, fontWeight: _Tokens.weightLabel)),
+                    style: TextStyle(
+                        color: _Tokens.textMuted,
+                        fontSize: 20,
+                        fontWeight: _Tokens.weightLabel)),
               ],
             ],
           ),
@@ -628,7 +643,8 @@ class _FinishBar extends StatelessWidget {
                 Container(
                   width: 10,
                   height: 10,
-                  decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                  decoration:
+                      BoxDecoration(color: accent, shape: BoxShape.circle),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -650,7 +666,8 @@ class _FinishBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                const Icon(Icons.arrow_forward_rounded, color: _Tokens.textMuted, size: 16),
+                const Icon(Icons.arrow_forward_rounded,
+                    color: _Tokens.textMuted, size: 16),
               ],
             ),
           ),
@@ -701,7 +718,8 @@ class _ErrorScreen extends StatelessWidget {
   final VoidCallback onRetry;
   final VoidCallback onBack;
 
-  const _ErrorScreen({required this.error, required this.onRetry, required this.onBack});
+  const _ErrorScreen(
+      {required this.error, required this.onRetry, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -736,7 +754,8 @@ class _ErrorScreen extends StatelessWidget {
               Text(
                 error,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: _Tokens.textMuted, fontSize: 14, height: 1.4),
+                style: const TextStyle(
+                    color: _Tokens.textMuted, fontSize: 14, height: 1.4),
               ),
               const SizedBox(height: 24),
               OutlinedButton(
@@ -746,7 +765,8 @@ class _ErrorScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(_Tokens.radiusPanel),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 onPressed: onRetry,
                 child: const Text('TRY AGAIN'),

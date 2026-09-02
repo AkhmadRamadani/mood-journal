@@ -15,8 +15,9 @@ class RecordRepository {
     DateTime date, {
     void Function(List<MoodModel> fresh)? onRefreshed,
   }) async {
-    final fromDate = DateTime(date.year, date.month, date.day, 0, 0, 0);
-    final toDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final fromDate = DateTime(date.year, date.month, date.day, 0, 0, 0).toUtc();
+    final toDate =
+        DateTime(date.year, date.month, date.day, 23, 59, 59).toUtc();
 
     final fromStr = fromDate.toIso8601String();
     final toStr = toDate.toIso8601String();
@@ -56,8 +57,9 @@ class RecordRepository {
     DateTime end, {
     void Function(List<MoodModel> fresh)? onRefreshed,
   }) async {
-    final fromDate = DateTime(start.year, start.month, start.day, 0, 0, 0);
-    final toDate = DateTime(end.year, end.month, end.day, 23, 59, 59);
+    final fromDate =
+        DateTime(start.year, start.month, start.day, 0, 0, 0).toUtc();
+    final toDate = DateTime(end.year, end.month, end.day, 23, 59, 59).toUtc();
 
     final fromStr = fromDate.toIso8601String();
     final toStr = toDate.toIso8601String();

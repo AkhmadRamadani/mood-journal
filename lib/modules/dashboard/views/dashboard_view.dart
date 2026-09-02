@@ -6,6 +6,7 @@ import 'package:moodie/constants/routes.dart';
 import 'package:moodie/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:moodie/modules/gamification/controllers/gamification_controller.dart';
 import 'package:moodie/modules/home/controllers/home_controller.dart';
+import 'package:moodie/modules/quick_log/views/quick_log_bar.dart';
 import 'package:moodie/modules/record/views/add_menstrual_log_view.dart';
 import 'package:moodie/modules/record/views/record_view.dart';
 import 'package:moodie/modules/record/views/year_in_pixels_view.dart';
@@ -52,6 +53,8 @@ class DashboardView extends StatelessWidget {
                   ),
                   const SizedBox(height: Spacing.spacing * 2),
                   const _StreakBanner(),
+                  const SizedBox(height: Spacing.spacing * 3),
+                  const QuickLogBar(),
                   const SizedBox(height: Spacing.spacing * 3),
                   _TodayCard(controller: controller),
                   const SizedBox(height: Spacing.spacing * 4),

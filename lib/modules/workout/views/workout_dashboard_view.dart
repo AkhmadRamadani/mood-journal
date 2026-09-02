@@ -178,6 +178,7 @@ class WorkoutDashboardView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(Icons.bolt_rounded,
                                     color: Colors.amber, size: 16),
@@ -194,12 +195,17 @@ class WorkoutDashboardView extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Text(
-                            selected.description,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              selected.description,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
@@ -276,7 +282,7 @@ class WorkoutDashboardView extends StatelessWidget {
                     backgroundColor: const Color(0xFF6C5CE7),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        vertical: 18, horizontal: 20),
+                        vertical: 16, horizontal: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
@@ -287,14 +293,18 @@ class WorkoutDashboardView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.videocam_rounded, size: 28),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Start ${selected.label} AI Tracking',
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.2,
+                      const Icon(Icons.videocam_rounded, size: 24),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                          'Start ${selected.label} AI Tracking',
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.2,
+                          ),
                         ),
                       ),
                     ],

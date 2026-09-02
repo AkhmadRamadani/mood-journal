@@ -74,7 +74,7 @@ class MoodModel {
       'mood': mood.name,
       'emotions': emotions,
       'intensity': intensity,
-      'created_at': createdAt.toIso8601String(),
+      'created_at': createdAt.toUtc().toIso8601String(),
       'note': note,
       'title': title,
       'user_id': userId,

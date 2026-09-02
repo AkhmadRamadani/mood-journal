@@ -32,7 +32,7 @@ class DailyDrinkModel {
   Map<String, dynamic> toJson() {
     return {
       'user_id': userId,
-      'created_at': createdAt.toIso8601String(),
+      'created_at': createdAt.toUtc().toIso8601String(),
       'drink_amount': drinkAmount,
       'target_amount': targetAmount,
     };
