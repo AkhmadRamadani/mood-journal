@@ -1206,6 +1206,8 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.37):
     - BoringSSL-GRPC/Interface (= 0.0.37)
   - BoringSSL-GRPC/Interface (0.0.37)
+  - camera_avfoundation (0.0.1):
+    - Flutter
   - cloud_firestore (5.6.12):
     - Firebase/Firestore (= 11.15.0)
     - firebase_core
@@ -1290,6 +1292,8 @@ PODS:
     - nanopb (~> 3.30910.0)
   - FirebaseSharedSwift (11.15.0)
   - Flutter (1.0.0)
+  - flutter_litert (3.6.0):
+    - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
   - flutter_native_timezone (0.0.1):
@@ -1448,11 +1452,13 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/darwin`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
+  - flutter_litert (from `.symlinks/plugins/flutter_litert/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
@@ -1492,6 +1498,8 @@ SPEC REPOS:
     - RecaptchaInterop
 
 EXTERNAL SOURCES:
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/darwin"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   firebase_auth:
@@ -1502,6 +1510,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
+  flutter_litert:
+    :path: ".symlinks/plugins/flutter_litert/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_timezone:
@@ -1516,6 +1526,7 @@ SPEC CHECKSUMS:
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: e215d35177a9cf469927863e69c13e220df32a8b
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
+  camera_avfoundation: 968a9a5323c79a99c166ad9d7866bfd2047b5a9b
   cloud_firestore: fdcc87898326e396d6ef6df543acf9b5c2034b95
   CwlCatchException: 7acc161b299a6de7f0a46a6ed741eae2c8b4d75a
   CwlCatchExceptionSupport: 54ccab8d8c78907b57f99717fb19d4cc3bce02dc
@@ -1535,6 +1546,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 3b26e2cee503815e01c3701236b020aa9b576f09
   FirebaseSharedSwift: e17c654ef1f1a616b0b33054e663ad1035c8fd40
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_litert: d8f8469fd36c0aada8bc4d7ac1891114d6839548
   flutter_local_notifications: ad39620c743ea4c15127860f4b5641649a988100
   flutter_native_timezone: 5fe32678d72d1894880e94303ef41c2919f014e5
   google_sign_in_ios: b48bb9af78576358a168361173155596c845f0b9

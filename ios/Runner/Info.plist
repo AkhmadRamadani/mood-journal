@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to detect your pose and count reps.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Moodie uses speech recognition to convert your spoken voice into journal notes.</string>
 	<key>NSMicrophoneUsageDescription</key>

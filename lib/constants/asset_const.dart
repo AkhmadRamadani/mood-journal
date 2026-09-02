@@ -42,4 +42,9 @@ class AssetConst {
   static const String progressHydrateSVG = 'assets/icons/hydrate/progress.svg';
 
   static const String appIcon = 'assets/icons/icon.png';
+
+  // AI Models
+  static const String poseDetectorModel = 'assets/models/pose_detector.tflite';
+  static const String poseLandmarksDetectorModel =
+      'assets/models/pose_landmarks_detector.tflite';
 }

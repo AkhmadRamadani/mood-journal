@@ -61,6 +61,8 @@ dependencies:
   intl: ^0.17.0
   dio: ^5.4.0
   speech_to_text: ^7.4.0
+  camera: ^0.12.0
+  pose_detection: ^3.7.0
 
 
 
@@ -96,6 +98,7 @@ flutter:
     - assets/lotties/
     - assets/animations/
     - assets/icons/hydrate/
+    - assets/models/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

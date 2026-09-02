@@ -18,4 +18,5 @@ class Routes {
   static const String termService = '/term-service';
   static const String hydrate = '/hydrate';
   static const String gamification = '/gamification';
+  static const String workout = '/workout';
 }

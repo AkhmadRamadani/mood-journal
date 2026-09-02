@@ -21,6 +21,7 @@ import 'package:moodie/modules/profile/views/term_service.dart';
 import 'package:moodie/modules/record/views/add_mood_view.dart';
 import 'package:moodie/modules/splash/controllers/splash_controller.dart';
 import 'package:moodie/modules/splash/views/splash_view.dart';
+import 'package:moodie/modules/workout/views/workout_dashboard_view.dart';
 
 class Pages {
   Pages._();
@@ -106,6 +107,10 @@ class Pages {
       GetPage(
         name: Routes.gamification,
         page: () => const GamificationScreen(),
+      ),
+      GetPage(
+        name: Routes.workout,
+        page: () => const WorkoutDashboardView(),
       ),
     ];
   }

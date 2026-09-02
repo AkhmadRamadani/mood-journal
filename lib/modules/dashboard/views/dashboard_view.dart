@@ -349,34 +349,48 @@ class _QuickActionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _QuickActionButton(
-          icon: Icons.edit_note_rounded,
-          label: 'Log Mood',
-          color: const Color(0xFF6C5CE7),
-          onTap: () => Get.toNamed(Routes.addMood),
-        ),
-        _QuickActionButton(
-          icon: Icons.water_drop_rounded,
-          label: 'Hydrate',
-          color: const Color(0xFF00CEC9),
-          onTap: () => Get.toNamed(Routes.hydrate),
-        ),
-        _QuickActionButton(
-          icon: Icons.opacity_rounded,
-          label: 'Period Log',
-          color: const Color(0xFFFD79A8),
-          onTap: () => Get.to(() => const AddMenstrualLogView()),
-        ),
-        _QuickActionButton(
-          icon: Icons.history_rounded,
-          label: 'History',
-          color: const Color(0xFF00B894),
-          onTap: () => Get.to(() => const YearInPixelsView()),
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      clipBehavior: Clip.none,
+      child: Row(
+        children: [
+          _QuickActionButton(
+            icon: Icons.edit_note_rounded,
+            label: 'Log Mood',
+            color: const Color(0xFF6C5CE7),
+            onTap: () => Get.toNamed(Routes.addMood),
+          ),
+          const SizedBox(width: 18),
+          _QuickActionButton(
+            icon: Icons.fitness_center_rounded,
+            label: 'AI Workout',
+            color: const Color(0xFFE17055),
+            onTap: () => Get.toNamed(Routes.workout),
+          ),
+          const SizedBox(width: 18),
+          _QuickActionButton(
+            icon: Icons.water_drop_rounded,
+            label: 'Hydrate',
+            color: const Color(0xFF00CEC9),
+            onTap: () => Get.toNamed(Routes.hydrate),
+          ),
+          const SizedBox(width: 18),
+          _QuickActionButton(
+            icon: Icons.opacity_rounded,
+            label: 'Period Log',
+            color: const Color(0xFFFD79A8),
+            onTap: () => Get.to(() => const AddMenstrualLogView()),
+          ),
+          const SizedBox(width: 18),
+          _QuickActionButton(
+            icon: Icons.history_rounded,
+            label: 'History',
+            color: const Color(0xFF00B894),
+            onTap: () => Get.to(() => const YearInPixelsView()),
+          ),
+        ],
+      ),
     );
   }
 }
